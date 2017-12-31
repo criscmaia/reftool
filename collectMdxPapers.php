@@ -16,7 +16,8 @@ $json = json_decode($json_str);
 $jsonData = json_encode($json, JSON_PRETTY_PRINT);
 //echo "<pre>" . $jsonData . "</pre><hr>";
 
-echo "<h3>Searching for: $search <hr>";
+echo "<h4>Searching for: $search </h4>";
+echo "<a href='/reftool/'>go back</a><hr>";
 
 foreach($json as $indjson){
     $paper = $indjson;
