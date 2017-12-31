@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
-//$search = "Almaas Ali";
-$search = "Cristiano Maia";
+$search = "Almaas Ali";
+//$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 
@@ -33,14 +33,6 @@ foreach($json as $indjson){
 
             if (isset($paper->type))        { $type = "'".$paper->type."'"; }
             if (isset($paper->creators))     { $allcreators = $paper->creators; }
-            // if it has the authors, check if in the DB
-            if(sizeof($allcreators)>0){
-                foreach($allcreators as $eachcreator){
-                    $fName = $eachcreator->name->given;
-                    $lName = $eachcreator->name->family;
-                    check_mdxAuthorExistence($fName, $lName);
-                }
-            }
             if (isset($paper->succeeds))     { $succeeds = $paper->succeeds; } else { $succeeds = 'NULL';}
             if (isset($paper->ispublished))  { $ispublished = "'".$paper->ispublished."'"; } else { $ispublished = 'NULL';}
             if (isset($paper->pres_type))    { $presType = "'".$paper->pres_type."'"; } else { $presType = 'NULL';}
@@ -63,12 +55,23 @@ foreach($json as $indjson){
                 $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
             }
 
-            $sql = "INSERT INTO `publication` (`type`,`authors`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, 1, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
-            if ($conn->query($sql) === TRUE) {
-                echo "<p>New record created successfully</p>";
-            } else {
-                echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
-//                echo "<p>Error: " . $conn->error . "</p>";
+
+            // if it has the authors, check if in the DB
+            if(sizeof($allcreators)>0){
+                foreach($allcreators as $eachcreator){
+                    $fName = $eachcreator->name->given;
+                    $lName = $eachcreator->name->family;
+                    $email = $eachcreator->id;
+                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email);
+
+                    $sql = "INSERT INTO `publication` (`type`,`authors`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
+                    if ($conn->query($sql) === TRUE) {
+                        echo "<p>New record created successfully</p>";
+                    } else {
+                        echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
+        //                echo "<p>Error: " . $conn->error . "</p>";
+                    }
+                }
             }
         }
     }
@@ -77,15 +80,27 @@ $conn->close();
 
 
 // check if author is on the DB
-function check_mdxAuthorExistence($fname, $lname){
+function getMdxAuthorId($fname, $lname, $email){
     include 'dbconnect.php';
 
     $fullName = $fname . ' ' . $lname;
-    if ($checkMdxAuthorExistence = $conn->query("SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) like '$fullName';")) {
+    if ($checkMdxAuthorExistence = $conn->query("SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';")) {
         $row_cnt = $checkMdxAuthorExistence->num_rows;
         if($row_cnt>0) {
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
             echo $fname . " " . $lname. " is IN THE DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
+            // UPDATE DETAILS ? ADD EMAIL?
+            return $resultsArray['mdxAuthorID'];
+        } else {
+            $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`) VALUES('$fname','$lname','$email','$fullName');";
+            if ($conn->query($sql) === TRUE) {
+                $last_id = $conn->insert_id;
+                echo "New record created successfully. ID: ". $last_id. "<br>";
+                return $last_id;
+            } else {
+                echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
+//                echo "<p>Error: " . $conn->error . "</p>";
+            }
         }
         $checkMdxAuthorExistence->close();
     }
