@@ -56,7 +56,7 @@ foreach($json as $indjson){
             }
 
 
-            // if it has the authors, check if in the DB
+            // ONLY ADD TO DB IF IT HAS AN AUTHOR
             if(sizeof($allcreators)>0){
                 foreach($allcreators as $eachcreator){
                     $fName = $eachcreator->name->given;
@@ -64,12 +64,16 @@ foreach($json as $indjson){
                     $email = $eachcreator->id;
                     $mdxAuthorId = getMdxAuthorId($fName, $lName, $email);
 
-                    $sql = "INSERT INTO `publication` (`type`,`authors`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
-                    if ($conn->query($sql) === TRUE) {
-                        echo "<p>New record created successfully</p>";
+                    // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
+                    if (!checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid)){
+                        $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
+                        if ($conn->query($sql) === TRUE) {
+                            echo "New record created successfully. Publication added: " . $mdxAuthorId."".$eprintid."<br>";
+                        } else {
+                            echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
+                        }
                     } else {
-                        echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
-        //                echo "<p>Error: " . $conn->error . "</p>";
+                        echo "PUBLICATION + AUTHOR already in DB: " . $mdxAuthorId." - ".$eprintid."<br>";
                     }
                 }
             }
@@ -78,6 +82,20 @@ foreach($json as $indjson){
 }
 $conn->close();
 
+
+function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
+    include 'dbconnect.php';
+
+    if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
+        $row_cnt = $checkPublicationAlreadyInDB->num_rows;
+        if($row_cnt>0) {
+            return true;
+        } else {
+            return false;
+        }
+        $checkPublicationAlreadyInDB->close();
+    }
+}
 
 // check if author is on the DB
 function getMdxAuthorId($fname, $lname, $email){
@@ -89,13 +107,13 @@ function getMdxAuthorId($fname, $lname, $email){
         if($row_cnt>0) {
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
             echo $fname . " " . $lname. " is IN THE DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
-            // UPDATE DETAILS ? ADD EMAIL?
+            // TODO: UPDATE DETAILS ? ADD EMAIL?
             return $resultsArray['mdxAuthorID'];
         } else {
             $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`) VALUES('$fname','$lname','$email','$fullName');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
-                echo "New record created successfully. ID: ". $last_id. "<br>";
+                echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
                 return $last_id;
             } else {
                 echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
