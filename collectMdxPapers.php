@@ -6,12 +6,9 @@ error_reporting(E_ALL);
 include 'dbconnect.php';
 
 $search = "Almaas Ali";
-$search = "Cristiano Maia";
+//$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
-
-//echo $result;
-//echo "<hr>";
 
 $json_str = $result;
 $json = json_decode($json_str);
@@ -22,7 +19,7 @@ $jsonData = json_encode($json, JSON_PRETTY_PRINT);
 foreach($json as $indjson){
     $paper = $indjson;
 
-    // GET TITLE AND DATE 1st BECAUSE IF IS EMPTY OR <2014, JUST SKIP
+    // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
     if (isset($paper->date))         { $date = $paper->date; } else { $date = 'NULL';}
     if (isset($paper->title))        { $title = "'".$paper->title."'"; } else { $title = 'NULL';}
     if ($date != 'NULL') {
@@ -31,7 +28,7 @@ foreach($json as $indjson){
         if ($title!="NULL" && $year>=2014){
             $date = "'".$date."'";      // add quotes for DB INSERT
 
-            if (isset($paper->type))        { $type = "'".$paper->type."'"; }
+            if (isset($paper->type))         { $type = "'".$paper->type."'"; }
             if (isset($paper->creators))     { $allcreators = $paper->creators; }
             if (isset($paper->succeeds))     { $succeeds = $paper->succeeds; } else { $succeeds = 'NULL';}
             if (isset($paper->ispublished))  { $ispublished = "'".$paper->ispublished."'"; } else { $ispublished = 'NULL';}
@@ -68,12 +65,12 @@ foreach($json as $indjson){
                     if (!checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid)){
                         $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                         if ($conn->query($sql) === TRUE) {
-                            echo "New record created successfully. Publication added: " . $mdxAuthorId." - ".$eprintid."<br>";
+                            echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
                         } else {
                             echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                         }
                     } else {
-                        echo "PUBLICATION + AUTHOR already in DB: " . $mdxAuthorId." - ".$eprintid."<br>";
+                        echo "PUBLICATION + AUTHOR already in DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
                     }
                 }
             }
@@ -82,7 +79,7 @@ foreach($json as $indjson){
 }
 $conn->close();
 
-
+// check if publication + author already in the DB
 function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
     include 'dbconnect.php';
 
@@ -106,8 +103,18 @@ function getMdxAuthorId($fname, $lname, $email){
         $row_cnt = $checkMdxAuthorExistence->num_rows;
         if($row_cnt>0) {
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
-            echo $fname . " " . $lname. " is IN THE DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
-            // TODO: UPDATE DETAILS ? ADD EMAIL?
+            $mdxAuthorID = $resultsArray['mdxAuthorID'];
+            echo $fname . " " . $lname. " is in the DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
+            if ($email != $resultsArray['email'] || $fullName != $resultsArray['repositoryName']) {     // check if email or full name is different from DB
+                $sql = "UPDATE `mdxAuthor` SET `email`='$email', `repositoryName`='$fullName' WHERE `mdxAuthorID` = '$mdxAuthorID';";
+                $result = $conn->query($sql);
+                if ($result) {
+                    echo "Values udpated: email: ".$email.", repository name: ".$fullName. "<br>";
+                } else {
+                    echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
+                }
+                $conn->close();
+            }
             return $resultsArray['mdxAuthorID'];
         } else {
             $found = strpos($email, "@mdx.ac.uk");
