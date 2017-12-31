@@ -20,13 +20,14 @@ if (count($json)==0) {
 } else {
     echo "<a href='/reftool/'>go back</a>";
     echo "<h4>Searching for: $search </h4>";
-    echo count($json) . " results found <br>";
+    echo count($json) . " results found (from all years) <br>";
     echo "<hr>";
 
 
     $jsonData = json_encode($json, JSON_PRETTY_PRINT);
     //echo "<pre>" . $jsonData . "</pre><hr>";
 
+    $eraRating = "NULL";
     foreach($json as $indjson){
         $paper = $indjson;
 
@@ -97,10 +98,10 @@ if (count($json)==0) {
                     }
                 }
             } else {
-                echo "Either Title is null or no publications after 2014. Date: $date . Title: $title <br>";
+//                echo "Either Title is null or no publications after 2014. Date: $date . Title: $title <br>";
             }
         } else {
-            echo "Date is null. Date: $date . Title: $title<br>";
+//            echo "Date is null. Date: $date . Title: $title<br>";
         }
     }
     $conn->close();
@@ -131,10 +132,14 @@ function checkEra2010rank($issn) {
     $issn = trim($issn, '"');
     if ($checkEraRank = $conn->query("SELECT rank FROM era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;")) {
         $row_cnt = $checkEraRank->num_rows;
+        echo "ISSN results: $row_cnt <br>";
         if($row_cnt>0) {
             $resultsArray = $checkEraRank->fetch_assoc();
-            return '"'.$resultsArray['rank'].'"';
+            $rank = $resultsArray['rank'];
+            echo "rank: $rank <br>";
+            return '"'.$rank.'"';
         } else {
+            echo "returning NULL <br>";
             return "NULL";
         }
         $checkEraRank->close();
@@ -193,7 +198,6 @@ function getMdxAuthorId($fname, $lname, $email){
                 return $last_id;
             } else {
                 echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
-//                echo "<p>Error: " . $conn->error . "</p>";
             }
         }
         $checkMdxAuthorExistence->close();
