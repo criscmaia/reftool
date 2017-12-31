@@ -5,16 +5,18 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
-//$search = "Almaas Ali";
+$formFName = $_POST["firstName"];
+$formLName = $_POST["lastName"];
+$search = $formFName . " " . $formLName;
 //$search = "Cristiano Maia";
-//$search = "Juan Carlos Augusto";    // 61 itens!
-$search = "Huan X. Nguyen";        // 77...
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 $json_str = $result;
 $json = json_decode($json_str);
 $jsonData = json_encode($json, JSON_PRETTY_PRINT);
 //echo "<pre>" . $jsonData . "</pre><hr>";
+
+echo "<h3>Searching for: $search <hr>";
 
 foreach($json as $indjson){
     $paper = $indjson;
