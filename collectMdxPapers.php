@@ -6,14 +6,17 @@ error_reporting(E_ALL);
 include 'dbconnect.php';
 
 //$search = "Almaas Ali";
-$search = "Pietro Abate";
+//$search = "Pietro Abate";       // 0 papers after 2014
+//$search = "Jennifer Davis";       // 2 papers ...
+//$search = "Francina Orfila-Sintes"; // 1...
+$search = "Julio Batle";        // 1.. same as above. No changes.
 //$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 $json_str = $result;
 $json = json_decode($json_str);
 $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-//echo "<pre>" . $jsonData . "</pre><hr>";
+echo "<pre>" . $jsonData . "</pre><hr>";
 
 foreach($json as $indjson){
     $paper = $indjson;
@@ -22,10 +25,19 @@ foreach($json as $indjson){
     if (isset($paper->date))         { $date = $paper->date; } else { $date = "NULL";}
     if (isset($paper->title))        { $title = '"'.$paper->title.'"'; } else { $title = "NULL";}
     if ($date != "NULL") {
+//        echo $date . "<br>";
+        if (strlen($date)==4) {              // only year
+            $date = $date . "-01-01";
+        } else if (strlen($date)==7) {       // only year and month
+            $date = $date . "-01";
+        }
+//        echo $date . "<br>";
+
+
         $split_date = explode('-',$date);
         $year = $split_date[0];
         if ($title!="NULL" && $year>=2014){
-            $date = '"'.$date.'"';      // add quotes for DB INSERT
+            $date = '"'.$date.'"';           // add quotes for DB INSERT
 
             if (isset($paper->type))         { $type = '"'.$paper->type.'"'; }
             if (isset($paper->creators))     { $allcreators = $paper->creators; }
@@ -78,10 +90,10 @@ foreach($json as $indjson){
                 }
             }
         } else {
-            echo "Either Title is null or no publications after 2014";
+            echo "Either Title is null or no publications after 2014. Date: $date . Title: $title <br>";
         }
     } else {
-        echo "Date is null. <br>";
+        echo "Date is null. Date: $date . Title: $title<br>";
     }
 }
 $conn->close();
