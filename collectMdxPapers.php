@@ -32,6 +32,7 @@ function checkEra2010rank($issn) {
     }
 }
 
+//$search = "Almaas Ali";
 $search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
@@ -96,13 +97,7 @@ foreach($json as $indjson){
         }
     }
 
-    if(sizeof($issn)>0){
-//        foreach($issn as $eachissn){
-            echo "issn: " . $issn . "<br>";
-            checkEra2010rank($issn);
-//        }
-    }
-
+    checkEra2010rank($issn);
 
 
     $existing_eprints_array = array();
