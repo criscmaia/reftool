@@ -13,7 +13,7 @@ $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8"
 $json_str = $result;
 $json = json_decode($json_str);
 $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-echo "<pre>" . $jsonData . "</pre><hr>";
+//echo "<pre>" . $jsonData . "</pre><hr>";
 
 foreach($json as $indjson){
     $paper = $indjson;
@@ -33,25 +33,26 @@ foreach($json as $indjson){
         if ($title!="NULL" && $year>=2014){
             $date = '"'.$date.'"';           // add quotes for DB INSERT
 
-            if (isset($paper->type))         { $type = '"'.$paper->type.'"'; }
+
+            if (isset($paper->type))         { $type = '"'.str_replace('"', "'", $paper->type).'"'; }
             if (isset($paper->creators))     { $allcreators = $paper->creators; }
             if (isset($paper->succeeds))     { $succeeds = $paper->succeeds; } else { $succeeds = "NULL";}
-            if (isset($paper->ispublished))  { $ispublished = '"'.$paper->ispublished.'"'; } else { $ispublished = "NULL";}
-            if (isset($paper->pres_type))    { $presType = '"'.$paper->pres_type.'"'; } else { $presType = "NULL";}
-            if (isset($paper->keywords))     { $keywords = '"'.$paper->keywords.'"'; } else { $keywords = "NULL";}
-            if (isset($paper->publication))  { $publication = '"'.$paper->publication.'"'; } else { $publication = "NULL";}
-            if (isset($paper->volume))       { $volume = '"'.$paper->volume.'"'; } else { $volume = "NULL";}
-            if (isset($paper->number))       { $number = '"'.$paper->number.'"'; } else { $number = "NULL";}
-            if (isset($paper->publisher))    { $publisher = '"'.$paper->publisher.'"'; } else { $publisher = "NULL";}
-            if (isset($paper->event_title))  { $eventTitle = '"'.$paper->event_title.'"'; } else { $eventTitle = "NULL";}
-            if (isset($paper->event_type))   { $eventType = '"'.$paper->event_type.'"'; } else { $eventType = "NULL";}
-            if (isset($paper->isbn))         { $isbn = '"'.$paper->isbn.'"'; } else { $isbn = "NULL";}
-            if (isset($paper->issn))         { $issn = '"'.$paper->issn.'"'; } else { $issn = "NULL";}
-            if (isset($paper->book_title))   { $bookTitle = '"'.$paper->book_title.'"'; } else { $bookTitle = "NULL";}
+            if (isset($paper->ispublished))  { $ispublished = '"'.str_replace('"', "'", $paper->ispublished).'"'; } else { $ispublished = "NULL";}
+            if (isset($paper->pres_type))    { $presType = '"'.str_replace('"', "'", $paper->pres_type).'"'; } else { $presType = "NULL";}
+            if (isset($paper->keywords))     { $keywords = '"'.str_replace('"', "'", $paper->keywords).'"'; } else { $keywords = "NULL";}
+            if (isset($paper->publication))  { $publication = '"'.str_replace('"', "'", $paper->publication).'"'; } else { $publication = "NULL";}
+            if (isset($paper->volume))       { $volume = '"'.str_replace('"', "'", $paper->volume).'"'; } else { $volume = "NULL";}
+            if (isset($paper->number))       { $number = '"'.str_replace('"', "'", $paper->number).'"'; } else { $number = "NULL";}
+            if (isset($paper->publisher))    { $publisher = '"'.str_replace('"', "'", $paper->publisher).'"'; } else { $publisher = "NULL";}
+            if (isset($paper->event_title))  { $eventTitle = '"'.str_replace('"', "'", $paper->event_title).'"'; } else { $eventTitle = "NULL";}
+            if (isset($paper->event_type))   { $eventType = '"'.str_replace('"', "'", $paper->event_type).'"'; } else { $eventType = "NULL";}
+            if (isset($paper->isbn))         { $isbn = '"'.str_replace('"', "'", $paper->isbn).'"'; } else { $isbn = "NULL";}
+            if (isset($paper->issn))         { $issn = '"'.str_replace('"', "'", $paper->issn).'"'; } else { $issn = "NULL";}
+            if (isset($paper->book_title))   { $bookTitle = '"'.str_replace('"', "'", $paper->book_title).'"'; } else { $bookTitle = "NULL";}
             if (isset($paper->eprintid))     { $eprintid = $paper->eprintid; } else { $eprintid = "NULL";}
-            if (isset($paper->official_url)) { $doi = '"'.$paper->official_url.'"'; } else { $doi = "NULL";}
-            if (isset($paper->uri))          { $uri = '"'.$paper->uri.'"'; } else { $uri = "NULL";}
-            if (isset($paper->abstract))     { $abstract = '"'.$paper->abstract.'"'; } else { $abstract = "NULL";}
+            if (isset($paper->official_url)) { $doi = '"'.str_replace('"', "'", $paper->official_url).'"'; } else { $doi = "NULL";}
+            if (isset($paper->uri))          { $uri = '"'.str_replace('"', "'", $paper->uri).'"'; } else { $uri = "NULL";}
+            if (isset($paper->abstract))     { $abstract = '"'.str_replace('"', "'", $paper->abstract).'"'; } else { $abstract = "NULL";}
 
             if ($issn != "NULL") {
                 $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
