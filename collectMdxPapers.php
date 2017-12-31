@@ -7,7 +7,8 @@ include 'dbconnect.php';
 
 //$search = "Almaas Ali";
 //$search = "Cristiano Maia";
-$search = "Juan Carlos Augusto";    // 61 itens!
+//$search = "Juan Carlos Augusto";    // 61 itens!
+$search = "Huan X. Nguyen";        // 77...
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 $json_str = $result;
