@@ -68,7 +68,7 @@ foreach($json as $indjson){
                     if (!checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid)){
                         $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                         if ($conn->query($sql) === TRUE) {
-                            echo "New record created successfully. Publication added: " . $mdxAuthorId."".$eprintid."<br>";
+                            echo "New record created successfully. Publication added: " . $mdxAuthorId." - ".$eprintid."<br>";
                         } else {
                             echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                         }
@@ -110,7 +110,16 @@ function getMdxAuthorId($fname, $lname, $email){
             // TODO: UPDATE DETAILS ? ADD EMAIL?
             return $resultsArray['mdxAuthorID'];
         } else {
-            $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`) VALUES('$fname','$lname','$email','$fullName');";
+            $found = strpos($email, "@mdx.ac.uk");
+            if ($found === false) {
+                echo "The string '@mdx.ac.uk' was not found in the string '$email' <br>";
+                $currentEmployee = 0;
+            } else {
+                echo "The string '@mdx.ac.uk' was found in the string '$email' and exists at position $found <br>";
+                $currentEmployee = 1;
+            }
+
+            $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$fname','$lname','$email','$fullName','$currentEmployee');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
                 echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
