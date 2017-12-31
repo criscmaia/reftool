@@ -3,8 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-//$search = "Almaas Ali";
-$search = "Cristiano Maia";
+$search = "Almaas Ali";
+//$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 
@@ -61,12 +61,10 @@ foreach($json as $indjson){
                 $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
             }
 
-            if ($title!="NULL" && $year>=2014){
-                $sql = "INSERT INTO `publication` (`type`,`authors`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, 1, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
+            $sql = "INSERT INTO `publication` (`type`,`authors`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, 1, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
 
-                echo $sql;
-                echo "<br><br>";
-            }
+            echo $sql;
+            echo "<br><br>";
         }
     }
 }
