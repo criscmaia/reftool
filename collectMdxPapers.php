@@ -8,14 +8,12 @@ include 'dbconnect.php';
 //$search = "Almaas Ali";
 $search = "Pietro Abate";
 //$search = "Cristiano Maia";
-$link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
+$link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
-
 $json_str = $result;
 $json = json_decode($json_str);
-
 $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-echo "<pre>" . $jsonData . "</pre><hr>";
+//echo "<pre>" . $jsonData . "</pre><hr>";
 
 foreach($json as $indjson){
     $paper = $indjson;
@@ -79,7 +77,11 @@ foreach($json as $indjson){
                     echo "<hr>";
                 }
             }
+        } else {
+            echo "Either Title is null or no publications after 2014";
         }
+    } else {
+        echo "Date is null. <br>";
     }
 }
 $conn->close();
