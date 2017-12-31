@@ -132,14 +132,11 @@ function checkEra2010rank($issn) {
     $issn = trim($issn, '"');
     if ($checkEraRank = $conn->query("SELECT rank FROM era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;")) {
         $row_cnt = $checkEraRank->num_rows;
-        echo "ISSN results: $row_cnt <br>";
         if($row_cnt>0) {
             $resultsArray = $checkEraRank->fetch_assoc();
             $rank = $resultsArray['rank'];
-            echo "rank: $rank <br>";
             return '"'.$rank.'"';
         } else {
-            echo "returning NULL <br>";
             return "NULL";
         }
         $checkEraRank->close();
