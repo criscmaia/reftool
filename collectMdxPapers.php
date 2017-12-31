@@ -17,7 +17,22 @@ function check_mdxAuthorExistence($fname, $lname){
     }
 }
 
-$search = "Almaas Ali";
+
+// check paper grade
+function checkEra2010rank($issn) {
+    include 'dbconnect.php';
+
+    if ($checkEraRank = $conn->query("SELECT rank FROM era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;")) {
+        $row_cnt = $checkEraRank->num_rows;
+        if($row_cnt>0) {
+            $resultsArray = $checkEraRank->fetch_assoc();
+            echo $issn . " issn RANK is: " . $resultsArray['rank'] . " <br>";
+        }
+        $checkEraRank->close();
+    }
+}
+
+$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 
@@ -79,6 +94,13 @@ foreach($json as $indjson){
             $lName = $eachcreator->name->family;
             check_mdxAuthorExistence($fName, $lName);
         }
+    }
+
+    if(sizeof($issn)>0){
+//        foreach($issn as $eachissn){
+            echo "issn: " . $issn . "<br>";
+            checkEra2010rank($issn);
+//        }
     }
 
 
