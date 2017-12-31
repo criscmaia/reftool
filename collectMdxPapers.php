@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
-//$search = "Almaas Ali";
-$search = "Cristiano Maia";
+$search = "Almaas Ali";
+//$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&exp=0|1|-date%2Fcreators_name%2Ftitle|archive|-|q3%3Acreators_name%2Feditors_name%3AALL%3AEQ%3A".$search."|-|eprint_status%3Aeprint_status%3AANY%3AEQ%3Aarchive|metadata_visibility%3Ametadata_visibility%3AANY%3AEQ%3Ashow&n=&cache=1377950";
 $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 
@@ -64,7 +64,7 @@ foreach($json as $indjson){
 
                     // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                     $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
-                    echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. <br>";
+                    echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. Should show nothing if FALSE and 1 if true <br>";
                     if (!$publicationAlreadyInDB){
                         $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                         if ($conn->query($sql) === TRUE) {
@@ -91,7 +91,20 @@ function getMdxAuthorId($fname, $lname, $email){
 
     $fullName = $fname . ' ' . $lname;
 
-    if ($checkMdxAuthorExistence = $conn->query("SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';")) {   // search author find by name or email TODO: do only email so there is no risk of duplicate names?
+    // check if email is MDX
+    $found = strpos($email, "@mdx.ac.uk");
+    if ($found === false) {
+        echo "Checking if email finishes with '@mdx.ac.uk'. Not found. Current email: '$email' <br>";
+        $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
+        $currentEmployee = 0;
+    } else {
+        echo "Checking if email finishes with '@mdx.ac.uk'. Found. Current email: '$email' <br>";
+        $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
+        $currentEmployee = 1;
+    }
+
+
+    if ($checkMdxAuthorExistence = $conn->query($query)) {   // search author find by name or email TODO: do only email so there is no risk of duplicate names?
         $row_cnt = $checkMdxAuthorExistence->num_rows;
 
         if($row_cnt>0) {
@@ -115,15 +128,6 @@ function getMdxAuthorId($fname, $lname, $email){
             return $resultsArray['mdxAuthorID'];
         } else {
             echo "author does not exist on db. <br>";
-            $found = strpos($email, "@mdx.ac.uk");
-            if ($found === false) {
-                echo "Checking if email finishes with '@mdx.ac.uk'. Not found. Current email: '$email' <br>";
-                $currentEmployee = 0;
-            } else {
-                echo "Checking if email finishes with '@mdx.ac.uk'. Found. Current email: '$email' <br>";
-                $currentEmployee = 1;
-            }
-
             $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$fname','$lname','$email','$fullName','$currentEmployee');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
@@ -145,9 +149,9 @@ function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
     if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
         $row_cnt = $checkPublicationAlreadyInDB->num_rows;
         if($row_cnt>0) {
-            return 'true';
+            return true;
         } else {
-            return 'false';
+            return false;
         }
         $checkPublicationAlreadyInDB->close();
     }
