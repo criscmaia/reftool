@@ -5,8 +5,13 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
-$formFName = $_POST["firstName"];
-$formLName = $_POST["lastName"];
+//$formFName = $_POST["firstName"];
+//$formLName = $_POST["lastName"];
+session_start();
+$formFName = $_SESSION["firstName"];
+$formLName = $_SESSION["lastName"];
+
+
 $search = $formFName . " " . $formLName;
 //$search = "Cristiano Maia";
 $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
