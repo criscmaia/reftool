@@ -4,7 +4,7 @@ session_start();
 
 $filePath = $_SESSION['filePath'];
 
-if ( $xlsx = SimpleXLSX::parse('$filePath')) {
+if ( $xlsx = SimpleXLSX::parse($filePath)) {
         $totalNames = count($xlsx->rows());
 //        echo '<h1>$xlsx->rows()</h1>';
         echo '<pre>';
