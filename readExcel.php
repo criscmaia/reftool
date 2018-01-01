@@ -2,7 +2,9 @@
 require_once __DIR__ . '/simplexlsx.class.php';
 session_start();
 
-if ( $xlsx = SimpleXLSX::parse('staff.xlsx')) {
+$filePath = $_SESSION['filePath'];
+
+if ( $xlsx = SimpleXLSX::parse('$filePath')) {
         $totalNames = count($xlsx->rows());
 //        echo '<h1>$xlsx->rows()</h1>';
         echo '<pre>';

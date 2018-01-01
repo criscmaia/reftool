@@ -1,5 +1,5 @@
-<body style="text-align:center">
 <?php
+session_start();
 if (!array_key_exists('Submitted',$_POST)) {
 ?>
 
@@ -65,11 +65,15 @@ if (!array_key_exists('Submitted',$_POST)) {
 
             $staffListName = sha1_file($_FILES['staffList']['tmp_name']) . ".xlsx";    // Rename with unique name from its binary data.
             $fileSavePath = $upload_dir . $staffListName;
+            $_SESSION['filePath'] = $fileSavePath;
             if (is_uploaded_file($staffListFile)) {
                 echo "is uploaded work.";
                 if (!move_uploaded_file($staffListFile,$fileSavePath)) {
                     echo 'Could not save file.<br>';
                     endPage();
+                } else {
+                    echo 'upload worked: $fileSavePath';
+                    header ('Location: /reftool/readExcel.php');
                 }
             } else {
                 //This case happens if somehow the file we are working with was already on the server. It's to stop hackers.
