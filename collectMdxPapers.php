@@ -25,7 +25,7 @@ foreach ($importedNames as $name) {
         echo "<a href='/reftool/'>go back</a><hr>";
     } else {
         echo "<h4>Searching for: $search </h4>";
-        echo count($json) . " results found (from all years) <br>";
+        echo count($json) . " publications found (from all years) <br>";
 //        echo "<hr>";
 
 
@@ -111,10 +111,10 @@ foreach ($importedNames as $name) {
             }
         }
     }
-    echo "Total valid papers: " . $totalPapersPerPerson . "<br><hr>";
+    echo "Total of " . $totalPapersPerPerson . " combinations of publication+author found<br><hr>";
 }
 echo "<strong>Search completed! </strong><br>";
-echo "<a href='/reftool/readExcel.php'>go back</a>";
+echo "<a href='/reftool/readExcel.php'>← go back</a>";
 
 
 // check if publication + author already in the DB
