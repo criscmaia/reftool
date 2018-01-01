@@ -11,6 +11,7 @@ $importedNames = $_SESSION["importedNames"];
 foreach ($importedNames as $name) {
     $formFName = $name[0];
     $formLName = $name[1];
+    $totalPapersPerPerson=0;
 
     $search = $formFName . " " . $formLName;
     //$search = "Cristiano Maia";
@@ -23,10 +24,9 @@ foreach ($importedNames as $name) {
         echo "No results found for <strong>$search</strong><br>";
         echo "<a href='/reftool/'>go back</a><hr>";
     } else {
-        echo "<a href='/reftool/'>go back</a>";
         echo "<h4>Searching for: $search </h4>";
         echo count($json) . " results found (from all years) <br>";
-        echo "<hr>";
+//        echo "<hr>";
 
 
         $jsonData = json_encode($json, JSON_PRETTY_PRINT);
@@ -83,23 +83,24 @@ foreach ($importedNames as $name) {
                             $fName = $eachcreator->name->given;
                             $lName = $eachcreator->name->family;
                             $email = $eachcreator->id;
-                            echo "For each author: fName: '$fName', lName: '$lName', email: '$email'<br>";
+//                            echo "For each author: fName: '$fName', lName: '$lName', email: '$email'<br>";
                             $mdxAuthorId = getMdxAuthorId($fName, $lName, $email);
 
                             // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                             $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
-                            echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. Should show nothing if FALSE and 1 if true <br>";
+//                            echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. Should show nothing if FALSE and 1 if true <br>";
                             if (!$publicationAlreadyInDB){
                                 $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                                 if ($conn->query($sql) === TRUE) {
-                                    echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
+//                                    echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
                                 } else {
                                     echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                                 }
                             } else {
-                                echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
+//                                echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
                             }
-                            echo "<hr>";
+                            $totalPapersPerPerson++;
+//                            echo "<hr>";
                         }
                     }
                 } else {
@@ -110,8 +111,10 @@ foreach ($importedNames as $name) {
             }
         }
     }
+    echo "Total valid papers: " . $totalPapersPerPerson . "<br><hr>";
 }
-
+echo "<strong>Search completed! </strong><br>";
+echo "<a href='/reftool/readExcel.php'>go back</a>";
 
 
 // check if publication + author already in the DB
@@ -152,7 +155,7 @@ function checkEra2010rank($issn) {
 
 // check if author is on the DB
 function getMdxAuthorId($fname, $lname, $email){
-    echo "Get MDX author ID: fName: '$fname', lName: '$lname', email: '$email' <br>";
+//    echo "Get MDX author ID: fName: '$fname', lName: '$lname', email: '$email' <br>";
 
     include 'dbconnect.php';
 
@@ -161,11 +164,11 @@ function getMdxAuthorId($fname, $lname, $email){
     // check if email is MDX
     $found = strpos($email, "@mdx.ac.uk");
     if ($found === false) {
-        echo "Checking if email finishes with '@mdx.ac.uk'. Not found. Current email: '$email' <br>";
+//        echo "Checking if email finishes with '@mdx.ac.uk'. Not found. Current email: '$email' <br>";
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
         $currentEmployee = 0;
     } else {
-        echo "Checking if email finishes with '@mdx.ac.uk'. Found. Current email: '$email' <br>";
+//        echo "Checking if email finishes with '@mdx.ac.uk'. Found. Current email: '$email' <br>";
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
         $currentEmployee = 1;
     }
@@ -175,18 +178,18 @@ function getMdxAuthorId($fname, $lname, $email){
         $row_cnt = $checkMdxAuthorExistence->num_rows;
 
         if($row_cnt>0) {
-            echo "found by either name or email. <br>";
+//            echo "found by either name or email. <br>";
 
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
             $mdxAuthorID = $resultsArray['mdxAuthorID'];
-            echo $fname . " " . $lname. " is in the DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
+//            echo $fname . " " . $lname. " is in the DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
 
             if ($email != $resultsArray['email'] || $fullName != $resultsArray['repositoryName']) {     // check if email or full name is different from DB
-                echo "email or full name is different. current email: '$email', new email: ".$resultsArray['email'].". current repository name: '$fullName', new name:".$resultsArray['repositoryName']."<br>";
+//                echo "email or full name is different. current email: '$email', new email: ".$resultsArray['email'].". current repository name: '$fullName', new name:".$resultsArray['repositoryName']."<br>";
                 $sql = "UPDATE `mdxAuthor` SET `email`='$email', `repositoryName`='$fullName' WHERE `mdxAuthorID` = '$mdxAuthorID';";
                 $result = $conn->query($sql);
                 if ($result) {
-                    echo "Values udpated: email: ".$email.", repository name: ".$fullName. "<br>";
+//                    echo "Values udpated: email: ".$email.", repository name: ".$fullName. "<br>";
                 } else {
                     echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                 }
@@ -194,11 +197,11 @@ function getMdxAuthorId($fname, $lname, $email){
             }
             return $resultsArray['mdxAuthorID'];
         } else {
-            echo "author does not exist on db. <br>";
+//            echo "author does not exist on db. <br>";
             $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$fname','$lname','$email','$fullName','$currentEmployee');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
-                echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
+//                echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
                 return $last_id;
             } else {
                 echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
