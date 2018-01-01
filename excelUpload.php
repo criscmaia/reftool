@@ -12,13 +12,38 @@
         } else {
             //process the  form
             $staffListFile = $_FILES['staffList']['tmp_name'];
-            $fileSize = $_FILES['staffList']['size'];
-            $fileType = $_FILES['staffList']['type'];
+//            $fileSize = $_FILES['staffList']['size'];
+//            $fileType = $_FILES['staffList']['type'];
             $fileError = $_FILES['staffList']['error'];
 
             $staffListName=$_POST['FirstName'] . '_' . $_POST['LastName'] . '_staffList.xlsx';
             if ($fileError) {
-                echo "We could not upload the file:<br>$fileError";
+                switch ($fileError) {
+                    case 1:
+                        echo "UPLOAD_ERR_INI_SIZE = Value: 1; The uploaded file exceeds the upload_max_filesize directive in php.ini.";
+                        break;
+                    case 2:
+                        echo "UPLOAD_ERR_FORM_SIZE = Value: 2; The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.";
+                        break;
+                    case 3:
+                        echo "UPLOAD_ERR_PARTIAL = Value: 3; The uploaded file was only partially uploaded.";
+                        break;
+                    case 4:
+                        echo "UPLOAD_ERR_NO_FILE = Value: 4; No file was uploaded.";
+                        break;
+                    case 5:
+                        echo "Error unknown.";
+                        break;
+                    case 6:
+                        echo "UPLOAD_ERR_NO_TMP_DIR = Value: 6; Missing a temporary folder. Introduced in PHP 5.0.3.";
+                        break;
+                    case 7:
+                        echo "UPLOAD_ERR_CANT_WRITE = Value: 7; Failed to write file to disk. Introduced in PHP 5.1.0.";
+                        break;
+                    case 8:
+                        echo "UPLOAD_ERR_EXTENSION = Value: 8; A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help.";
+                        break;
+                }
                 endPage();
             }
 
@@ -51,7 +76,6 @@
                 echo 'Hey, what is going on here? Are you being bad?';
                 endPage();
             }
-            $staffList=makeFileSafe($fileSavePath);
     ?>
     <h2>Thanks!</h2>
     <b>We got your staffList.</b>
@@ -59,7 +83,6 @@
     <form>
         <textarea cols="60" rows="20"><?php echo $staffList ?></textarea>
     </form>
-    </p>
     <?php
 }
 
@@ -80,43 +103,4 @@ function makeFileSafe($filePath) {
     fclose($fP);
     return $contents;
 }
-?>
-
-
-
-
-<?php
-////    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//        $target_dir = "reftool/tmp/";
-//        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-//        $uploadOk = 1;
-//        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-//        // Check if image file is a actual image or fake image
-//        if(isset($_POST["submit"])) {
-//            $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-//            if($check !== false) {
-//                echo "File is an image - " . $check["mime"] . ".";
-//                $uploadOk = 1;
-//            } else {
-//                echo "File is not an image.";
-//                $uploadOk = 0;
-//            }
-//        }
-//
-//
-//        $uploaddir = '/var/www/html/reftool/tmp/';
-//        $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
-//
-//        echo '<pre>';
-//        if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-//            echo "File is valid, and was successfully uploaded.\n";
-//        } else {
-//            echo "Possible file upload attack!\n";
-//        }
-//
-//        echo 'Here is some more debugging info:';
-//        print_r($_FILES);
-//
-//        print "</pre>";
-////    }
 ?>
