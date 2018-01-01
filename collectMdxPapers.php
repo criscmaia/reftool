@@ -6,9 +6,6 @@ error_reporting(E_ALL);
 session_start();
 include 'dbconnect.php';
 
-//$formFName = $_POST["firstName"];
-//$formLName = $_POST["lastName"];
-
 $importedNames = $_SESSION["importedNames"];
 
 foreach ($importedNames as $name) {
