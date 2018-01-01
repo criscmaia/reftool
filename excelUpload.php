@@ -1,6 +1,6 @@
 <body style="text-align:center">
 <?php
-    if (!array_key_exists('Submitted',$_POST)) {
+if (!array_key_exists('Submitted',$_POST)) {
 ?>
 
     <form method="post" enctype="multipart/form-data">
@@ -16,7 +16,6 @@
 //            $fileType = $_FILES['staffList']['type'];
             $fileError = $_FILES['staffList']['error'];
 
-            $staffListName=$_POST['FirstName'] . '_' . $_POST['LastName'] . '_staffList.xlsx';
             if ($fileError) {
                 switch ($fileError) {
                     case 1:
@@ -64,11 +63,12 @@
                 $canProceed = false;
             }
 
+            $staffListName = sha1_file($_FILES['staffList']['tmp_name']) . ".xlsx";    // Rename with unique name from its binary data.
             $fileSavePath = $upload_dir . $staffListName;
             if (is_uploaded_file($staffListFile)) {
                 echo "is uploaded work.";
                 if (!move_uploaded_file($staffListFile,$fileSavePath)) {
-                    echo 'Could not save file.';
+                    echo 'Could not save file.<br>';
                     endPage();
                 }
             } else {
