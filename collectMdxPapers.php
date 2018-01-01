@@ -109,7 +109,6 @@ foreach ($importedNames as $name) {
     //            echo "Date is null. Date: $date . Title: $title<br>";
             }
         }
-        $conn->close();
     }
 }
 
