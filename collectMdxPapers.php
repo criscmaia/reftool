@@ -7,7 +7,7 @@ session_start();
 include 'dbconnect.php';
 
 if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
-    header("Location: https://gsd.mdx.ac.uk/reftool/excelUpload.php");
+    header("Location: /reftool/excelUpload.php");
     die();
 } else {
     $importedNames = $_SESSION["importedNames"];
