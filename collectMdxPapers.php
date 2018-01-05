@@ -87,7 +87,6 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 $fName = $eachcreator->name->given;
                                 $lName = $eachcreator->name->family;
                                 $email = $eachcreator->id;
-    //                            echo "For each author: fName: '$fName', lName: '$lName', email: '$email'<br>";
                                 $mdxAuthorId = getMdxAuthorId($fName, $lName, $email);
 
                                 // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
@@ -119,23 +118,23 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
     }
     echo "<strong>Search completed! </strong><br>";
     echo "<a href='/reftool/readExcel.php'>← go back</a>";
+}       // check if variable session is set
 
 
-    // check if publication + author already in the DB
-    function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
-        include 'dbconnect.php';
+// check if publication + author already in the DB
+function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
+    include 'dbconnect.php';
 
-        if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
-            $row_cnt = $checkPublicationAlreadyInDB->num_rows;
-            if($row_cnt>0) {
-                return true;
-            } else {
-                return false;
-            }
-            $checkPublicationAlreadyInDB->close();
+    if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
+        $row_cnt = $checkPublicationAlreadyInDB->num_rows;
+        if($row_cnt>0) {
+            return true;
+        } else {
+            return false;
         }
+        $checkPublicationAlreadyInDB->close();
     }
-}       // check if variabl session is set
+}
 
 
 // check paper rank
