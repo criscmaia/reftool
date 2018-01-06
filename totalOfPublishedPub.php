@@ -103,18 +103,16 @@
     $(document).ready(function() {
         $("#showPubs").on('click', function() {
             $authorid = $(this).data("mdxauthorid");
-            $('#content').text('authorid : ' + $authorid);
 
-            //            $.ajax({
-            //                url: 'ajaxfile.php',
-            //                type: 'post',
-            //                data: {
-            //                    mdxAuthorID: value
-            //                },
-            //                success: function(response) {
-            //                    echo 'it works! <br>';
-            //                }
-            //            });
+            $.ajax({
+                type: 'post',
+                data: {
+                    authorid: $authorid
+                },
+                success: function(response) {
+                    $('#content').text('authorid: ' + $authorid);
+                }
+            });
         });
     });
 
