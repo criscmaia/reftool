@@ -95,25 +95,35 @@
         <h2>List of published papers by...</h2>
         <a class="close" href="#">&times;</a>
         <div id="content">
-            Put table here
+            <table>
+                <tr style="text-align: left;">
+                    <th>Title</th>
+                    <th>Publication</th>
+                </tr>
+                <div id="tableResult"></div>
+            </table>
         </div>
     </div>
-</div>
-<script>
-    $(document).ready(function() {
-        $("#showPubs").on('click', function() {
-            $authorid = $(this).data("mdxauthorid");
+    <script>
+        $(document).ready(function() {
+            $("#showPubs").on('click', function() {
+                $authorid = $(this).data("mdxauthorid");
 
-            $.ajax({
-                type: 'post',
-                data: {
-                    authorid: $authorid
-                },
-                success: function(response) {
-                    $('#content').text('authorid: ' + $authorid);
-                }
+                $.ajax({
+                    url: '/reftool/getAuthorPubs.php',
+                    type: 'post',
+                    data: {
+                        authorid: $authorid
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#tableResult').html(response);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
+                    }
+                });
             });
         });
-    });
 
-</script>
+    </script>
