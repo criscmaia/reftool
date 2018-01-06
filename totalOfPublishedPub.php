@@ -74,7 +74,7 @@
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
-            echo '<td style="text-align: center;"><a href="#popUp" data-artid="$row[mdxAuthorID]">' . $row["total"] . '</a></td>';
+            echo '<td style="text-align: center;"><a href="#popUp" id="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
             echo '<td>' . $row["firstName"] . '</td>';
             echo '<td>' . $row["lastName"] . '</td>';
             echo '<td>' . $row["email"] . '</td>';
@@ -89,13 +89,33 @@
     $conn->close();
 ?>
     </table>
-    <div id="popUp" class="overlay">
-        <div class="popup">
-            <h2>List of published papers by...</h2>
-            <a class="close" href="#">&times;</a>
-            <div class="content">
-                Put table here
-            </div>
+</div>
+<div id="popUp" class="overlay">
+    <div class="popup">
+        <h2>List of published papers by...</h2>
+        <a class="close" href="#">&times;</a>
+        <div id="content">
+            Put table here
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#showPubs").on('click', function() {
+            $authorid = $(this).data("mdxauthorid");
+            $('#content').text('authorid : ' + $authorid);
+
+            //            $.ajax({
+            //                url: 'ajaxfile.php',
+            //                type: 'post',
+            //                data: {
+            //                    mdxAuthorID: value
+            //                },
+            //                success: function(response) {
+            //                    echo 'it works! <br>';
+            //                }
+            //            });
+        });
+    });
+
+</script>
