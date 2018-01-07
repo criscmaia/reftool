@@ -34,7 +34,7 @@
     }
 
     .ellipse:hover {
-/*        padding: 2px;*/
+        /*        padding: 2px;*/
         white-space: normal;
         word-break: break-word;
         z-index: 5;
@@ -113,9 +113,11 @@ include 'dbconnect.php';
             }
 
             if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
-                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
-//                echo 'row["publicationID"]: '.$row["publicationID"].'. row["author"]: '.$row["author"].'<br>';
-                getAssignedRef($row["publicationID"], $row["author"]);
+                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';    // continue printing the authors
+                echo '<td>';
+                    getAssignedRef($row["publicationID"], $row["author"]);
+                echo '</td>';
+                echo '</tr>';
                 $authorCounter++;
             }
         }
