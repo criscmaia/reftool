@@ -42,5 +42,19 @@ TODO:
 - [ ] Allow user to manually update any field. Double check before submitting change.  
 
 ---------------------
+**totalOfPublishedPub.php:**  
+Lists author (name/email), if current employee, how many publications saved in the systemm (since 2014), option to edit/delete it.  
+When clicking on the # of publications link, it pop-up a window with list of the publication titles and dates, related to this user.  
+It send POSTS requests via **getAuthorPubs.php** file to get the list above.  
+
+TODO:  
+- [ ] Improve overall layout. Use collapsibles/accordions instead of pop-up.  
+- [ ] Maybe show more details about the published papers? Name of other authors?  
+
+---------------------
+**getAuthorPubs.php**  
+Receives the POST request from totalOfPublishedPub.php to get all published papers by specific author, since 2014.  
+
+---------------------
 **Others:**
 - [ ] Page where it shows all authors, show a section of similar names and ask user if they want to merge it.  
