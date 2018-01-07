@@ -26,7 +26,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 
         if (count($json)==0) {
             echo "No results found for <strong>$search</strong><br>";
-            echo "<a href='/reftool/'>go back</a><hr>";
+//            echo "<a href='/reftool/'>go back</a><hr>";
         } else {
             echo "<h4>Searching for: $search </h4>";
             echo count($json) . " publications found (from all years) <br>";
