@@ -33,5 +33,14 @@ TODO:
 - [ ] if no publications found for specific authors (using name/surname), ask user to provide authors email. If still nothing found, suggest similar names with high similarity. If found, ask user permission to update name/email values in the DB.  
 
 ---------------------
+**fullList.php:**  
+Lists all publications (id - with link to ePrint, title, abstract, date, ERA, isPub, PresType, publication, publisher) and authors (full name and email)  
+Hover the abstract line for it to expand.  
+
+TODO:  
+- [ ] Show what REF the pair (publication+author) is assigned to. If none, show option add to it.  
+- [ ] Allow user to manually update any field. Double check before submitting change.  
+
+---------------------
 **Others:**
 - [ ] Page where it shows all authors, show a section of similar names and ask user if they want to merge it.  
