@@ -23,7 +23,7 @@
         color: white;
     }
 
-/*
+    /*
     .ellipse {
         width: 400px;
         overflow: hidden;
@@ -85,47 +85,39 @@ include 'dbconnect.php';
 
     if ($result->num_rows > 0) {                                                                                // if any resulst from query
         $currentEprintID;                                                                                       // initialise var
-        $counter = 1;
+        $authorCounter = 1;
+        $publicationDescDone = false;
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID==$nextEprintID) {                                   // still on same publication id, keep printing
                 $currentEprintID=$row["ePrintID"];
                 $totalAuthors = $ePrintIdTotal[$currentEprintID];                                               // how many authors to print
-                if ($totalAuthors==1) {
+                $rowspan = $ePrintIdTotal[$currentEprintID]+1;
+
+                if (!$publicationDescDone) {                                                                    // if publication details for this id has been printed already
                     echo '<tr>';
-                        echo '\$ePrintIdTotal[$currentEprintID]: $ePrintIdTotal[$currentEprintID]';
-                        echo '<td rowspan="'.$totalAuthors.'">';
+                        echo '<td rowspan="'.$rowspan.'">';
                             echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                         echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
                         echo '</td>';
-                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["date"]) ? $row["date"] : '').'</td>';
-                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
-                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(empty($row["presType"]) ? $row["presType"] : '').'</td>';
-                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["publication"]) ? $row["publication"] : '').'<br>'.(empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+                        echo '<td rowspan="'.$rowspan.'">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
+                        echo '<td rowspan="'.$rowspan.'">'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+                        echo '<td rowspan="'.$rowspan.'">'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
+                        echo '<td rowspan="'.$rowspan.'">'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
                     echo '</tr>';
-                    echo '<tr><td>'.$row["firstName"].' '.$row["lastName"].'<br>'.$row["email"].'</td></tr>';
+                    $publicationDescDone = true;
                 }
-                if ($counter <= $totalAuthors) {                                                                // check if has printed all authors
-                    if ($counter==1) {                                                                          // if first time printing, print pub details
-                        echo '<tr>';
-                            echo '<td rowspan="'.$totalAuthors.'">';
-                                echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-                            echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
-                            echo '</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["date"]) ? $row["date"] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(empty($row["presType"]) ? $row["presType"] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["publication"]) ? $row["publication"] : '').'<br>'.(empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
-                        echo '</tr>';
-                    } else {
-                        echo '<tr><td>'.$row["firstName"].' '.$row["lastName"].'<br>'.$row["email"].'</td></tr>';   // continue printing the authors
-                    }
-                    $counter++;
+
+                if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
+                    echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
+                    $authorCounter++;
+                } else {
+                    $authorCounter=1;
                 }
-            }
-            else {                                                                                            // if new pub eprint id
+            } else {
                 $currentEprintID=$row["ePrintID"];
-                $counter = 1;
+                $publicationDescDone = false;
+                $authorCounter = 1;
             }
         }
     } else {
