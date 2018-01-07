@@ -89,4 +89,22 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include 'dbconnect.php';
+
+    $ePrintIdTotal = "";
+    $sql = "SELECT ePrintID, COUNT(ePrintID) as total FROM reftool.publication
+            GROUP BY ePrintID
+            ORDER BY ePrintID;";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            $ePrintIdTotal[$row["ePrintID"]] = $row["total"];
+        }
+    } else {
+        echo '<h2>0 results</h2>';
+    }
+    echo '<pre>'; print_r($ePrintIdTotal); echo '</pre>';
+
+    $conn->close();
+
 ?>
