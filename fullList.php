@@ -23,7 +23,7 @@
         color: white;
     }
 
-    /*
+
     .ellipse {
         width: 400px;
         overflow: hidden;
@@ -32,7 +32,7 @@
         margin: 0;
         padding: 0;
     }
-*/
+
 
     .ellipse:hover {
         padding: 2px;
@@ -83,20 +83,20 @@ include 'dbconnect.php';
             ORDER BY ePrintID;";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {                                                                                // if any resulst from query
+    if ($result->num_rows > 0) {                                                                                // if any results from query
         $currentEprintID;                                                                                       // initialise var
         $authorCounter = 1;
-        $publicationDescDone = false;
+        $publicationDescDone = false;                                                                           // haven't printed publication details yet
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
-            if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // still on same publication id, keep printing
-                $currentEprintID=$row["ePrintID"];
+            if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
+                $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
                 $publicationDescDone = false;
                 $authorCounter = 1;
             }
 
             $totalAuthors = $ePrintIdTotal[$currentEprintID];                                                   // how many authors to print
-            $rowspan = $ePrintIdTotal[$currentEprintID]+1;
+            $rowspan = $ePrintIdTotal[$currentEprintID]+1;                                                      // description + amount of authors
 
             if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
                 echo '<tr>';
@@ -115,8 +115,6 @@ include 'dbconnect.php';
             if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
                 echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
                 $authorCounter++;
-            } else {
-                $authorCounter=1;
             }
         }
     } else {
