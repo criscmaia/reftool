@@ -33,9 +33,8 @@
         padding: 0;
     }
 
-
     .ellipse:hover {
-        padding: 2px;
+/*        padding: 2px;*/
         white-space: normal;
         word-break: break-word;
         z-index: 5;
@@ -100,11 +99,11 @@ include 'dbconnect.php';
 
             if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
                 echo '<tr>';
-                    echo '<td rowspan="'.$rowspan.'">';
+                    echo '<td rowspan="'.$rowspan.'" style="">';
                         echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                     echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
                     echo '</td>';
-                    echo '<td rowspan="'.$rowspan.'">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
+                    echo '<td rowspan="'.$rowspan.'" style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
