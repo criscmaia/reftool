@@ -25,5 +25,13 @@ If yes, search by email OR full name.
 if no, only searches by full name.  
 IF found    : updates first name/last name + email. Useful if found by name, but doesn't have email saved, and vice-versa  
 IF NOT found: insert all details, marking as current employee if email ends with @mdx.ac.uk --- **not 100% guaranteed**.  
+Check if publication+author pair is already in the DB. Insert if not.
+
+TODO:  
+- [ ] show how many publication found, how many since 2014, how many already in the DB, how many added.  
+- [ ] list all the publications from previous point with Collapsibles/Accordions.  
+- [ ] if no publications found for specific authors (using name/surname), ask user to provide authors email. If still nothing found, suggest similar names with high similarity. If found, ask user permission to update name/email values in the DB.  
 
 ---------------------
+**Others:**
+- [ ] Page where it shows all authors, show a section of similar names and ask user if they want to merge it.  
