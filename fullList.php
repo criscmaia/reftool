@@ -11,10 +11,6 @@
         padding: 8px;
     }
 
-    #publications tr:nth-child(even) {
-/*        background-color: #f2f2f2;*/
-    }
-
     #publications tr:hover {
         background-color: #ddd;
     }
@@ -36,16 +32,7 @@
         padding: 0;
     }
 
-    .content li {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
     .ellipse:hover {
-        /*        width: 300px;*/
-        /*        border: 2px solid #eee;*/
-        /*        box-shadow: 0px 3px 10px 0px black;*/
         padding: 2px;
         white-space: normal;
         word-break: break-word;
@@ -65,93 +52,6 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td rowspan="5">
-                <a href="#">ID</a> - Title <br> Abstract
-            </td>
-            <td rowspan="5">
-                Date
-            </td>
-            <td rowspan="5">
-                ERA
-            </td>
-            <td rowspan="5">
-                isPub <br> presType
-            </td>
-            <td rowspan="5">
-                publication <br> publisher <br> eventTitle <br>
-            </td>
-        </tr>
-        <tr>
-            <td>firstName lastName<br>Email</td>
-        </tr>
-        <tr>
-            <td>firstName lastName<br>Email</td>
-        </tr>
-        <tr>
-            <td>firstName lastName<br>Email</td>
-        </tr>
-        <tr>
-            <td>firstName lastName<br>Email</td>
-        </tr>
-        <tr>
-            <td rowspan="4">
-                <a href="#">14039</a> - An approach to early evaluation of informational privacy requirements
-                <ul>
-                    <li class="ellipse"><strong>Abstract: </strong>The widespread availability of information in the digital age places a significant demand on the privacy needs of individuals. However, privacy considerations in requirements management are often treated as non-functional concerns and in particular, early feedback of privacy concerns is not easily embedded into current requirements practice. Luciano Floridi's Ontological Theory of Informational Privacy presents an extensive interpretation of informational privacy using concepts such as ontological friction. This paper first re-casts the theory in terms of modelling constructs and then applies the theory in the form of a Bayesian network of beliefs in the context of an existing research project aimed at developing socio-technical system delivered as a mobile app in the UK youth justice system. The operationalisation of the theory and its relationship to value sensitive design creates opportunities for early evaluation of informational privacy concerns in the requirements process.</li>
-                </ul>
-            </td>
-            <td rowspan="4">
-                2015-04-13
-            </td>
-            <td rowspan="4">
-
-            </td>
-            <td rowspan="4">
-                pub <br> paper
-            </td>
-            <td rowspan="4">
-                <br> Association for Computing Machinery (ACM) <br> 30th ACM Symposium on Applied Computing 2015 <br>
-            </td>
-        </tr>
-        <tr>
-            <td>Balbir Barn<br>B.Barn@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Giuseppe Primiero<br>G.Primiero@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Ravinder Barn<br>r.barn@rhul.ac.uk</td>
-        </tr>
-        <tr>
-            <td rowspan="4">
-                <a href="#">14039</a> - An approach to early evaluation of informational privacy requirements
-                <ul>
-                    <li class="ellipse"><strong>Abstract: </strong>The widespread availability of information in the digital age places a significant demand on the privacy needs of individuals. However, privacy considerations in requirements management are often treated as non-functional concerns and in particular, early feedback of privacy concerns is not easily embedded into current requirements practice. Luciano Floridi's Ontological Theory of Informational Privacy presents an extensive interpretation of informational privacy using concepts such as ontological friction. This paper first re-casts the theory in terms of modelling constructs and then applies the theory in the form of a Bayesian network of beliefs in the context of an existing research project aimed at developing socio-technical system delivered as a mobile app in the UK youth justice system. The operationalisation of the theory and its relationship to value sensitive design creates opportunities for early evaluation of informational privacy concerns in the requirements process.</li>
-                </ul>
-            </td>
-            <td rowspan="4">
-                2015-04-13
-            </td>
-            <td rowspan="4">
-
-            </td>
-            <td rowspan="4">
-                pub <br> paper
-            </td>
-            <td rowspan="4">
-                <br> Association for Computing Machinery (ACM) <br> 30th ACM Symposium on Applied Computing 2015 <br>
-            </td>
-        </tr>
-        <tr>
-            <td>Balbir Barn<br>B.Barn@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Giuseppe Primiero<br>G.Primiero@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Ravinder Barn<br>r.barn@rhul.ac.uk</td>
-        </tr>
         <tr>
             <td rowspan="4">
                 <a href="#">14039</a> - An approach to early evaluation of informational privacy requirements
