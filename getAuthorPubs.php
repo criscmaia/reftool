@@ -10,12 +10,19 @@ include 'dbconnect.php';
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+        echo '<table>
+                <tr style="text-align: left">
+                    <th>Title</th>
+                    <th>Publication</th>
+                </tr>';
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
             echo '<td>' . $row["title"] . '</td>';
             echo '<td>' . $row["date"] . '</td>';
             echo '</tr>';
         }
+        echo '</table>
+        </div>';
     } else {
         echo '<h2>0 results</h2>';
     }

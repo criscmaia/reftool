@@ -17,11 +17,11 @@
     }
 
     .popup {
-        margin: 70px auto;
+        margin: 20px auto;
         padding: 20px;
         background: #fff;
         border-radius: 5px;
-        width: 30%;
+        width: 80%;
         position: relative;
         transition: all 5s ease-in-out;
     }
@@ -74,7 +74,7 @@
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
-            echo '<td style="text-align: center;"><a href="#popUp" id="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
+            echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
             echo '<td>' . $row["firstName"] . '</td>';
             echo '<td>' . $row["lastName"] . '</td>';
             echo '<td>' . $row["email"] . '</td>';
@@ -92,23 +92,16 @@
 </div>
 <div id="popUp" class="overlay">
     <div class="popup">
-        <h2>List of published papers by...</h2>
+        <h3>List of published papers by...</h3>
         <a class="close" href="#">&times;</a>
         <div id="content">
-            <table>
-                <tr style="text-align: left;">
-                    <th>Title</th>
-                    <th>Publication</th>
-                </tr>
-                <div id="tableResult"></div>
-            </table>
+            <div id="tableResult"></div>
         </div>
     </div>
     <script>
         $(document).ready(function() {
-            $("#showPubs").on('click', function() {
+            $(".showPubs").on('click', function() {
                 $authorid = $(this).data("mdxauthorid");
-
                 $.ajax({
                     url: '/reftool/getAuthorPubs.php',
                     type: 'post',
