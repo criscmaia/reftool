@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 include 'dbconnect.php';
 
     $authorid = isset($_POST['authorid']) ? $_POST['authorid'] : null;
-    $sql = "SELECT title, date FROM reftool.publication WHERE author = ".$authorid." ORDER BY date DESC;";
+    $sql = "SELECT title, date FROM publication WHERE author = ".$authorid." ORDER BY date DESC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {

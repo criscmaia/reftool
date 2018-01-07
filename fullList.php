@@ -50,6 +50,7 @@
             <th>isPub presType</th>
             <th>More details</th>
             <th>Authors</th>
+            <th>REF Unit</th>
         </tr>
     </thead>
     <tbody>
@@ -112,6 +113,7 @@ include 'dbconnect.php';
             }
 
             if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
+                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
                 echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
                 $authorCounter++;
             }
