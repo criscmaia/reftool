@@ -1,9 +1,5 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-include 'dbconnect.php';    // connect to DB
+function getAssignedRef($publicationID, $authorID) {
+    include 'dbconnect.php';    // connect to DB
 
     $publicationID = 3500;
     $authorID = 2060;
@@ -19,18 +15,20 @@ include 'dbconnect.php';    // connect to DB
             $assignedRef = $rowAssignedRef['refUnitID'];
         }
     } else {
-        echo "No REF Units registered";
+//        echo "No REF Units registered";
+        $assignedRef = 0;
     }
     $conn->close();
-?>
+    printRefOptions($assignedRef);
+}
 
-
-    <select name="refUnits">
-<?php
+function printRefOptions($assignedRef) {
     include 'dbconnect.php';
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
+        echo '<select name="refUnits">';
+        echo '<option value="0">No REF assigned</option>';
         while($row = $result->fetch_assoc()) {
             if ($row['refUnitID'] == $assignedRef) {
                 echo "<option selected value=\"". $row['refUnitID'] ."\">" . $row['assignedID'] . " - " . $row['name'] . "</option>";
@@ -41,6 +39,6 @@ include 'dbconnect.php';    // connect to DB
     } else {
         echo "<option value=\"\">No RefUnits found</option>";
     }
+    echo '</select>';
     $conn->close();
-?>
-</select>
+}

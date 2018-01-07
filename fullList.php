@@ -77,7 +77,7 @@ include 'dbconnect.php';
 //    echo '<pre>'; print_r($ePrintIdTotal); echo '</pre>';
 
     // ------------------------
-    $sql = "SELECT ePrintID, uri, title, abstract, date, eraRating, isPublished, presType, publication, publisher, eventTitle, author, firstName, lastName, email
+    $sql = "SELECT publicationID, ePrintID, uri, title, abstract, date, eraRating, isPublished, presType, publication, publisher, eventTitle, author, firstName, lastName, email
             FROM publication, mdxAuthor
             where publication.author = mdxAuthor.mdxAuthorID
             ORDER BY ePrintID;";
@@ -114,7 +114,8 @@ include 'dbconnect.php';
 
             if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
                 echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
-                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td></tr>';    // continue printing the authors
+//                echo 'row["publicationID"]: '.$row["publicationID"].'. row["author"]: '.$row["author"].'<br>';
+                getAssignedRef($row["publicationID"], $row["author"]);
                 $authorCounter++;
             }
         }
@@ -122,6 +123,53 @@ include 'dbconnect.php';
         echo '<h2>0 results</h2>';
     }
     $conn->close();
+
+function getAssignedRef($publicationID, $authorID) {
+    include 'dbconnect.php';    // connect to DB
+
+    $assignedRef = "SELECT refUnit.refUnitID, refUnit.name, publication.publicationID, publication.author
+                    FROM refUnit, refUnit_publication, publication
+                    WHERE refUnit.refUnitID = refUnit_publication.refUnitID
+                    AND refUnit_publication.publicationID = publication.publicationID
+                    AND publication.publicationID = $publicationID
+                    AND publication.author = $authorID;";
+//    echo $assignedRef . "<br>";
+    $resultAssignedRef = $conn->query($assignedRef);
+    if ($resultAssignedRef->num_rows > 0) {
+        while($rowAssignedRef = $resultAssignedRef->fetch_assoc()) {
+            $assignedRef = $rowAssignedRef['refUnitID'];
+//            echo "\$assignedRef: $assignedRef <br>";
+        }
+    } else {
+//        echo "No REF Units registered";
+        $assignedRef = 0;
+    }
+    $conn->close();
+    printRefOptions($assignedRef);
+}
+
+function printRefOptions($assignedRef) {
+//    echo "\$assignedRef: $assignedRef <br>";
+    include 'dbconnect.php';
+    $sql = "SELECT * FROM refUnit;";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        echo '<select name="refUnits">';
+        echo '<option value="0">No REF assigned</option>';
+        while($row = $result->fetch_assoc()) {
+            if ($row['refUnitID'] == $assignedRef) {
+                echo "<option selected value=\"". $row['refUnitID'] ."\">" . $row['assignedID'] . " - " . $row['name'] . "</option>";
+            } else {
+                echo "<option value=\"". $row['refUnitID'] ."\">" . $row['assignedID'] . " - " . $row['name'] . "</option>";
+            }
+        }
+    } else {
+        echo "<option value=\"\">No RefUnits found</option>";
+    }
+    echo '</select>';
+    $conn->close();
+}
+
 ?>
     </tbody>
 </table>
