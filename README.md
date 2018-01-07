@@ -58,3 +58,4 @@ Receives the POST request from totalOfPublishedPub.php to get all published pape
 ---------------------
 **Others:**
 - [ ] Page where it shows all authors, show a section of similar names and ask user if they want to merge it.  
+- [ ] Allow publications/authors to be searched/added manually.  
