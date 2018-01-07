@@ -52,37 +52,6 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td rowspan="4">
-                <a href="#">14039</a> - An approach to early evaluation of informational privacy requirements
-                <ul>
-                    <li class="ellipse"><strong>Abstract: </strong>The widespread availability of information in the digital age places a significant demand on the privacy needs of individuals. However, privacy considerations in requirements management are often treated as non-functional concerns and in particular, early feedback of privacy concerns is not easily embedded into current requirements practice. Luciano Floridi's Ontological Theory of Informational Privacy presents an extensive interpretation of informational privacy using concepts such as ontological friction. This paper first re-casts the theory in terms of modelling constructs and then applies the theory in the form of a Bayesian network of beliefs in the context of an existing research project aimed at developing socio-technical system delivered as a mobile app in the UK youth justice system. The operationalisation of the theory and its relationship to value sensitive design creates opportunities for early evaluation of informational privacy concerns in the requirements process.</li>
-                </ul>
-            </td>
-            <td rowspan="4">
-                2015-04-13
-            </td>
-            <td rowspan="4">
-
-            </td>
-            <td rowspan="4">
-                pub <br> paper
-            </td>
-            <td rowspan="4">
-                <br> Association for Computing Machinery (ACM) <br> 30th ACM Symposium on Applied Computing 2015 <br>
-            </td>
-        </tr>
-        <tr>
-            <td>Balbir Barn<br>B.Barn@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Giuseppe Primiero<br>G.Primiero@mdx.ac.uk</td>
-        </tr>
-        <tr>
-            <td>Ravinder Barn<br>r.barn@rhul.ac.uk</td>
-        </tr>
-    </tbody>
-</table>
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -103,8 +72,47 @@ include 'dbconnect.php';
     } else {
         echo '<h2>0 results</h2>';
     }
-    echo '<pre>'; print_r($ePrintIdTotal); echo '</pre>';
+//    echo '<pre>'; print_r($ePrintIdTotal); echo '</pre>';
 
+    // ------------------------
+    $sql = "SELECT ePrintID, uri, title, abstract, date, eraRating, isPublished, presType, publication, publisher, eventTitle, author, firstName, lastName, email
+            FROM publication, mdxAuthor
+            where publication.author = mdxAuthor.mdxAuthorID
+            ORDER BY ePrintID;";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {                                                                                // if any resulst from query
+        $currentEprintID;                                                                                       // initialise var
+        while($row = $result->fetch_assoc()) {
+            $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
+            if (empty($currentEprintID) || $currentEprintID==$nextEprintID) {                                   // still on same publication id, keep printing
+                $currentEprintID=$nextEprintID;
+                $totalAuthors = $ePrintIdTotal[$nextEprintID];                                                  // how many authors to print
+                for ($i = 1; $i <= $totalAuthors; $i++) {
+                    if ($i==1) {                                                                                // if first time printing, print pub details
+                        echo '<tr>';
+                            echo '<td rowspan="'.$totalAuthors.'">';
+                                echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
+                            echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
+                            echo '</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['date']) ? $row['date'] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['eraRating']) ? $row['eraRating'] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['isPublished']) ? $row['isPublished'] : '').'<br>'.(empty($row['presType']) ? $row['presType'] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['publication']) ? $row['publication'] : '').'<br>'.(empty($row['publisher']) ? $row['publisher'] : '').'</td>';
+                        echo '</tr>';
+                    } else {
+                        echo '<tr><td>'.$row["firstName"].' '.$row["lastName"].'<br>'.$row["email"].'</td></tr>';   // continue printing the authors
+                    }
+                }
+            }
+//            else {                                                                                            // if new pub eprint id
+
+//            }
+        }
+    } else {
+        echo '<h2>0 results</h2>';
+    }
     $conn->close();
-
 ?>
+    </tbody>
+</table>
