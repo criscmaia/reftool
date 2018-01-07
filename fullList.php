@@ -23,6 +23,7 @@
         color: white;
     }
 
+/*
     .ellipse {
         width: 400px;
         overflow: hidden;
@@ -31,6 +32,7 @@
         margin: 0;
         padding: 0;
     }
+*/
 
     .ellipse:hover {
         padding: 2px;
@@ -52,7 +54,7 @@
         </tr>
     </thead>
     <tbody>
-<?php
+        <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -83,31 +85,48 @@ include 'dbconnect.php';
 
     if ($result->num_rows > 0) {                                                                                // if any resulst from query
         $currentEprintID;                                                                                       // initialise var
+        $counter = 1;
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID==$nextEprintID) {                                   // still on same publication id, keep printing
-                $currentEprintID=$nextEprintID;
-                $totalAuthors = $ePrintIdTotal[$nextEprintID];                                                  // how many authors to print
-                for ($i = 1; $i <= $totalAuthors; $i++) {
-                    if ($i==1) {                                                                                // if first time printing, print pub details
+                $currentEprintID=$row["ePrintID"];
+                $totalAuthors = $ePrintIdTotal[$currentEprintID];                                               // how many authors to print
+                if ($totalAuthors==1) {
+                    echo '<tr>';
+                        echo '\$ePrintIdTotal[$currentEprintID]: $ePrintIdTotal[$currentEprintID]';
+                        echo '<td rowspan="'.$totalAuthors.'">';
+                            echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
+                        echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
+                        echo '</td>';
+                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["date"]) ? $row["date"] : '').'</td>';
+                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(empty($row["presType"]) ? $row["presType"] : '').'</td>';
+                        echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["publication"]) ? $row["publication"] : '').'<br>'.(empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+                    echo '</tr>';
+                    echo '<tr><td>'.$row["firstName"].' '.$row["lastName"].'<br>'.$row["email"].'</td></tr>';
+                }
+                if ($counter <= $totalAuthors) {                                                                // check if has printed all authors
+                    if ($counter==1) {                                                                          // if first time printing, print pub details
                         echo '<tr>';
                             echo '<td rowspan="'.$totalAuthors.'">';
                                 echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                             echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
                             echo '</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['date']) ? $row['date'] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['eraRating']) ? $row['eraRating'] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['isPublished']) ? $row['isPublished'] : '').'<br>'.(empty($row['presType']) ? $row['presType'] : '').'</td>';
-                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row['publication']) ? $row['publication'] : '').'<br>'.(empty($row['publisher']) ? $row['publisher'] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["date"]) ? $row["date"] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(empty($row["presType"]) ? $row["presType"] : '').'</td>';
+                            echo '<td rowspan="'.$totalAuthors.'">'.(empty($row["publication"]) ? $row["publication"] : '').'<br>'.(empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
                         echo '</tr>';
                     } else {
                         echo '<tr><td>'.$row["firstName"].' '.$row["lastName"].'<br>'.$row["email"].'</td></tr>';   // continue printing the authors
                     }
+                    $counter++;
                 }
             }
-//            else {                                                                                            // if new pub eprint id
-
-//            }
+            else {                                                                                            // if new pub eprint id
+                $currentEprintID=$row["ePrintID"];
+                $counter = 1;
+            }
         }
     } else {
         echo '<h2>0 results</h2>';
