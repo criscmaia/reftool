@@ -1,32 +1,36 @@
 <?php
-    include 'dbconnect.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    // if previous is NULL must INSERT instead of update
+include 'dbconnect.php';
 
     $previousrefid = isset($_POST['previousrefid']) ? $_POST['previousrefid'] : null;
     $refunitid = isset($_POST['refunitid']) ? $_POST['refunitid'] : null;
     $publicationid = isset($_POST['publicationid']) ? $_POST['publicationid'] : null;
-    echo 'POST worked! Previous REF unit:'. $previousrefid. '. New: ' . $refunitid.'. Publication id: '. $publicationid;
-    return '\$refunitid: $refunitid. - \$publicationid: $publicationid . <br>';
-//    $sql = "UPDATE refUnit_publication SET refUnitID='8' WHERE refUnitID='7' andpublicationID='3500';";
-//    $result = $conn->query($sql);
-//
-//    if ($result->num_rows > 0) {
-//        echo '<table>
-//                <tr style="text-align: left">
-//                    <th>Title</th>
-//                    <th>Publication</th>
-//                </tr>';
-//        while($row = $result->fetch_assoc()) {
-//            echo '<tr>';
-//            echo '<td>' . $row["title"] . '</td>';
-//            echo '<td>' . $row["date"] . '</td>';
-//            echo '</tr>';
-//        }
-//        echo '</table>
-//        </div>';
-//    } else {
-//        echo '<h2>0 results</h2>';
-//    }
+
+
+    if (!isset($refunitid) && isset($previousrefid)) {       // no refunit but had one before - chosen to remove REF
+        $sql = "DELETE FROM refUnit_publication WHERE refUnitID=$previousrefid and publicationID=$publicationid;";
+        $reponse = 'REF unit removed: '. $previousrefid. '. Publication id: '. $publicationid;
+    }
+
+    if (!isset($previousrefid) && isset($refunitid)) {      // no previous ref but selected one - no REF assigned
+        $sql = "INSERT INTO refUnit_publication (refUnitID, publicationID) VALUES ($refunitid, $publicationid);";
+        $reponse = 'REF unit added: ' . $refunitid.'. Publication id: '. $publicationid;
+    }
+
+    if (isset($previousrefid) && isset($refunitid)){         // it has previous but chose another one - update current REF
+        $sql = "UPDATE refUnit_publication SET refUnitID=$refunitid WHERE refUnitID=$previousrefid and publicationID=$publicationid;";
+        $reponse = 'REF unit changed:'. $previousrefid. '. New: ' . $refunitid.'. Publication id: '. $publicationid;
+    }
+
+    $result = $conn->query($sql);
+
+    if ($result) {
+        echo $response;
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
     $conn->close();
 ?>

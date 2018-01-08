@@ -194,10 +194,10 @@ function printRefOptions($assignedRef, $publicationID) {
                     publicationid: $publicationid
                 },
                 success: function(response) {
-                    $('#notification').text(response);
+                    $('#notification').html(response);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $('#notification').text(textStatus, errorThrown);
+                    $('#notification').html(textStatus, errorThrown);
                     console.log(textStatus, errorThrown);
                 }
             });
