@@ -1,3 +1,4 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <style>
     #publications {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -41,6 +42,7 @@
     }
 
 </style>
+<p id="notification">Notifications here</p>
 <table id="publications">
     <thead>
         <tr style="text-align: left">
@@ -156,13 +158,13 @@ function printRefOptions($assignedRef, $publicationID) {
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
-        echo '<select name="refUnits">';
+        echo '<select class="refOptions" name="refUnits">';
         echo '<option value="0">No REF assigned</option>';
         while($row = $result->fetch_assoc()) {
             if ($row['refUnitID'] == $assignedRef) {
-                echo '<option class="refOptions" selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
+                echo '<option selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             } else {
-                echo '<option class="refOptions" value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
+                echo '<option value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             }
         }
     } else {
@@ -171,56 +173,30 @@ function printRefOptions($assignedRef, $publicationID) {
     echo '</select>';
     $conn->close();
 }
-
-function onChangeRefOptions() {
-    include 'dbconnect.php';
-
-    $refunitid = isset($_POST['refunitid']) ? $_POST['refunitid'] : null;
-    $publicationid = isset($_POST['publicationid']) ? $_POST['publicationid'] : null;
-    echo '\$refunitid: $refunitid. - \$publicationid: $publicationid . <br>';
-//    $sql = "UPDATE refUnit_publication SET refUnitID='8' WHERE refUnitID='7' andpublicationID='3500';";
-//    $result = $conn->query($sql);
-//
-//    if ($result->num_rows > 0) {
-//        echo '<table>
-//                <tr style="text-align: left">
-//                    <th>Title</th>
-//                    <th>Publication</th>
-//                </tr>';
-//        while($row = $result->fetch_assoc()) {
-//            echo '<tr>';
-//            echo '<td>' . $row["title"] . '</td>';
-//            echo '<td>' . $row["date"] . '</td>';
-//            echo '</tr>';
-//        }
-//        echo '</table>
-//        </div>';
-//    } else {
-//        echo '<h2>0 results</h2>';
-//    }
-    $conn->close();
-}
-
 ?>
     </tbody>
 </table>
 <script>
     $(document).ready(function() {
         $(".refOptions").on('change', function() {
-            $refunitid = $(this).data("refunitid");
-            $publicationid = $(this).data("publicationid");
+            $('#notification').text("Changing REF...");
+            $refunitid = $(this).children('option:selected').data("refunitid");
+            $publicationid = $(this).children('option:selected').data("publicationid");
+            alert ($refunitid + " - " + $publicationid);
             $.ajax({
-                url: '/reftool/fullList.php',
+                url: '/reftool/updateRef.php',
                 type: 'post',
                 data: {
                     refunitid: $refunitid,
                     publicationid: $publicationid
                 },
                 success: function(response) {
-                    console.log(response);
-//                    $('#tableResult').html(response);
+                    $('#notification').text(response);
+//                    alert(response);
+//                    console.log(response);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
+                    $('#notification').text(textStatus, errorThrown);
                     console.log(textStatus, errorThrown);
                 }
             });
