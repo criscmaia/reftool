@@ -159,7 +159,7 @@ function printRefOptions($assignedRef, $publicationID) {
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         echo '<select class="refOptions" name="refUnits">';
-        echo '<option value="0">No REF assigned</option>';
+        echo '<option data-publicationid="'.$publicationID.'">No REF assigned</option>';
         while($row = $result->fetch_assoc()) {
             if ($row['refUnitID'] == $assignedRef) {
                 echo '<option selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
