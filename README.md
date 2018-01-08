@@ -49,7 +49,7 @@ TODO:
 Receives the POST request from fullList.php to CRUD the refUnits.  
 
 ---------------------
-**totalOfPublishedPub.php:**  
+**publicationsPerAuthor.php:**  
 Lists author (name/email), if current employee, how many publications saved in the systemm (since 2014), option to edit/delete it.  
 When clicking on the # of publications link, it pop-up a window with list of the publication titles and dates, related to this user.  
 It send POSTS requests via **getAuthorPubs.php** file to get the list above.  
