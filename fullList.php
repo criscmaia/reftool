@@ -180,8 +180,8 @@ function printRefOptions($assignedRef, $publicationID) {
     $(document).ready(function() {
         $(".refOptions").on('change', function() {
             $('#notification').text("Changing REF...");
-            $refunitid = $(this).children('option:selected').data("refunitid");
-            $publicationid = $(this).children('option:selected').data("publicationid");
+            $refunitid = $(this).find(':selected').data('refunitid');
+            $publicationid = $(this).find(':selected').data('publicationid');
             alert ($refunitid + " - " + $publicationid);
             $.ajax({
                 url: '/reftool/updateRef.php',
