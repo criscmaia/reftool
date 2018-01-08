@@ -48,44 +48,47 @@
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-<div class="selectTable">
-    <h1>List of authors with total amount of publications since 2014</h1>
-    <table>
-        <tr style="text-align: left;">
+<!-- datatable plugin -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<table id="publications">
+    <thead>
+        <tr style="text-align: left">
             <th># of publications</th>
             <th>First name</th>
             <th>Last name</th>
             <th>email</th>
             <th>Current employee</th>
         </tr>
-        <?php
-    include 'dbconnect.php';
+    </thead>
+    <tbody>
+    <?php
+include 'dbconnect.php';
 
-    $sql = "SELECT COUNT(mdxAuthorID) as total, firstName, lastName, email, mdxAuthorID, currentEmployee
-            FROM reftool.publication, reftool.mdxAuthor
-            where publication.author = mdxAuthor.mdxAuthorID
-            GROUP BY mdxAuthorID
-            ORDER BY total DESC;";
-    $result = $conn->query($sql);
+$sql = "SELECT COUNT(mdxAuthorID) as total, firstName, lastName, email, mdxAuthorID, currentEmployee
+        FROM reftool.publication, reftool.mdxAuthor
+        where publication.author = mdxAuthor.mdxAuthorID
+        GROUP BY mdxAuthorID
+        ORDER BY total DESC;";
+$result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            echo '<tr>';
-            echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
-            echo '<td>' . $row["firstName"] . '</td>';
-            echo '<td>' . $row["lastName"] . '</td>';
-            echo '<td>' . $row["email"] . '</td>';
-            echo '<td>' .(($row["currentEmployee"]=="1")?"yes":""). '<br>';
-            echo '</tr>';
-        }
-    } else {
-        echo '<h2>0 results</h2>';
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        echo '<tr>';
+        echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
+        echo '<td>' . $row["firstName"] . '</td>';
+        echo '<td>' . $row["lastName"] . '</td>';
+        echo '<td>' . $row["email"] . '</td>';
+        echo '<td>' .(($row["currentEmployee"]=="1")?"yes":""). '</td>';
+        echo '</tr>';
     }
-    $conn->close();
+} else {
+    echo '<h2>0 results</h2>';
+}
+$conn->close();
 ?>
-    </table>
-</div>
+<tbody>
+</table>
 <div id="popUp" class="overlay">
     <div class="popup">
         <h3>List of published papers by...</h3>
@@ -94,25 +97,39 @@
             <div id="tableResult"></div>
         </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            $(".showPubs").on('click', function() {
-                $authorid = $(this).data("mdxauthorid");
-                $.ajax({
-                    url: '/reftool/getAuthorPubs.php',
-                    type: 'post',
-                    data: {
-                        authorid: $authorid
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        $('#tableResult').html(response);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
+</div>
+<script>
+    $(document).ready(function() {
+        $(".showPubs").on('click', function() {
+            $authorid = $(this).data("mdxauthorid");
+            $.ajax({
+                url: '/reftool/getAuthorPubs.php',
+                type: 'post',
+                data: {
+                    authorid: $authorid
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#tableResult').html(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
             });
         });
 
-    </script>
+
+
+        $('#publications').DataTable({
+            "autoWidth": true,
+            "ordering": true,
+            "paging": false,
+            "searching": true,
+            "info": true,
+            responsive: true,
+            stateSave: true
+        });
+
+    });
+
+</script>
