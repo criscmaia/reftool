@@ -28,11 +28,11 @@ include 'dbconnect.php';
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
-                echo '<td>'.(!empty($row["assignedID"]) ? $row["assignedID"] : 'null').'</td>';
-                echo '<td>'.(!empty($row["name"]) ? $row["name"] : 'null').'</td>';
-                echo '<td>'.(!empty($row["title"]) ? $row["title"] : 'null').'</td>';
-                echo '<td>'.(!empty($row["author"]) ? $row["author"] : 'null').'</td>';
-                echo '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : 'null').'</td>';
+                echo '<td>'.(!empty($row["assignedID"]) ? $row["assignedID"] : '').'</td>';
+                echo '<td>'.(!empty($row["name"]) ? $row["name"] : '').'</td>';
+                echo '<td>'.(!empty($row["title"]) ? $row["title"] : '').'</td>';
+                echo '<td>'.(!empty($row["author"]) ? $row["author"] : '').'</td>';
+                echo '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
             echo '</tr>';
         }
     } else {
