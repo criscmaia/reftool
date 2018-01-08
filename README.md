@@ -36,12 +36,17 @@ TODO:
 **fullList.php:**  
 Lists all publications (id - with link to ePrint, title, abstract, date, ERA, isPub, PresType, publication, publisher) and authors (full name and email)  
 Check if pair publication+author has already been assigned to REF, if YES, automatically selects it from the dropbox, if not, shows the default option "No REF Assigned"  
+User can also change the dropdown to either remove the REF assigned by selecting the first option, assign it to a new one, or simply assign to a different one.
 Hover the abstract line for it to expand.  
 
 TODO:  
 - [x] Show what REF the pair (publication+author) is assigned to. If none, show option add to it.  
-- [ ] Assign REF when changing the dropdown value next to authors name.  
+- [x] Assign REF when changing the dropdown value next to authors name.  
 - [ ] Allow user to manually update any field. Double check before submitting change.  
+
+---------------------
+**updateRef.php**  
+Receives the POST request from fullList.php to CRUD the refUnits .  
 
 ---------------------
 **totalOfPublishedPub.php:**  
