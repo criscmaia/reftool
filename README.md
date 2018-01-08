@@ -46,7 +46,7 @@ TODO:
 
 ---------------------
 **updateRef.php**  
-Receives the POST request from fullList.php to CRUD the refUnits .  
+Receives the POST request from fullList.php to CRUD the refUnits.  
 
 ---------------------
 **totalOfPublishedPub.php:**  
