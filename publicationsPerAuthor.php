@@ -58,8 +58,6 @@
             <th>Last name</th>
             <th>email</th>
             <th>Current employee</th>
-            <th>Edit</th>
-            <th>Delete</th>
         </tr>
         <?php
     include 'dbconnect.php';
@@ -79,8 +77,6 @@
             echo '<td>' . $row["lastName"] . '</td>';
             echo '<td>' . $row["email"] . '</td>';
             echo '<td>' .(($row["currentEmployee"]=="1")?"yes":""). '<br>';
-            echo '<td><a href="#">Edit</a></td>';
-            echo '<td><a href="#">Delete</a></td>';
             echo '</tr>';
         }
     } else {
