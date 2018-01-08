@@ -118,9 +118,8 @@ $conn->close();
             });
         });
 
-
-
         $('#publications').DataTable({
+            "dom": '<f',
             "autoWidth": true,
             "ordering": true,
             "paging": false,
