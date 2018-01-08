@@ -1,10 +1,8 @@
 Basic progress notes for future documentation:
 ---------------------
 **excelUpload.php:**  
-Imports xlsx file  
+Imports xlsx file.  
 
-TODO:  
-- [ ] Test with different kind of cell formats, borders, empty cells, wrong columns.  
 ---------------------
 **readExcel.php:**  
 Lists all names imported from excel  
