@@ -147,10 +147,10 @@ function getAssignedRef($publicationID, $authorID) {
         $assignedRef = 0;
     }
     $conn->close();
-    printRefOptions($assignedRef);
+    printRefOptions($assignedRef, $publicationID);
 }
 
-function printRefOptions($assignedRef) {
+function printRefOptions($assignedRef, $publicationID) {
 //    echo "\$assignedRef: $assignedRef <br>";
     include 'dbconnect.php';
     $sql = "SELECT * FROM refUnit;";
@@ -160,18 +160,44 @@ function printRefOptions($assignedRef) {
         echo '<option value="0">No REF assigned</option>';
         while($row = $result->fetch_assoc()) {
             if ($row['refUnitID'] == $assignedRef) {
-                echo "<option selected value=\"". $row['refUnitID'] ."\">" . $row['assignedID'] . " - " . $row['name'] . "</option>";
+                echo '<option class="refOptions" selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             } else {
-                echo "<option value=\"". $row['refUnitID'] ."\">" . $row['assignedID'] . " - " . $row['name'] . "</option>";
+                echo '<option class="refOptions" value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             }
         }
     } else {
-        echo "<option value=\"\">No RefUnits found</option>";
+        echo '<option value="">No RefUnits found</option>';
     }
     echo '</select>';
     $conn->close();
 }
 
+function onChangeRefOptions() {
+
+}
+
 ?>
     </tbody>
 </table>
+<script>
+    $(document).ready(function() {
+        $(".showPubs").on('click', function() {
+            $authorid = $(this).data("mdxauthorid");
+            $.ajax({
+                url: '/reftool/getAuthorPubs.php',
+                type: 'post',
+                data: {
+                    authorid: $authorid
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#tableResult').html(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
+
+</script>
