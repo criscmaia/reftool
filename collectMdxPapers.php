@@ -117,7 +117,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
         echo "Total of " . $totalPapersPerPerson . " combinations of publication+author found<br><hr>";
     }
     echo "<strong>Search completed! </strong><br>";
-    echo "<a href='/reftool/readExcel.php'>← go back</a>";
+    echo "<a href='/reftool/fullList.php'>Show full list →</a>";
 }       // check if variable session is set
 
 
