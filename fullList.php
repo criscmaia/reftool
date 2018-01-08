@@ -178,13 +178,13 @@ function printRefOptions($assignedRef, $publicationID) {
 </table>
 <script>
     $(document).ready(function() {
-
         $(".refOptions").on('focus', function() {
-            $previousrefid = $(this).find(':selected').data('refunitid');     // previous selected REF
+            $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
         }).change(function() {
             $('#notification').text("Changing REF...");
             $refunitid = $(this).find(':selected').data('refunitid');
             $publicationid = $(this).find(':selected').data('publicationid');
+            $(".refOptions").blur();
             $.ajax({
                 url: '/reftool/updateRef.php',
                 type: 'post',
