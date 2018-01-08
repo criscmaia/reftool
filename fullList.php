@@ -173,7 +173,32 @@ function printRefOptions($assignedRef, $publicationID) {
 }
 
 function onChangeRefOptions() {
+    include 'dbconnect.php';
 
+    $refunitid = isset($_POST['refunitid']) ? $_POST['refunitid'] : null;
+    $publicationid = isset($_POST['publicationid']) ? $_POST['publicationid'] : null;
+    echo '\$refunitid: $refunitid. - \$publicationid: $publicationid . <br>';
+//    $sql = "UPDATE refUnit_publication SET refUnitID='8' WHERE refUnitID='7' andpublicationID='3500';";
+//    $result = $conn->query($sql);
+//
+//    if ($result->num_rows > 0) {
+//        echo '<table>
+//                <tr style="text-align: left">
+//                    <th>Title</th>
+//                    <th>Publication</th>
+//                </tr>';
+//        while($row = $result->fetch_assoc()) {
+//            echo '<tr>';
+//            echo '<td>' . $row["title"] . '</td>';
+//            echo '<td>' . $row["date"] . '</td>';
+//            echo '</tr>';
+//        }
+//        echo '</table>
+//        </div>';
+//    } else {
+//        echo '<h2>0 results</h2>';
+//    }
+    $conn->close();
 }
 
 ?>
@@ -181,17 +206,19 @@ function onChangeRefOptions() {
 </table>
 <script>
     $(document).ready(function() {
-        $(".showPubs").on('click', function() {
-            $authorid = $(this).data("mdxauthorid");
+        $(".refOptions").on('change', function() {
+            $refunitid = $(this).data("refunitid");
+            $publicationid = $(this).data("publicationid");
             $.ajax({
-                url: '/reftool/getAuthorPubs.php',
+                url: '/reftool/fullList.php',
                 type: 'post',
                 data: {
-                    authorid: $authorid
+                    refunitid: $refunitid,
+                    publicationid: $publicationid
                 },
                 success: function(response) {
                     console.log(response);
-                    $('#tableResult').html(response);
+//                    $('#tableResult').html(response);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
