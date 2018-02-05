@@ -3,6 +3,10 @@ include 'menu.php';
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- datatable plugin - NOT SUPPORTED because of DataTables does not support colspan or rowspan in the tbody tag -->
+<!-- datatable plugin -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
 <style>
     #publications {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -92,52 +96,58 @@ include 'dbconnect.php';
 
     if ($result->num_rows > 0) {                                                                                // if any results from query
         $currentEprintID;                                                                                       // initialise var
-        $authorCounter = 1;
+        $authorCounter = 0;
         $publicationDescDone = false;                                                                           // haven't printed publication details yet
+        $author1id = '';
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
                 $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
                 $publicationDescDone = false;
-                $authorCounter = 1;
+//                $authorCounter = 1;
             }
 
             $totalAuthors = $ePrintIdTotal[$currentEprintID];                                                   // how many authors to print
 //            $rowspan = $ePrintIdTotal[$currentEprintID]+1;                                                      // description + amount of authors
-            $rowspan = 1;                                                                                       // printing only first author
-
+//            $rowspan = 1;                                                                                       // printing only first author
+//            $refAuthor1 = '';
             if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
+//                $refAuthor1 += getAssignedRef($row["publicationID"], $row["author"]);
+                $author1id = $row["author"];
                 echo '<tr>';
-                    echo '<td rowspan="'.$rowspan.'" style="">';
+                    echo '<td style="">';
                         echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                         echo '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                     echo '</td>';
-                    echo '<td rowspan="'.$rowspan.'" style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
-                    echo '<td rowspan="'.$rowspan.'">'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
-                    echo '<td rowspan="'.$rowspan.'">'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
-                    echo '<td rowspan="'.$rowspan.'">'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
-                    echo '<td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';
-                    echo '<td>';
-                        getAssignedRef($row["publicationID"], $row["author"]);
-                    echo '</td>';
-                echo '</tr>';
+                    echo '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
+                    echo '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+                    echo '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
+                    echo '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+                    echo '<td id="authors">';
                 $publicationDescDone = true;
             }
 
-            //  when showing a REF per author, instead of just first author
-//            if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
-//                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';    // continue printing the authors
-//                echo '<td>';
-//                    getAssignedRef($row["publicationID"], $row["author"]);
-//                echo '</td>';
-//                echo '</tr>';
-//                $authorCounter++;
-//            }
+            //  prints all authors before showing REF assigned to the 1st one
+            $authorCounter++;
+            if ($authorCounter < $totalAuthors) {                                                           // check if has printed all authors
+                echo (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // continue printing the authors
+            } else {
+                echo '</td>';
+                echo '<td id="ref">';
+                echo getAssignedRef($row["publicationID"], $author1id);
+                echo '</td>';                                                        // shows REF unit for 1st author on the last column
+                echo '</tr>';
+                $authorCounter=0;
+            }
         }
     } else {
         echo '<h2>0 results</h2>';
     }
+
+        echo '</tbody>';
+                echo '</table>';
     $conn->close();
+
 
 function getAssignedRef($publicationID, $authorID) {
     include 'dbconnect.php';    // connect to DB
@@ -160,7 +170,7 @@ function getAssignedRef($publicationID, $authorID) {
         $assignedRef = 0;
     }
     $conn->close();
-    printRefOptions($assignedRef, $publicationID);
+    echo printRefOptions($assignedRef, $publicationID);
 }
 
 function printRefOptions($assignedRef, $publicationID) {
@@ -168,6 +178,7 @@ function printRefOptions($assignedRef, $publicationID) {
     include 'dbconnect.php';
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
+
     if ($result->num_rows > 0) {
         echo '<select class="refOptions" name="refUnits">';
         echo '<option data-publicationid="'.$publicationID.'">No REF assigned</option>';
@@ -181,12 +192,11 @@ function printRefOptions($assignedRef, $publicationID) {
     } else {
         echo '<option value="">No RefUnits found</option>';
     }
-    echo '</select>';
+    echo '</select></td>';
     $conn->close();
 }
 ?>
-    </tbody>
-</table>
+
 <script>
     $(document).ready(function() {
         $(".refOptions").on('focus', function() {
