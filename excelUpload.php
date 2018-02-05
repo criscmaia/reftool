@@ -1,3 +1,6 @@
+<?php
+include "menu.php";
+?>
 <form method="post" action="<?=$_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
     <input type="file" name="staffList" id="xlsx_uploads" name="xlsx_uploads" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
     <br>

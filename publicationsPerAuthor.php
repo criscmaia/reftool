@@ -1,3 +1,6 @@
+<?php
+include "menu.php";
+?>
 <style>
     .overlay {
         position: fixed;

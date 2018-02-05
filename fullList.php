@@ -1,3 +1,6 @@
+<?php
+include "menu.php";
+?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- datatable plugin - NOT SUPPORTED because of DataTables does not support colspan or rowspan in the tbody tag -->
 <style>
