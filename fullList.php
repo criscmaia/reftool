@@ -36,6 +36,7 @@ include 'menu.php';
         white-space: nowrap;
         margin: 0;
         padding: 0;
+        font-size: 90%;
     }
 
     .ellipse:hover {
@@ -102,30 +103,36 @@ include 'dbconnect.php';
             }
 
             $totalAuthors = $ePrintIdTotal[$currentEprintID];                                                   // how many authors to print
-            $rowspan = $ePrintIdTotal[$currentEprintID]+1;                                                      // description + amount of authors
+//            $rowspan = $ePrintIdTotal[$currentEprintID]+1;                                                      // description + amount of authors
+            $rowspan = 1;                                                                                       // printing only first author
 
             if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
                 echo '<tr>';
                     echo '<td rowspan="'.$rowspan.'" style="">';
                         echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-                    echo '<ul><li class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</li></ul>';
+                        echo '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                     echo '</td>';
                     echo '<td rowspan="'.$rowspan.'" style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
                     echo '<td rowspan="'.$rowspan.'">'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+                    echo '<td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';
+                    echo '<td>';
+                        getAssignedRef($row["publicationID"], $row["author"]);
+                    echo '</td>';
                 echo '</tr>';
                 $publicationDescDone = true;
             }
 
-            if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
-                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';    // continue printing the authors
-                echo '<td>';
-                    getAssignedRef($row["publicationID"], $row["author"]);
-                echo '</td>';
-                echo '</tr>';
-                $authorCounter++;
-            }
+            //  when showing a REF per author, instead of just first author
+//            if ($authorCounter <= $totalAuthors) {                                                           // check if has printed all authors
+//                echo '<tr><td>'.(!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').'<br>'.(!empty($row["email"]) ? $row["email"] : '').'</td>';    // continue printing the authors
+//                echo '<td>';
+//                    getAssignedRef($row["publicationID"], $row["author"]);
+//                echo '</td>';
+//                echo '</tr>';
+//                $authorCounter++;
+//            }
         }
     } else {
         echo '<h2>0 results</h2>';
