@@ -13,6 +13,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 } else {
     $importedNames = $_SESSION["importedNames"];
 
+    echo "<h3>Author: quantity of publications in total (from all years)</h3>";
     foreach ($importedNames as $name) {
         $formFName = $name[0];
         $formLName = $name[1];
@@ -29,10 +30,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
             echo "No results found for <strong>$search</strong><br>";
 //            echo "<a href='/reftool/'>go back</a><hr>";
         } else {
-            echo "<h4>Searching for: $search </h4>";
-            echo count($json) . " publications found (from all years) <br>";
-    //        echo "<hr>";
-
+            echo "<strong>$search</strong>: " . count($json) . " publications <br>";
 
             $jsonData = json_encode($json, JSON_PRETTY_PRINT);
             //echo "<pre>" . $jsonData . "</pre><hr>";
@@ -115,9 +113,9 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                 }
             }
         }
-        echo "Total of " . $totalPapersPerPerson . " combinations of publication+author found<br><hr>";
+        echo "Total of <strong>" . $totalPapersPerPerson . "</strong> combinations of publication+author (where this person is an author) found.<br><br>";
     }
-    echo "<strong>Search completed! </strong><br>";
+    echo "<hr><strong>Search completed! </strong><br>";
     echo "<a href='/reftool/fullList.php'>Show full list →</a>";
 }       // check if variable session is set
 
