@@ -101,6 +101,7 @@ include 'dbconnect.php';
         $authorCounter = 0;
         $publicationDescDone = false;                                                                           // haven't printed publication details yet
         $author1id = '';
+        $publicationID = '';
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
@@ -111,6 +112,7 @@ include 'dbconnect.php';
             $totalAuthors = $ePrintIdTotal[$currentEprintID];                                                   // how many authors to print
             if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
                 $author1id = $row["author"];                                                                    // get author 1 id to link to the REF in the last column
+                $publicationID = $row["publicationID"];                                                         // same as author above
                 echo '<tr>';
                     echo '<td style="">';
                         echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
@@ -127,11 +129,13 @@ include 'dbconnect.php';
             //  prints all authors before showing REF assigned to the 1st one
             $authorCounter++;
             if ($authorCounter < $totalAuthors) {                                                               // check if has printed all authors
+//                echo $row["publicationID"] . ' -- ' . $author1id;
                 echo (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // continue printing the authors
             } else {
                 echo '</td>';                                                                                   // close the authors column
                 echo '<td>';                                                                                    // start REF column
-                echo getAssignedRef($row["publicationID"], $author1id);                                         // get author 1 ref link
+
+                echo getAssignedRef($publicationID, $author1id);                                         // get author 1 ref link
                 echo '</td>';
                 echo '</tr>';
                 $authorCounter=0;                                                                               // start counting author again for next paper
