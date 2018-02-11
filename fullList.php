@@ -196,7 +196,18 @@ function printRefOptions($assignedRef, $publicationID) {
 
 <script>
     $(document).ready(function() {
-        $("#publications").DataTable();
+        $('#publications').DataTable({
+            "dom": '<f',
+            "autoWidth": true,
+            "ordering": true,
+            "paging": false,
+            "searching": true,
+            "info": true,
+            responsive: true,
+            stateSave: true
+        });
+
+
         $(".refOptions").on('focus', function() {
             $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
         }).change(function() {
