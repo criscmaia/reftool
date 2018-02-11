@@ -2,39 +2,12 @@
 include 'menu.php';
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- datatable plugin - NOT SUPPORTED because of DataTables does not support colspan or rowspan in the tbody tag -->
 <!-- datatable plugin -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 <style>
-/*
-    #publications {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    #publications td,
-    #publications th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    #publications tr:hover {
-        background-color: #ddd;
-    }
-
-    #publications th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        background-color: #4CAF50;
-        color: white;
-    }
-*/
-
-
+    /* START - show only the begin of the abstract until you hover it */
     .ellipse {
         width: 400px;
         overflow: hidden;
@@ -51,7 +24,7 @@ include 'menu.php';
         word-break: break-word;
         z-index: 5;
     }
-
+    /* END - show only the begin of the abstract until you hover it */
 </style>
 <p id="notification">Notifications here</p>
 <table id="publications">
@@ -129,13 +102,11 @@ include 'dbconnect.php';
             //  prints all authors before showing REF assigned to the 1st one
             $authorCounter++;
             if ($authorCounter < $totalAuthors) {                                                               // check if has printed all authors
-//                echo $row["publicationID"] . ' -- ' . $author1id;
                 echo (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // continue printing the authors
             } else {
                 echo '</td>';                                                                                   // close the authors column
                 echo '<td>';                                                                                    // start REF column
-
-                echo getAssignedRef($publicationID, $author1id);                                         // get author 1 ref link
+                echo getAssignedRef($publicationID, $author1id);                                                // get author 1 ref link
                 echo '</td>';
                 echo '</tr>';
                 $authorCounter=0;                                                                               // start counting author again for next paper
@@ -159,15 +130,15 @@ function getAssignedRef($publicationID, $authorID) {
                     AND refUnit_publication.publicationID = publication.publicationID
                     AND publication.publicationID = $publicationID
                     AND publication.author = $authorID;";
-//    echo $assignedRef . "<br>";
+    //    echo $assignedRef . "<br>";
     $resultAssignedRef = $conn->query($assignedRef);
     if ($resultAssignedRef->num_rows > 0) {
         while($rowAssignedRef = $resultAssignedRef->fetch_assoc()) {
             $assignedRef = $rowAssignedRef['refUnitID'];
-//            echo "\$assignedRef: $assignedRef <br>";
+            //            echo "\$assignedRef: $assignedRef <br>";
         }
     } else {
-//        echo "No REF Units registered";
+        //        echo "No REF Units registered";
         $assignedRef = 0;
     }
     $conn->close();
@@ -175,7 +146,7 @@ function getAssignedRef($publicationID, $authorID) {
 }
 
 function printRefOptions($assignedRef, $publicationID) {
-//    echo "\$assignedRef: $assignedRef <br>";
+    //    echo "\$assignedRef: $assignedRef <br>";
     include 'dbconnect.php';
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
