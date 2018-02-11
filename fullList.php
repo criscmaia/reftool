@@ -8,6 +8,7 @@ include 'menu.php';
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 <style>
+/*
     #publications {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
@@ -31,6 +32,7 @@ include 'menu.php';
         background-color: #4CAF50;
         color: white;
     }
+*/
 
 
     .ellipse {
@@ -194,6 +196,7 @@ function printRefOptions($assignedRef, $publicationID) {
 
 <script>
     $(document).ready(function() {
+        $("#publications").DataTable();
         $(".refOptions").on('focus', function() {
             $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
         }).change(function() {
