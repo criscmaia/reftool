@@ -1,6 +1,12 @@
 <?php
 include 'menu.php';
 ?>
+
+<br>
+Download xlsx template <a href="/reftool/staff.xlsx">from here</a>.<br>
+Remember that the value in the "Current Employee" column will <strong>always</strong> overwrite the value in the DB.<br>
+<br><br><br>
+
 <form method="post" action="<?=$_SERVER['PHP_SELF']?>" enctype="multipart/form-data">
     <input type="file" name="staffList" id="xlsx_uploads" name="xlsx_uploads" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
     <br>
