@@ -15,10 +15,10 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 
     echo "<h3>Author: quantity of publications in total (from all years)</h3>";
     foreach ($importedNames as $author) {
-        $formFName = $author[0];
-        $formLName = $author[1];
-        $formEmail = strtolower($author[2]);
-        $formCurrentEmployee = (strtolower($author[3])=="y")?1:0;       // convert Y/y to 1, or anything else to 0
+        $formFName = isset($author[0])?$author[0]:null;
+        $formLName = isset($author[1])?$author[1]:null;
+        $formEmail = isset($author[2])?strtolower($author[2]):null;
+        $formCurrentEmployee = isset($author[3])?((strtolower($author[3])=="y")?1:0):null;       // convert Y/y to 1, or anything else to 0
 
 //        echo "MDX auhor form: formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
 
