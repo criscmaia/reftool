@@ -166,17 +166,15 @@ function getMdxAuthorId($fname, $lname, $email){
     // check if email is MDX
     $found = strpos($email, "@mdx.ac.uk");
     if ($found === false) {
-//        echo "Checking if email finishes with '@mdx.ac.uk'. Not found. Current email: '$email' <br>";
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
         $currentEmployee = 0;
     } else {
-//        echo "Checking if email finishes with '@mdx.ac.uk'. Found. Current email: '$email' <br>";
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
         $currentEmployee = 1;
     }
 
 
-    if ($checkMdxAuthorExistence = $conn->query($query)) {   // search author find by name or email TODO: do only email so there is no risk of duplicate names?
+    if ($checkMdxAuthorExistence = $conn->query($query)) {
         $row_cnt = $checkMdxAuthorExistence->num_rows;
 
         if($row_cnt>0) {
