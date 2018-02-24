@@ -18,7 +18,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
         $formFName = $author[0];
         $formLName = $author[1];
         $formEmail = strtolower($author[2]);
-        $formCurrentEmployee = strtolower($author[3]);
+        $formCurrentEmployee = (strtolower($author[3])=="y")?1:0;       // convert Y/y to 1, or anything else to 0
 
 //        echo "MDX auhor form: formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
 
@@ -91,14 +91,15 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 $fName = $eachcreator->name->given;
                                 $lName = $eachcreator->name->family;
                                 $email = strtolower($eachcreator->id);
-                                echo "Get MDX author ID: fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
+
                                 if ($formEmail == $email) {
-                                    echo "Form author <br>";
-                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formFName, $formLName, $formEmail, $formCurrentEmployee);
+                                    echo "fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
+                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, $formCurrentEmployee);
                                 } else {
-                                    echo "Co-author <br>";
-                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, '', '', '', '');
+                                    echo "fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '' <br>";
+                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, '');
                                 }
+
 
                                 // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                                 $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
@@ -168,21 +169,21 @@ function checkEra2010rank($issn) {
 }
 
 // check if author is on the DB
-function getMdxAuthorId($fname, $lname, $email, $formFName, $formLName, $formEmail, $formCurrentEmployee){
-    echo "Get MDX author ID: fName: '$fname', lName: '$lname', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
-
+function getMdxAuthorId($fname, $lname, $email, $formEmail, $formCurrentEmployee){
     include 'dbconnect.php';
 
     $fullName = $fname . ' ' . $lname;
-
-    // check if email is MDX
     $found = strpos($email, "@mdx.ac.uk");
-    if ($found === false) {
-        $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
-        $currentEmployee = 0;
-    } else {
+
+    echo "is formCurrentEmployee empty? ".empty($formCurrentEmployee)."<br>";
+    if ($found) {                                                                   // if author email from the paper is the same as the one from the spreadsheet OR if email ends with @mdx.ac.uk
+        $currentEmployee = (empty($formCurrentEmployee))?1:$formCurrentEmployee;                            // considers the data from the spreadhseet (if not null) OR 1
+        echo "MDX EMPLOYEE: currentEmployee: '$currentEmployee'<br>";
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
-        $currentEmployee = 1;
+    } else {                                                                                                // considers that is not an employee
+        $currentEmployee = 0;
+        echo "NOT MDX EMPLOYEE: currentEmployee: '$currentEmployee'<br>";
+        $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
     }
 
 
@@ -194,11 +195,10 @@ function getMdxAuthorId($fname, $lname, $email, $formFName, $formLName, $formEma
 
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
             $mdxAuthorID = $resultsArray['mdxAuthorID'];
-//            echo $fname . " " . $lname. " is in the DB. ID: " . $resultsArray['mdxAuthorID'] . " <br>";
 
-            if ($email != $resultsArray['email'] || $fullName != $resultsArray['repositoryName']) {     // check if email or full name is different from DB
+            if ($email != $resultsArray['email'] || $fullName != $resultsArray['repositoryName'] || $currentEmployee != $resultsArray['currentEmployee']) {     // check if email OR full name OR current employee is different from DB
 //                echo "email or full name is different. current email: '$email', new email: ".$resultsArray['email'].". current repository name: '$fullName', new name:".$resultsArray['repositoryName']."<br>";
-                $sql = "UPDATE `mdxAuthor` SET `email`='$email', `repositoryName`='$fullName' WHERE `mdxAuthorID` = '$mdxAuthorID';";
+                $sql = "UPDATE `mdxAuthor` SET `email`='$email', `repositoryName`='$fullName', `currentEmployee`='$currentEmployee' WHERE `mdxAuthorID` = '$mdxAuthorID';";
                 $result = $conn->query($sql);
                 if ($result) {
 //                    echo "Values udpated: email: ".$email.", repository name: ".$fullName. "<br>";
