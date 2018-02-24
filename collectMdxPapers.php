@@ -14,9 +14,14 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
     $importedNames = $_SESSION["importedNames"];
 
     echo "<h3>Author: quantity of publications in total (from all years)</h3>";
-    foreach ($importedNames as $name) {
-        $formFName = $name[0];
-        $formLName = $name[1];
+    foreach ($importedNames as $author) {
+        $formFName = $author[0];
+        $formLName = $author[1];
+        $formEmail = strtolower($author[2]);
+        $formCurrentEmployee = strtolower($author[3]);
+
+//        echo "MDX auhor form: formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
+
         $totalPapersPerPerson=0;
 
         $search = $formFName . " " . $formLName;
@@ -85,8 +90,15 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                             foreach($allcreators as $eachcreator){
                                 $fName = $eachcreator->name->given;
                                 $lName = $eachcreator->name->family;
-                                $email = $eachcreator->id;
-                                $mdxAuthorId = getMdxAuthorId($fName, $lName, $email);
+                                $email = strtolower($eachcreator->id);
+                                echo "Get MDX author ID: fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
+                                if ($formEmail == $email) {
+                                    echo "Form author <br>";
+                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formFName, $formLName, $formEmail, $formCurrentEmployee);
+                                } else {
+                                    echo "Co-author <br>";
+                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, '', '', '', '');
+                                }
 
                                 // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                                 $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
@@ -156,8 +168,8 @@ function checkEra2010rank($issn) {
 }
 
 // check if author is on the DB
-function getMdxAuthorId($fname, $lname, $email){
-//    echo "Get MDX author ID: fName: '$fname', lName: '$lname', email: '$email' <br>";
+function getMdxAuthorId($fname, $lname, $email, $formFName, $formLName, $formEmail, $formCurrentEmployee){
+    echo "Get MDX author ID: fName: '$fname', lName: '$lname', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
 
     include 'dbconnect.php';
 
