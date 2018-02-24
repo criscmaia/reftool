@@ -11,9 +11,7 @@
 
 <body>
     <h1>RefTool</h1>
-    <?php
-        include 'mdxAuthor.php';
-    ?>
+
 </body>
 
 </html>
