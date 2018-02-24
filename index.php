@@ -47,13 +47,13 @@ error_reporting(E_ALL);
 ?>
 
     <form method="post" action="<?=$_SERVER['PHP_SELF']?>" method="post">
-        <p><label>Project Name*: <input type="text" autofocus required maxlength="150" name="projectName" value="<?php echo $projectName; ?>"></label></p>
-        <p><label>Description: <input type="text" size="100" maxlength="250" name="description" value="<?php echo $description; ?>"></label></p>
-        <p>Scores:</p>
-        <p><label>A*: <input type="number" size="5" step="any" required name="Astar" value="<?php echo $Astar; ?>"></label></p>
-        <p><label>A: <input type="number" size="5" step="any" required name="A" value="<?php echo $A; ?>"></label></p>
-        <p><label>B: <input type="number" size="5" step="any" required name="B" value="<?php echo $B; ?>"></label></p>
-        <p><label>C: <input type="number" size="5" step="any" required name="C" value="<?php echo $C; ?>"></label></p>
+        <p><label>Project Name*: <input type="text" autofocus size="25" required maxlength="150" name="projectName"></label></p>
+        <p><label>Description: <textarea type="text" cols="25" rows="2" maxlength="250" name="description"></textarea></p>
+        <p><strong>Scores</strong>:</p>
+        <p><label>A*: <input type="number" step="any" required name="Astar" value="3.5"></label></p>
+        <p><label>A: <input type="number" step="any" required name="A" value="3"></label></p>
+        <p><label>B: <input type="number" step="any" required name="B" value="2.75"></label></p>
+        <p><label>C: <input type="number" step="any" required name="C" value="2.5"></label></p>
         <p><button type="submit" name="insertProject">Insert project</button></p>
     </form>
 </body>
