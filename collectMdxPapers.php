@@ -92,11 +92,9 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 $lName = $eachcreator->name->family;
                                 $email = strtolower($eachcreator->id);
 
-                                if ($formEmail == $email) {                 // same author as the one in the uploaded spreadsheet
-//                                    echo "fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '$formCurrentEmployee' <br>";
+                                if ($formEmail == $email) {             // same author as the one in the uploaded spreadsheet
                                     $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, $formCurrentEmployee);
                                 } else {
-//                                    echo "fName: '$fName', lName: '$lName', email: '$email' | formFName: '$formFName', formLName: '$formLName', formEmail: '$formEmail', formCurrentEmployee: '' <br>";
                                     $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, null);
                                 }
 
@@ -175,15 +173,13 @@ function getMdxAuthorId($fname, $lname, $email, $formEmail, $formCurrentEmployee
     $fullName = $fname . ' ' . $lname;
     $found = strpos($email, "@mdx.ac.uk");
 
-//    echo "formCurrentEmployee: '$formCurrentEmployee'. isset? " . isset($formCurrentEmployee).". empty? ".empty($formCurrentEmployee).". Equals ''? ".($formCurrentEmployee=='')."<br>";
-
-    if (isset($formCurrentEmployee)) {                                                                      // if spreadsheet says if current employee
+    if (isset($formCurrentEmployee)) {          // if spreadsheet says if current employee
         $currentEmployee = $formCurrentEmployee;
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
-    } else if ($found) {                                                                                    // if email ends with @mdx.ac.uk
+    } else if ($found) {                        // if email ends with @mdx.ac.uk
         $currentEmployee = 1;
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%' OR email LIKE '%$email%';";
-    } else {                                                                                                // considers that is not an employee
+    } else {                                    // considers that is not an employee
         $currentEmployee = 0;
         $query = "SELECT * FROM mdxAuthor WHERE CONCAT(firstName, ' ', lastName) LIKE '%$fullName%';";      // does not search by email because many authors with '[ex-mdx]' email.
     }
@@ -192,26 +188,10 @@ function getMdxAuthorId($fname, $lname, $email, $formEmail, $formCurrentEmployee
     if ($checkMdxAuthorExistence = $conn->query($query)) {
         $row_cnt = $checkMdxAuthorExistence->num_rows;
 
-        if($row_cnt>0) {                                                                                    // author find in the DB
+        if($row_cnt>0) {                                                // author found in the DB
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
-
-//          DOES NOT UPDATE THE ROW IN ORDER NOT TO OVERWRITE ANY PREVIOUS VALUE
-
-//            $mdxAuthorID = $resultsArray['mdxAuthorID'];
-//
-//            if ($email != $resultsArray['email'] || $fullName != $resultsArray['repositoryName'] || $currentEmployee != $resultsArray['currentEmployee']) {     // check if email OR full name OR current employee is different from DB
-////                echo "email or full name is different. current email: '$email', new email: ".$resultsArray['email'].". current repository name: '$fullName', new name:".$resultsArray['repositoryName']."<br>";
-//                $sql = "UPDATE `mdxAuthor` SET `email`='$email', `repositoryName`='$fullName', `currentEmployee`='$currentEmployee' WHERE `mdxAuthorID` = '$mdxAuthorID';";
-//                $result = $conn->query($sql);
-//                if ($result) {
-////                    echo "Values udpated: email: ".$email.", repository name: ".$fullName. "<br>";
-//                } else {
-//                    echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
-//                }
-//                $conn->close();
-//            }
             return $resultsArray['mdxAuthorID'];
-        } else {                                                                                            // author does NOT exist in the DB
+        } else {                                                        // author does NOT exist in the DB
             $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$fname','$lname','$email','$fullName','$currentEmployee');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
