@@ -14,7 +14,6 @@ Remember that the value in the "Current Employee" column will <strong>always</st
 </form>
 
 <?php
-    session_start();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $staffListFile = $_FILES['staffList']['tmp_name'];
         $fileError = $_FILES['staffList']['error'];
