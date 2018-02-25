@@ -32,7 +32,6 @@ isset($_SESSION)?Session_destroy():Session_start();
     $B = mysqli_real_escape_string($conn, $_POST["B"]);
     $C = mysqli_real_escape_string($conn, $_POST["C"]);
 
-    $sql = "INSERT INTO project (projectName, description, Astar, A, B, C) VALUES ('$projectName', '$description', '$Astar', '$A', '$B', '$C')";
     $sql = "INSERT INTO `project` (`projectName`, `description`, `Astar`, `A`, `B`, `C`) VALUES ('$projectName', '$description', '$Astar', '$A', '$B', '$C')";
 
     if ($conn->query($sql) === TRUE) {
@@ -41,7 +40,7 @@ isset($_SESSION)?Session_destroy():Session_start();
         $_SESSION['projectDetails'] = $projectDetails;
         echo "<script>
                 alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
-                setTimeout(\"location.href = '/reftool/excelUpload.php';\",1000);
+                location.href = '/reftool/excelUpload.php';;
               </script>";
 //        header('Location: /reftool/excelUpload.php');
     } else {
@@ -54,9 +53,7 @@ isset($_SESSION)?Session_destroy():Session_start();
 
 <!--
   TODO:
-  add insert to SESSION
-  add SESSION to the menu
-  add option to log-out from Project
+  check if session name already exists before inserting
   option to select previous one or start new
   update Activity Diagram
   -->
