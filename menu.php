@@ -13,7 +13,7 @@ if(!isset($_SESSION["projectDetails"]) && empty($_SESSION["projectDetails"])) {
     die();
 } else {
     $projectDetails = $_SESSION["projectDetails"];
-    echo "<strong>Project: $projectDetails[1] <a href='/reftool/' title='Change Project'>[x]</a></strong> | ";
+    echo "<strong>Project: <abbr title=\"$projectDetails[2]\">$projectDetails[1]</abbr> <a href='/reftool/' title='Change Project'>[x]</a></strong> | ";
 //    print_r($projectDetails);
 }
 ?>
