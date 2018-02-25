@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 
 <head>
@@ -32,17 +32,27 @@ isset($_SESSION)?Session_destroy():Session_start();
     $B = mysqli_real_escape_string($conn, $_POST["B"]);
     $C = mysqli_real_escape_string($conn, $_POST["C"]);
 
-    $sql = "INSERT INTO `project` (`projectName`, `description`, `Astar`, `A`, `B`, `C`) VALUES ('$projectName', '$description', '$Astar', '$A', '$B', '$C')";
+     // only inserts if Project Name AND Description is not already in the DB
+     $sql = "INSERT INTO `project` (`projectName`, `description`, `Astar`, `A`, `B`, `C`)
+            SELECT '$projectName', '$description', '$Astar', '$A', '$B', '$C' FROM `project`
+            WHERE NOT EXISTS (SELECT * FROM `project`
+                  WHERE projectName='$projectName' AND description='$description')
+            LIMIT 1 ";
 
     if ($conn->query($sql) === TRUE) {
-        $insertedId = $conn->insert_id;
-        $projectDetails = array($insertedId, $projectName, $description);
-        $_SESSION['projectDetails'] = $projectDetails;
-        echo "<script>
-                alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
-                location.href = '/reftool/excelUpload.php';;
-              </script>";
-//        header('Location: /reftool/excelUpload.php');
+        if ($conn->affected_rows>0) {                   // if INSERT worked
+            $insertedId = $conn->insert_id;
+            $projectDetails = array($insertedId, $projectName, $description);
+            $_SESSION['projectDetails'] = $projectDetails;
+            echo "<script>
+                    alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
+                    location.href = '/reftool/excelUpload.php';
+                  </script>";
+        } else {                                        // if there is already a project with same name AND description
+            echo "<script>
+                    alert(\"Project '$projectName' already exists with the same description. \\n\\nChange the fields or select the project name from the list. \");
+                  </script>";
+        }
     } else {
         echo "<p>Error: " . $conn->error . "</p>";
     }
@@ -53,11 +63,15 @@ isset($_SESSION)?Session_destroy():Session_start();
 
 <!--
   TODO:
-  check if session name already exists before inserting
   option to select previous one or start new
   update Activity Diagram
   -->
 
+   <hr>
+   Project Name <strong>AND</strong> Description must be unique.<br>
+   Currently you can only start a new project.<br>
+   I'll have an option where you can continue from a previous project soon.<br>
+   <hr>
     <form method="post" action="<?=$_SERVER['PHP_SELF']?>" method="post">
         <p><label>Project Name*: <input type="text" autofocus size="25" required maxlength="150" name="projectName"></label></p>
         <p><label>Description: <textarea type="text" cols="25" rows="2" maxlength="250" name="description"></textarea></p>
