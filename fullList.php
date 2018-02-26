@@ -86,13 +86,12 @@ $refUnitDropdown = "";
         $currentEprintID;                                                                                       // initialise var
         $authorCounter = 0;
         $publicationDescDone = false;                                                                           // haven't printed publication details yet
-        $author1id = '';
         $publicationID = '';
         while($row = $result->fetch_assoc()) {
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
                 $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
-                echo "currentEprintID: $currentEprintID <br>";
+//                echo "currentEprintID: $currentEprintID <br>";
 
                 // close AUTHOR columns AND prints everything from PREVIOUS publication ID
                 $authors .= "</td>";
@@ -118,12 +117,13 @@ $refUnitDropdown = "";
                 $authors = "";
                 $refUnitDropdown = "";
             } else {
-                echo "looping same eprint id <br>";
+//                echo "looping same eprint id <br>";
 
                 if ($authorLoop == 1) {              // first time that is getting this publication details
-                    echo "Going through the first author <br>";
+//                    echo "Going through the first author <br>";
 
                     $firstAuthorId = $row["author"];
+                    $publicationID = $row["publicationID"];
 
                     // column 1
                     $publicationDetails .= '<td style="">';
@@ -152,6 +152,7 @@ $refUnitDropdown = "";
                     getAssignedRef($projectDetails, $publicationID, $firstAuthorId);
                     $refUnitDropdown .= '</td>';
                 } else {
+                    echo "going through 2nd author <br>";
                     $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
                 }
                 $authorLoop++;
@@ -166,7 +167,7 @@ echo '</table>';
 $conn->close();
 
 
-function getAssignedRef($projectDetails, $publicationID, $authorID) {
+function getAssignedRef($projectDetails, $publicationID, $firstAuthorId) {
     include 'dbconnect.php';    // connect to DB
 
     $assignedRef = "SELECT refUnit.refUnitID, refUnit.name, publication.publicationID, publication.author
@@ -174,7 +175,7 @@ function getAssignedRef($projectDetails, $publicationID, $authorID) {
                     WHERE refUnit.refUnitID = refUnit_publication.refUnitID
                     AND refUnit_publication.publicationID = publication.publicationID
                     AND publication.publicationID = $publicationID
-                    AND publication.author = $authorID
+                    AND publication.author = $firstAuthorId
                     AND publication.projectID = $projectDetails[0];";
     $resultAssignedRef = $conn->query($assignedRef);
     if ($resultAssignedRef->num_rows > 0) {
