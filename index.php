@@ -17,8 +17,15 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-isset($_SESSION)?Session_destroy():Session_start();
- if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+session_start();    // must have as it doesn't have the menu to start automatically
+
+// log out from previous project
+if(isset($_SESSION["projectDetails"]) && !empty($_SESSION["projectDetails"])) {
+    unset($_SESSION['projectDetails']);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include 'dbconnect.php';    // connect to DB
     $projectName = $description = "";
     $Astar = "3.5";
