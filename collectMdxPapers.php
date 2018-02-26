@@ -99,7 +99,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 
 
                                 // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
-                                $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
+                                $publicationAlreadyInDB = checkPublicationAlreadyInDB ($projectDetails, $mdxAuthorId, $eprintid);
     //                            echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. Should show nothing if FALSE and 1 if true <br>";
                                 if (!$publicationAlreadyInDB){
                                     $sql = "INSERT INTO `publication` (`projectID`,`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($projectDetails[0], $type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
@@ -131,10 +131,10 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 
 
 // check if publication + author already in the DB
-function checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid) {
+function checkPublicationAlreadyInDB ($projectDetails, $mdxAuthorId, $eprintid) {
     include 'dbconnect.php';
 
-    if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
+    if ($checkPublicationAlreadyInDB = $conn->query("SELECT * FROM reftool.publication WHERE  projectID = $projectDetails[0] AND author = $mdxAuthorId AND ePrintID = '$eprintid';")) {
         $row_cnt = $checkPublicationAlreadyInDB->num_rows;
         if($row_cnt>0) {
             return true;
