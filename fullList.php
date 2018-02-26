@@ -51,7 +51,6 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
-$authorLoop = 1;
 $publicationDetails = "";
 $date = "";
 $era = "";
@@ -61,27 +60,25 @@ $authors = "";
 $refUnitDropdown = "";
 
     // get total amount of authors per publication
-    $ePrintIdTotalAuthors = array();
+    $ePrintIdTotal = "";
     $sql = "SELECT projectID, ePrintID, COUNT(ePrintID) as total FROM reftool.publication
             GROUP BY ePrintID, projectID
             ORDER BY ePrintID;";
     $result = $conn->query($sql);
-
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-            array_push($ePrintIdTotalAuthors, $row["total"]);
+            $ePrintIdTotal[$row["ePrintID"]] = $row["total"];
         }
-    } else {
-//        echo '<h2>0 results</h2>';
     }
 
 
-    echo "<pre>";
+//    echo "<pre>";
 //    var_dump(array_values($ePrintIdTotalAuthors));
-    var_dump($ePrintIdTotalAuthors);
-    echo "</pre>";
+//    var_dump($ePrintIdTotalAuthors);
+//    echo "</pre>";
 
 
+    // get all the publications + authors for the current Project
     $sql = "SELECT publicationID, ePrintID, uri, title, abstract, date, eraRating, isPublished, presType, publication, publisher, eventTitle, author, firstName, lastName, email
             FROM publication, mdxAuthor
             where publication.author = mdxAuthor.mdxAuthorID
@@ -90,104 +87,112 @@ $refUnitDropdown = "";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {                                                                                // if any results from query
-
-        for ($i = 0; $i <= count($ePrintIdTotalAuthors); $i++) {
-            echo "i: $i <br>";
-            for ($j = 0; $j <= $ePrintIdTotalAuthors[$i]; $j++) {
-                echo "j: $j <br>";
-            }
-        }
-
-        $currentEprintID;                                                                                       // initialise var
+        $currentEprintID;
         $publicationID = '';
         while($row = $result->fetch_assoc()) {
+            $amountOfAuthors = $ePrintIdTotal[$row["ePrintID"]];
+            $currentAuthor = 0;
+
+            if (empty($currentEprintID) || $currentEprintID != $row["ePrintID"]) {                              // if first eprint id ever OR if new eprint
+
+                // SHOULDN'T NEED TO CLEAR AS THE NEW VALUES WILL OVERWRITE IT
+                // clear variables
+                //$publicationDetails = "";
+                //$date = "";
+                //$era = "";
+                //$isPub = "";
+                //$moreDetails = "";
+                //$authors = "";
+                //$refUnitDropdown = "";
+
+                // echo "all variables are now clear <br>";
+
+                echo "new publication starts now";
+                $currentEprintID = $row["ePrintID"];
+
+                // echo "first time that is getting this publication details <br>";
+                $firstAuthorId = $row["author"];
+                $publicationID = $row["publicationID"];
+
+                // column 1
+                $publicationDetails = '<td style="">';
+                $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
+                $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
+                $publicationDetails .= '</td>';
+                // echo "<script>console.log('".$publicationDetails."');</script>";
+
+                // column 2
+                $date = '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
+
+                // column 3
+                $era = '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+
+                // column 4
+                $isPub = '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
+
+                // column 5
+                $moreDetails = '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+
+                // column 6
+                $authors = '<td id="authors">';
+                $authors = (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 1st author details
+                $currentAuthor++;
+
+                // create REF dropdown
+                $refUnitDropdown = '<td>';
+                getAssignedRef($projectDetails, $publicationID, $firstAuthorId);
+                $refUnitDropdown .= '</td>';
+
+            } else {                                                                                            // se for mesmo eprint, continua pegando dados dos authores
+                echo "printing the same publication <br>";
+                echo "getting the other authors details <br>";
+                $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
+                $currentAuthor++;
+
+                if ($currentAuthor == $amountOfAuthors) {                                                       // that was the last one. print everything
+                    $authors .= "</td>";                                                                            // close AUTHOR columns AND prints everything from PREVIOUS publication ID
+
+                    echo $publicationDetails;
+                    echo $date;
+                    echo $era;
+                    echo $isPub;
+                    echo $moreDetails;
+                    echo $authors;
+                    echo $refUnitDropdown;
+
+
+                    // echo "<script>alert(".$publicationDetails.")</script>";
+                    // echo "finish printing one publication <br>";
+                    // echo "<hr>";
+                }
+            }
+
+//            echo "<pre>";
+//            var_dump($row["ePrintID"]);
+//            var_dump($row);
+//            echo "</pre>";
+//
+
+//        for ($i = 0; $i <= count($ePrintIdTotalAuthors); $i++) {                                                // amount of papers
+//             paper $i
+//            echo "row: $row[$i][\"ePrintID\"] <br>";
+//        }
+
+
+//            for ($j = 0; $j <= $ePrintIdTotalAuthors[$i]; $j++) {                                               // amount of authors per paper
+//                // author $j
+//                if ($j==0) {
+//
+//                } else {
+//
+//                }
+//            }
+
+
 //            echo "<pre>";
 //            var_dump($ePrintIdTotalAuthors[$row["ePrintID"]][0]);
 //            echo "</pre>";
 
-
-            if (empty($currentEprintID)) {                                                                      // if first eprint id
-                $currentEprintID = $row["ePrintID"];                                                            // needs to set up as current
-            }
-            // echo "currentEprintID: $currentEprintID <br>";
-
-            $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
-            // echo "nextEprintID: $nextEprintID <br>";
-
-            if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
-                // echo "it's a new publication <br>";
-
-                $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
-                // echo "currentEprintID: $currentEprintID <br>";
-            } else {
-                // echo "still printing the same publication <br>";
-                if ($authorLoop == 1) {                                                                         // first time that is getting this publication details
-                    // echo "first time that is getting this publication details <br>";
-                    $firstAuthorId = $row["author"];
-                    $publicationID = $row["publicationID"];
-
-                    // column 1
-                    $publicationDetails .= '<td style="">';
-                    $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-                    $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
-                    $publicationDetails .= '</td>';
-                    // echo "<script>console.log('".$publicationDetails."');</script>";
-
-                    // column 2
-                    $date .= '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
-
-                    // column 3
-                    $era .= '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
-
-                    // column 4
-                    $isPub .= '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
-
-                    // column 5
-                    $moreDetails .= '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
-
-                    // column 6
-                    $authors .= '<td id="authors">';
-                    $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 1st author details
-
-                    // create REF dropdown
-                    $refUnitDropdown .= '<td>';
-                    getAssignedRef($projectDetails, $publicationID, $firstAuthorId);
-                    $refUnitDropdown .= '</td>';
-                } else {
-                    // echo "getting the other authors details <br>";
-                    $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
-                }
-                $authorLoop++;
-
-//                if ($authorLoop==$ePrintIdTotalAuthors[$row["ePrintID"]]) {
-//                    $authors .= "</td>";                                                                            // close AUTHOR columns AND prints everything from PREVIOUS publication ID
-//
-//                    echo $publicationDetails;
-//                    echo $date;
-//                    echo $era;
-//                    echo $isPub;
-//                    echo $moreDetails;
-//                    echo $authors;
-//                    echo $refUnitDropdown;
-//
-//
-//                    // echo "<script>alert(".$publicationDetails.")</script>";
-//                    // echo "finish printing one publication <br>";
-//                    // echo "<hr>";
-//
-//                    // clear variables
-//                    $authorLoop = 1;
-//                    $publicationDetails = "";
-//                    $date = "";
-//                    $era = "";
-//                    $isPub = "";
-//                    $moreDetails = "";
-//                    $authors = "";
-//                    $refUnitDropdown = "";
-//
-//                    // echo "all variables are now clear <br>";
-//                }
-            }
         }
     } else {
         echo '<h2>0 results</h2>';
