@@ -92,9 +92,9 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 $email = strtolower($eachcreator->id);
 
                                 if ($formEmail == $email) {             // same author as the one in the uploaded spreadsheet
-                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, $formCurrentEmployee);
+                                    $mdxAuthorId = getMdxAuthorId($projectDetails, $fName, $lName, $email, $formEmail, $formCurrentEmployee);
                                 } else {
-                                    $mdxAuthorId = getMdxAuthorId($fName, $lName, $email, $formEmail, null);
+                                    $mdxAuthorId = getMdxAuthorId($projectDetails, $fName, $lName, $email, $formEmail, null);
                                 }
 
 
@@ -102,7 +102,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 $publicationAlreadyInDB = checkPublicationAlreadyInDB ($mdxAuthorId, $eprintid);
     //                            echo "Publication + Author already in the DB? '$publicationAlreadyInDB'. Should show nothing if FALSE and 1 if true <br>";
                                 if (!$publicationAlreadyInDB){
-                                    $sql = "INSERT INTO `publication` (`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
+                                    $sql = "INSERT INTO `publication` (`projectID`,`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($projectDetails[0], $type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                                     if ($conn->query($sql) === TRUE) {
     //                                    echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
                                     } else {
@@ -166,7 +166,7 @@ function checkEra2010rank($issn) {
 }
 
 // check if author is on the DB
-function getMdxAuthorId($fname, $lname, $email, $formEmail, $formCurrentEmployee){
+function getMdxAuthorId($projectDetails, $fname, $lname, $email, $formEmail, $formCurrentEmployee){
     include 'dbconnect.php';
 
     $fullName = $fname . ' ' . $lname;
@@ -191,7 +191,7 @@ function getMdxAuthorId($fname, $lname, $email, $formEmail, $formCurrentEmployee
             $resultsArray = $checkMdxAuthorExistence->fetch_assoc();
             return $resultsArray['mdxAuthorID'];
         } else {                                                        // author does NOT exist in the DB
-            $sql = "INSERT INTO `mdxAuthor` (`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$fname','$lname','$email','$fullName','$currentEmployee');";
+            $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`repositoryName`,`currentEmployee`) VALUES('$projectDetails[0]', '$fname','$lname','$email','$fullName','$currentEmployee');";
             if ($conn->query($sql) === TRUE) {
                 $last_id = $conn->insert_id;
 //                echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
