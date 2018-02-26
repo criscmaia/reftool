@@ -75,10 +75,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   -->
 
    <hr>
-   Project Name <strong>AND</strong> Description must be unique.<br>
-   Currently you can only start a new project.<br>
-   I'll have an option where you can continue from a previous project soon.<br>
+   <h2>Continue with a previous project: </h2>
+   <form method="post" action="<?=$_SERVER['PHP_SELF']?>" method="post">
+            <?php
+                include 'dbconnect.php';
+                $sql = "SELECT * FROM project;";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    echo '<select class="projectOptions" name="projects">';
+                    echo '<option selected>No Project selected</option>';
+                    while($row = $result->fetch_assoc()) {
+                        echo '<option value="'. $row['projectID'] .'" data-projectID="'.$row['projectID'].'">'
+                            . $row['projectID'] . ': ' . $row['projectName']
+                            . ' (' . $row['description'] . ') Scores: ' . $row['Astar'] . ', ' . $row['A'] . ', ' . $row['B'] . ', ' . $row['C'] . '</option>';
+                    }
+                } else {
+                    echo '<option value="">No previous projects created</option>';
+                }
+                echo '</select></td>';
+                $conn->close();
+            ?>
+        <p><button type="submit" name="insertProject">Work on this Project</button></p>
+   </form>
+
    <hr>
+
+   <h2>Create a new project: </h2>
     <form method="post" action="<?=$_SERVER['PHP_SELF']?>" method="post">
         <p><label>Project Name*: <input type="text" autofocus size="25" required maxlength="150" name="projectName"></label></p>
         <p><label>Description: <textarea type="text" cols="25" rows="2" maxlength="250" name="description"></textarea></p>
@@ -89,6 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><label>C: <input type="number" step="any" required name="C" value="2.5"></label></p>
         <p><button type="submit" name="insertProject">Start new project</button></p>
     </form>
+    <hr>
 </body>
 
 
