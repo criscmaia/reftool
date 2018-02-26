@@ -66,6 +66,7 @@ include 'dbconnect.php';
     $sql = "SELECT publicationID, ePrintID, uri, title, abstract, date, eraRating, isPublished, presType, publication, publisher, eventTitle, author, firstName, lastName, email
             FROM publication, mdxAuthor
             where publication.author = mdxAuthor.mdxAuthorID
+            and publication.projectID = $projectDetails[0]
             ORDER BY ePrintID;";
     $result = $conn->query($sql);
 
@@ -106,7 +107,7 @@ include 'dbconnect.php';
             } else {
                 echo '</td>';                                                                                   // close the authors column
                 echo '<td>';                                                                                    // start REF column
-                echo getAssignedRef($publicationID, $author1id);                                                // get author 1 ref link
+                echo getAssignedRef($projectDetails, $publicationID, $author1id);                                                // get author 1 ref link
                 echo '</td>';
                 echo '</tr>';
                 $authorCounter=0;                                                                               // start counting author again for next paper
@@ -121,7 +122,7 @@ include 'dbconnect.php';
     $conn->close();
 
 
-function getAssignedRef($publicationID, $authorID) {
+function getAssignedRef($projectDetails, $publicationID, $authorID) {
     include 'dbconnect.php';    // connect to DB
 
     $assignedRef = "SELECT refUnit.refUnitID, refUnit.name, publication.publicationID, publication.author
@@ -129,7 +130,8 @@ function getAssignedRef($publicationID, $authorID) {
                     WHERE refUnit.refUnitID = refUnit_publication.refUnitID
                     AND refUnit_publication.publicationID = publication.publicationID
                     AND publication.publicationID = $publicationID
-                    AND publication.author = $authorID;";
+                    AND publication.author = $authorID
+                    AND publication.projectID = $projectDetails[0];";
     //    echo $assignedRef . "<br>";
     $resultAssignedRef = $conn->query($assignedRef);
     if ($resultAssignedRef->num_rows > 0) {
