@@ -83,12 +83,12 @@ $refUnitDropdown = "";
         $currentEprintID;
         $publicationID = '';
         $currentAuthor = 0;
+
         while($row = $result->fetch_assoc()) {
-            $amountOfAuthors = $ePrintIdTotal[$row["ePrintID"]];
+            $amountOfAuthors = $ePrintIdTotal[$row["ePrintID"]];                                                // total amount of authors for this specific eprint
 
             if (empty($currentEprintID) || $currentEprintID != $row["ePrintID"]) {                              // if first eprint id ever OR if new eprint
-                // echo "new publication starts now";
-                $currentEprintID = $row["ePrintID"];
+                $currentEprintID = $row["ePrintID"];                                                            // associate it with the current eprint
 
                 $firstAuthorId = $row["author"];
                 $publicationID = $row["publicationID"];
@@ -99,7 +99,6 @@ $refUnitDropdown = "";
                 $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                 $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                 $publicationDetails .= '</td>';
-//                 // // echo "<script>console.log('".$publicationDetails."');</script>";
 
                 // column 2
                 $date = '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
@@ -124,15 +123,12 @@ $refUnitDropdown = "";
                 $refUnitDropdown .= '</td>';
                 $refUnitDropdown .= '</tr>';
 
-            } else {                                                                                            // se for mesmo eprint, continua pegando dados dos authores
-                // echo "printing the same publication <br>";
-                // echo "getting the other authors details <br>";
+            } else {                                                                                            //  if is the same eprint, keep saving authors data
                 $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
                 $currentAuthor++;
 
-                // echo "currentAuthor: $currentAuthor - amountOfAuthors: $amountOfAuthors <br>";
-                if ($currentAuthor == $amountOfAuthors) {                                                       // that was the last one. print everything
-                    $authors .= "</td>";                                                                            // close AUTHOR columns AND prints everything from PREVIOUS publication ID
+                if ($currentAuthor == $amountOfAuthors) {                                                       // that was the last author. print everything
+                    $authors .= "</td>";
 
                     echo $publicationDetails;
                     echo $date;
