@@ -26,44 +26,55 @@ if(isset($_SESSION["projectDetails"]) && !empty($_SESSION["projectDetails"])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include 'dbconnect.php';    // connect to DB
-    $projectName = $description = "";
-    $Astar = "3.5";
-    $A = "3";
-    $B = "2.75";
-    $C = "2.5";
-    $projectName =  mysqli_real_escape_string($conn, $_POST["projectName"]);
-    $description = mysqli_real_escape_string($conn, $_POST["description"]);
-    $Astar = mysqli_real_escape_string($conn, $_POST["Astar"]);
-    $A = mysqli_real_escape_string($conn, $_POST["A"]);
-    $B = mysqli_real_escape_string($conn, $_POST["B"]);
-    $C = mysqli_real_escape_string($conn, $_POST["C"]);
+    if ($_POST['submitProject'] == 'continueProject') {
+        $selectedProject = $_POST['projects'];
+        $projectDetails = explode("|", $selectedProject);
+        $_SESSION['projectDetails'] = $projectDetails;
+        echo "<script>
+                alert(\"Project '$projectDetails[1]' selected successfully. \\n\\nPress OK to proceed. \");
+                location.href = '/reftool/excelUpload.php';
+              </script>";
+    } else if ($_POST['submitProject'] == 'insertProject') {
+        include 'dbconnect.php';    // connect to DB
+        $projectName = $description = "";
+        $Astar = "3.5";
+        $A = "3";
+        $B = "2.75";
+        $C = "2.5";
+        $projectName =  mysqli_real_escape_string($conn, $_POST["projectName"]);
+        $description = mysqli_real_escape_string($conn, $_POST["description"]);
+        $Astar = mysqli_real_escape_string($conn, $_POST["Astar"]);
+        $A = mysqli_real_escape_string($conn, $_POST["A"]);
+        $B = mysqli_real_escape_string($conn, $_POST["B"]);
+        $C = mysqli_real_escape_string($conn, $_POST["C"]);
 
-     // only inserts if Project Name AND Description is not already in the DB
-     $sql = "INSERT INTO `project` (`projectName`, `description`, `Astar`, `A`, `B`, `C`)
-            SELECT '$projectName', '$description', '$Astar', '$A', '$B', '$C' FROM `project`
-            WHERE NOT EXISTS (SELECT * FROM `project`
-                  WHERE projectName='$projectName' AND description='$description')
-            LIMIT 1 ";
+         // only inserts if Project Name AND Description is not already in the DB
+         $sql = "INSERT INTO `project` (`projectName`, `description`, `Astar`, `A`, `B`, `C`)
+                SELECT '$projectName', '$description', '$Astar', '$A', '$B', '$C' FROM `project`
+                WHERE NOT EXISTS (SELECT * FROM `project`
+                      WHERE projectName='$projectName' AND description='$description')
+                LIMIT 1 ";
 
-    if ($conn->query($sql) === TRUE) {
-        if ($conn->affected_rows>0) {                   // if INSERT worked
-            $insertedId = $conn->insert_id;
-            $projectDetails = array($insertedId, $projectName, $description);
-            $_SESSION['projectDetails'] = $projectDetails;
-            echo "<script>
-                    alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
-                    location.href = '/reftool/excelUpload.php';
-                  </script>";
-        } else {                                        // if there is already a project with same name AND description
-            echo "<script>
-                    alert(\"Project '$projectName' already exists with the same description. \\n\\nChange the fields or select the project name from the list. \");
-                  </script>";
+        if ($conn->query($sql) === TRUE) {
+            if ($conn->affected_rows>0) {                   // if INSERT worked
+                $insertedId = $conn->insert_id;
+                $projectDetails = array($insertedId, $projectName, $description);
+                $_SESSION['projectDetails'] = $projectDetails;
+                echo "<script>
+                        alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
+                        location.href = '/reftool/excelUpload.php';
+                      </script>";
+            } else {                                        // if there is already a project with same name AND description
+                echo "<script>
+                        alert(\"Project '$projectName' already exists with the same description. \\n\\nChange the fields or select the project name from the list. \");
+                      </script>";
+            }
+        } else {
+            echo "<p>Error: " . $conn->error . "</p>";
         }
-    } else {
-        echo "<p>Error: " . $conn->error . "</p>";
+        $conn->close();
     }
-    $conn->close();
+
 }
 
 ?>
@@ -86,9 +97,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo '<select class="projectOptions" name="projects">';
                     echo '<option selected>No Project selected</option>';
                     while($row = $result->fetch_assoc()) {
-                        echo '<option value="'. $row['projectID'] .'" data-projectID="'.$row['projectID'].'">'
+                        echo '<option value="'. $row['projectID'].'|'.$row['projectName'].'|'.$row['description'].'">'
                             . $row['projectID'] . ': ' . $row['projectName']
-                            . ' (' . $row['description'] . ') Scores: ' . $row['Astar'] . ', ' . $row['A'] . ', ' . $row['B'] . ', ' . $row['C'] . '</option>';
+                            . ' (' . $row['description'] . ') Scores: ' . $row['Astar'] . ', ' . $row['A'] . ', ' . $row['B'] . ', ' . $row['C']
+                            . '</option>';
                     }
                 } else {
                     echo '<option value="">No previous projects created</option>';
@@ -96,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo '</select></td>';
                 $conn->close();
             ?>
-        <p><button type="submit" name="insertProject">Work on this Project</button></p>
+        <p><button type="submit" name="submitProject" value="continueProject">Work on this Project</button></p>
    </form>
 
    <hr>
@@ -110,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><label>A: <input type="number" step="any" required name="A" value="3"></label></p>
         <p><label>B: <input type="number" step="any" required name="B" value="2.75"></label></p>
         <p><label>C: <input type="number" step="any" required name="C" value="2.5"></label></p>
-        <p><button type="submit" name="insertProject">Start new project</button></p>
+        <p><button type="submit" name="submitProject" value="insertProject">Start new project</button></p>
     </form>
     <hr>
 </body>

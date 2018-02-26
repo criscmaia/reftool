@@ -132,15 +132,12 @@ function getAssignedRef($projectDetails, $publicationID, $authorID) {
                     AND publication.publicationID = $publicationID
                     AND publication.author = $authorID
                     AND publication.projectID = $projectDetails[0];";
-    //    echo $assignedRef . "<br>";
     $resultAssignedRef = $conn->query($assignedRef);
     if ($resultAssignedRef->num_rows > 0) {
         while($rowAssignedRef = $resultAssignedRef->fetch_assoc()) {
             $assignedRef = $rowAssignedRef['refUnitID'];
-            //            echo "\$assignedRef: $assignedRef <br>";
         }
     } else {
-        //        echo "No REF Units registered";
         $assignedRef = 0;
     }
     $conn->close();
@@ -148,7 +145,6 @@ function getAssignedRef($projectDetails, $publicationID, $authorID) {
 }
 
 function printRefOptions($assignedRef, $publicationID) {
-    //    echo "\$assignedRef: $assignedRef <br>";
     include 'dbconnect.php';
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
@@ -187,10 +183,13 @@ function printRefOptions($assignedRef, $publicationID) {
 
         $(".refOptions").on('focus', function() {
             $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
+            alert("$previousrefid" + $previousrefid);
         }).change(function() {
             $('#notification').text("Changing REF...");
             $refunitid = $(this).find(':selected').data('refunitid');
             $publicationid = $(this).find(':selected').data('publicationid');
+            alert("$publicationid" + $publicationid);
+
             $(".refOptions").blur();
             $.ajax({
                 url: '/reftool/updateRef.php',

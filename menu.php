@@ -1,3 +1,4 @@
+<div class="menu">
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -13,7 +14,7 @@ if(!isset($_SESSION["projectDetails"]) && empty($_SESSION["projectDetails"])) {
     die();
 } else {
     $projectDetails = $_SESSION["projectDetails"];
-    echo "<strong>Project: <abbr title=\"$projectDetails[2]\">$projectDetails[1]</abbr> <a href='/reftool/' title='Change Project'>[x]</a></strong> | ";
+    echo "<strong>Project: <abbr title=\"$projectDetails[2]\">($projectDetails[0]) $projectDetails[1]</abbr> <a href='/reftool/' title='Change Project'>[x]</a></strong> | ";
 //    print_r($projectDetails);
 }
 ?>
@@ -23,4 +24,5 @@ if(!isset($_SESSION["projectDetails"]) && empty($_SESSION["projectDetails"])) {
 <a href="/reftool/fullList.php">Show full list</a> |
 <a href="/reftool/publicationsPerAuthor.php">Publications per author</a> |
 <a href="/reftool/refUnits.php">All ref units and the papers assigned to it.</a> |
+</div>
 <hr>
