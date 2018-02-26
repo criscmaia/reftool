@@ -70,15 +70,16 @@ include 'dbconnect.php';
 
 $sql = "SELECT COUNT(mdxAuthorID) as total, firstName, lastName, email, mdxAuthorID, currentEmployee
         FROM reftool.publication, reftool.mdxAuthor
-        where publication.author = mdxAuthor.mdxAuthorID
+        WHERE publication.author = mdxAuthor.mdxAuthorID
+        AND publication.projectID = $projectDetails[0]
         GROUP BY mdxAuthorID
-        ORDER BY total DESC;";
+        ORDER BY total;";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         echo '<tr>';
-        echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid='.$row[mdxAuthorID].'>' . $row["total"] . '</a></td>';
+        echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid="$row[mdxAuthorID]">' . $row["total"] . '</a></td>';
         echo '<td>' . $row["firstName"] . '</td>';
         echo '<td>' . $row["lastName"] . '</td>';
         echo '<td>' . $row["email"] . '</td>';
