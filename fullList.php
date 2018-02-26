@@ -85,26 +85,24 @@ $refUnitDropdown = "";
     if ($result->num_rows > 0) {                                                                                // if any results from query
 
         $currentEprintID;                                                                                       // initialise var
-        $authorCounter = 0;
-        $publicationDescDone = false;                                                                           // haven't printed publication details yet
         $publicationID = '';
         while($row = $result->fetch_assoc()) {
 
             if (empty($currentEprintID)) {                                                                      // if first eprint id
                 $currentEprintID = $row["ePrintID"];                                                            // needs to set up as current
             }
+            echo "currentEprintID: $currentEprintID <br>";
 
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
+            echo "nextEprintID: $nextEprintID <br>";
 
-            echo "currentEprintID: $currentEprintID - nextEprintID: $nextEprintID <br>";
-            echo "Empty? ".empty($currentEprintID).". equal? ".($currentEprintID!=$nextEprintID) . "<br>";
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
-                $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
-//                echo "currentEprintID: $currentEprintID - nextEprintID: $nextEprintID <br>";
-//                echo "currentEprintID: $currentEprintID <br>";
+                echo "it's a new publication <br>";
 
-                // close AUTHOR columns AND prints everything from PREVIOUS publication ID
-                $authors .= "</td>";
+                $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
+                echo "currentEprintID: $currentEprintID <br>";
+
+                $authors .= "</td>";                                                                            // close AUTHOR columns AND prints everything from PREVIOUS publication ID
 
                 echo $publicationDetails;
                 echo $date;
@@ -114,8 +112,10 @@ $refUnitDropdown = "";
                 echo $authors;
                 echo $refUnitDropdown;
 
-                // clear all the variables to start collecting the details for the next ePrint
-                $publicationDescDone = false;
+
+//                echo "<script>alert(".$publicationDetails.")</script>";
+                echo "finish printing one publication <br>";
+                echo "<hr>";
 
                 // clear variables
                 $authorLoop = 1;
@@ -126,12 +126,12 @@ $refUnitDropdown = "";
                 $moreDetails = "";
                 $authors = "";
                 $refUnitDropdown = "";
+
+                echo "all variables are now clear <br>";
             } else {
-//                echo "looping same eprint id <br>";
-
-                if ($authorLoop == 1) {              // first time that is getting this publication details
-                    echo "Going through the first author <br>";
-
+                echo "still printing the same publication <br>";
+                if ($authorLoop == 1) {                                                                         // first time that is getting this publication details
+                    echo "first time that is getting this publication details <br>";
                     $firstAuthorId = $row["author"];
                     $publicationID = $row["publicationID"];
 
@@ -140,6 +140,7 @@ $refUnitDropdown = "";
                     $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
                     $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                     $publicationDetails .= '</td>';
+                    echo "<script>console.log(".$publicationDetails.")</script>";
 
                     // column 2
                     $date .= '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
@@ -162,7 +163,7 @@ $refUnitDropdown = "";
                     getAssignedRef($projectDetails, $publicationID, $firstAuthorId);
                     $refUnitDropdown .= '</td>';
                 } else {
-                    echo "going through 2nd author <br>";
+                    echo "getting the other authors details <br>";
                     $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
                 }
                 $authorLoop++;
@@ -223,45 +224,45 @@ function printRefOptions($assignedRef, $publicationID) {
 }
 ?>
 
-                <script>
-                    $(document).ready(function() {
-                        $('#publications').DataTable({
-                            "dom": '<f',
-                            "autoWidth": true,
-                            "ordering": true,
-                            "paging": false,
-                            "searching": true,
-                            "info": true,
-                            responsive: true,
-                            stateSave: true
-                        });
+<script>
+    $(document).ready(function() {
+        $('#publications').DataTable({
+            "dom": '<f',
+            "autoWidth": true,
+            "ordering": true,
+            "paging": false,
+            "searching": true,
+            "info": true,
+            responsive: true,
+            stateSave: true
+        });
 
 
-                        $(".refOptions").on('focus', function() {
-                            $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
-                        }).change(function() {
-                            $('#notification').text("Changing REF...");
-                            $refunitid = $(this).find(':selected').data('refunitid');
-                            $publicationid = $(this).find(':selected').data('publicationid');
+        $(".refOptions").on('focus', function() {
+            $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
+        }).change(function() {
+            $('#notification').text("Changing REF...");
+            $refunitid = $(this).find(':selected').data('refunitid');
+            $publicationid = $(this).find(':selected').data('publicationid');
 
-                            $(".refOptions").blur();
-                            $.ajax({
-                                url: '/reftool/updateRef.php',
-                                type: 'post',
-                                data: {
-                                    previousrefid: $previousrefid,
-                                    refunitid: $refunitid,
-                                    publicationid: $publicationid
-                                },
-                                success: function(response) {
-                                    $('#notification').html(response);
-                                },
-                                error: function(jqXHR, textStatus, errorThrown) {
-                                    $('#notification').html(textStatus, errorThrown);
-                                    console.log(textStatus, errorThrown);
-                                }
-                            });
-                        });
-                    });
+            $(".refOptions").blur();
+            $.ajax({
+                url: '/reftool/updateRef.php',
+                type: 'post',
+                data: {
+                    previousrefid: $previousrefid,
+                    refunitid: $refunitid,
+                    publicationid: $publicationid
+                },
+                success: function(response) {
+                    $('#notification').html(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#notification').html(textStatus, errorThrown);
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
 
-                </script>
+</script>
