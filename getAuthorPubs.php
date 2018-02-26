@@ -16,7 +16,7 @@ $sql = "SELECT title, date FROM publication
 $result = $conn->query($sql);
 
 if (!$result) {
-    trigger_error('Invalid query: ' . $conn->error);
+    trigger_error('Error in: '.$sql.'<br><br>Invalid query: ' . $conn->error);
 } else if ($result->num_rows > 0) {
     echo '<table>
             <tr style="text-align: left">

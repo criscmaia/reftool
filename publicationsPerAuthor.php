@@ -79,7 +79,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         echo '<tr>';
-        echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid="$row[mdxAuthorID]">' . $row["total"] . '</a></td>';
+        echo '<td style="text-align: center;"><a href="#popUp" class="showPubs" data-mdxauthorid="'.$row["mdxAuthorID"].'">' . $row["total"] . '</a></td>';
         echo '<td>' . $row["firstName"] . '</td>';
         echo '<td>' . $row["lastName"] . '</td>';
         echo '<td>' . $row["email"] . '</td>';
