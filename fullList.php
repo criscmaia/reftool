@@ -70,7 +70,7 @@ $refUnitDropdown = "";
             $ePrintIdTotal[$row["ePrintID"]] = $row["total"];
         }
     } else {
-        echo '<h2>0 results</h2>';
+//        echo '<h2>0 results</h2>';
     }
 
 
@@ -92,9 +92,10 @@ $refUnitDropdown = "";
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
                 $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
+                echo "currentEprintID: $currentEprintID <br>";
 
                 // close AUTHOR columns AND prints everything from PREVIOUS publication ID
-                $authors += "</td>";
+                $authors .= "</td>";
 
                 echo $publicationDetails;
                 echo $date;
@@ -117,74 +118,45 @@ $refUnitDropdown = "";
                 $authors = "";
                 $refUnitDropdown = "";
             } else {
+                echo "looping same eprint id <br>";
 
-                if ($authorLoop < 1) {              // first time that is getting this publication details
+                if ($authorLoop == 1) {              // first time that is getting this publication details
+                    echo "Going through the first author <br>";
+
                     $firstAuthorId = $row["author"];
 
                     // column 1
-                    $publicationDetails += '<td style="">';
-                    $publicationDetails += '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-                    $publicationDetails += '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
-                    $publicationDetails += '</td>';
+                    $publicationDetails .= '<td style="">';
+                    $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
+                    $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
+                    $publicationDetails .= '</td>';
 
                     // column 2
-                    $date += '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
+                    $date .= '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
 
                     // column 3
-                    $era += '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
+                    $era .= '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
 
                     // column 4
-                    $isPub += '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
+                    $isPub .= '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
 
                     // column 5
-                    $moreDetails += '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
+                    $moreDetails .= '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
 
                     // column 6
-                    $authors += '<td id="authors">';
-                    $authors += (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 1st author details
+                    $authors .= '<td id="authors">';
+                    $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 1st author details
 
                     // create REF dropdown
-                    $refUnitDropdown += '<td>';
+                    $refUnitDropdown .= '<td>';
                     getAssignedRef($projectDetails, $publicationID, $firstAuthorId);
-                    $refUnitDropdown += '</td>';
+                    $refUnitDropdown .= '</td>';
                 } else {
-                    $authors += (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
+                    $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
                 }
                 $authorLoop++;
             }
         }
-
-//            $totalAuthors = $ePrintIdTotal[$currentEprintID];                                                   // how many authors to print
-////            echo "how many authors to print: $totalAuthors <br>";
-//            if (!$publicationDescDone) {                                                                        // if publication details for this id has been printed already
-//                $author1id = $row["author"];                                                                    // get author 1 id to link to the REF in the last column
-//                $publicationID = $row["publicationID"];                                                         // same as author above
-//                echo '<tr>';
-//                    echo '<td style="">';
-//                        echo '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-//                        echo '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
-//                    echo '</td>';
-//                    echo '<td style="width:80px;">'.(!empty($row["date"]) ? $row["date"] : '').'</td>';
-//                    echo '<td>'.(!empty($row["eraRating"]) ? $row["eraRating"] : '').'</td>';
-//                    echo '<td>'.(!empty($row["isPublished"]) ? $row["isPublished"] : '').'<br>'.(!empty($row["presType"]) ? $row["presType"] : '').'</td>';
-//                    echo '<td>'.(!empty($row["publication"]) ? $row["publication"] : '').'<br>'.(!empty($row["publisher"]) ? $row["publisher"] : '').'</td>';
-//                    echo '<td id="authors">';
-//                $publicationDescDone = true;
-//            }
-//
-//            echo "authorCounter: $authorCounter, how many authors to print: $totalAuthors <br>";
-//            if ($authorCounter < $totalAuthors) {                                                               // check if has printed all authors
-//                echo (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // continue printing the authors
-//            } else {
-//                echo '</td>';                                                                                   // close the authors column
-//                echo '<td>';                                                                                    // start REF column
-//                echo getAssignedRef($projectDetails, $publicationID, $author1id);                               // get author 1 ref link
-//                echo '</td>';
-//                echo '</tr>';
-//                $authorCounter=0;                                                                               // start counting author again for next paper
-//            }
-//            $authorCounter++;
-//        }
     } else {
         echo '<h2>0 results</h2>';
     }
@@ -216,25 +188,26 @@ function getAssignedRef($projectDetails, $publicationID, $authorID) {
     echo printRefOptions($assignedRef, $publicationID);
 }
 
-function printRefOptions($assignedRef, $publicationID, $refUnitDropdown) {
+function printRefOptions($assignedRef, $publicationID) {
     include 'dbconnect.php';
+    global $refUnitDropdown;
     $sql = "SELECT * FROM refUnit;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        $refUnitDropdown += '<select class="refOptions" name="refUnits">';
-        $refUnitDropdown += '<option data-publicationid="'.$publicationID.'">No REF assigned</option>';
+        $refUnitDropdown .= '<select class="refOptions" name="refUnits">';
+        $refUnitDropdown .= '<option data-publicationid="'.$publicationID.'">No REF assigned</option>';
         while($row = $result->fetch_assoc()) {
             if ($row['refUnitID'] == $assignedRef) {
-                $refUnitDropdown += '<option selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
+                $refUnitDropdown .= '<option selected value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             } else {
-                $refUnitDropdown += '<option value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
+                $refUnitDropdown .= '<option value="'. $row['refUnitID'] .'" data-refunitid="'.$row['refUnitID'].'" data-publicationid="'.$publicationID.'">' . $row['assignedID'] . ' - ' . $row['name'] . '</option>';
             }
         }
     } else {
-        $refUnitDropdown += '<option value="">No RefUnits found</option>';
+        $refUnitDropdown .= '<option value="">No RefUnits found</option>';
     }
-    $refUnitDropdown += '</select>';
+    $refUnitDropdown .= '</select>';
     $conn->close();
 }
 ?>
