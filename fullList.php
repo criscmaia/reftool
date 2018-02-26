@@ -51,6 +51,7 @@ error_reporting(E_ALL);
 
 include 'dbconnect.php';
 
+$authorLoop = 1;
 $publicationDetails = "";
 $date = "";
 $era = "";
@@ -88,9 +89,18 @@ $refUnitDropdown = "";
         $publicationDescDone = false;                                                                           // haven't printed publication details yet
         $publicationID = '';
         while($row = $result->fetch_assoc()) {
+
+            if (empty($currentEprintID)) {                                                                      // if first eprint id
+                $currentEprintID = $row["ePrintID"];                                                            // needs to set up as current
+            }
+
             $nextEprintID = $row["ePrintID"];                                                                   // current row eprint id
+
+            echo "currentEprintID: $currentEprintID - nextEprintID: $nextEprintID <br>";
+            echo "Empty? ".empty($currentEprintID).". equal? ".($currentEprintID!=$nextEprintID) . "<br>";
             if (empty($currentEprintID) || $currentEprintID!=$nextEprintID) {                                   // is it a new publication id?
                 $currentEprintID=$row["ePrintID"];                                                              // it is! what is the new id?
+//                echo "currentEprintID: $currentEprintID - nextEprintID: $nextEprintID <br>";
 //                echo "currentEprintID: $currentEprintID <br>";
 
                 // close AUTHOR columns AND prints everything from PREVIOUS publication ID
@@ -120,7 +130,7 @@ $refUnitDropdown = "";
 //                echo "looping same eprint id <br>";
 
                 if ($authorLoop == 1) {              // first time that is getting this publication details
-//                    echo "Going through the first author <br>";
+                    echo "Going through the first author <br>";
 
                     $firstAuthorId = $row["author"];
                     $publicationID = $row["publicationID"];
