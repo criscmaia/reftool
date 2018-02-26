@@ -17,7 +17,7 @@ include 'menu.php';
     </thead>
     <tbody>
 
-        <?php
+<?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -29,10 +29,13 @@ include 'dbconnect.php';
             FROM refUnit_publication, refUnit, publication, mdxAuthor
             WHERE refUnit_publication.refUnitID = refUnit.refUnitID
             AND refUnit_publication.publicationID = publication.publicationID
-            AND publication.author = mdxAuthor.mdxAuthorID;";
+            AND publication.author = mdxAuthor.mdxAuthorID
+            AND publication.projectID = $projectDetails[0];";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
+    if (!$result) {
+        trigger_error('Invalid query: ' . $conn->error);
+    } else if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
                 echo '<td>'.(!empty($row["assignedID"]) ? $row["assignedID"] : '').'</td>';
