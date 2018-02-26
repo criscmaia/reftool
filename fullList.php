@@ -48,8 +48,8 @@ error_reporting(E_ALL);
 include 'dbconnect.php';
 
     $ePrintIdTotal = "";
-    $sql = "SELECT ePrintID, COUNT(ePrintID) as total FROM reftool.publication
-            GROUP BY ePrintID
+    $sql = "SELECT projectID, ePrintID, COUNT(ePrintID) as total FROM reftool.publication
+            GROUP BY ePrintID, projectID
             ORDER BY ePrintID;";
     $result = $conn->query($sql);
 
