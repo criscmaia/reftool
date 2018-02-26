@@ -183,12 +183,10 @@ function printRefOptions($assignedRef, $publicationID) {
 
         $(".refOptions").on('focus', function() {
             $previousrefid = $(this).find(':selected').data('refunitid'); // previous selected REF
-            alert("$previousrefid" + $previousrefid);
         }).change(function() {
             $('#notification').text("Changing REF...");
             $refunitid = $(this).find(':selected').data('refunitid');
             $publicationid = $(this).find(':selected').data('publicationid');
-            alert("$publicationid" + $publicationid);
 
             $(".refOptions").blur();
             $.ajax({
