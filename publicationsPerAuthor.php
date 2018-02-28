@@ -49,11 +49,23 @@ include 'menu.php';
         overflow: auto;
     }
 
+    /* Have the SEARCH button to the left, and the PRINT button on the right side */
+    div.dt-buttons {
+        float: right;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        float: left;
+    }
+
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- datatable plugin -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" />
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+
 <table id="publications">
     <thead>
         <tr style="text-align: left">
@@ -104,6 +116,20 @@ $conn->close();
 </div>
 <script>
     $(document).ready(function() {
+        $('#publications').DataTable({
+            "dom": '<Bf>',
+            "autoWidth": true,
+            "ordering": true,
+            "paging": false,
+            "searching": true,
+            "info": true,
+            responsive: true,
+            stateSave: true,
+            buttons: [
+                'print'
+            ]
+        });
+
         $(".showPubs").on('click', function() {
             $authorid = $(this).data("mdxauthorid");
             $.ajax({
@@ -121,18 +147,6 @@ $conn->close();
                 }
             });
         });
-
-        $('#publications').DataTable({
-            "dom": '<f',
-            "autoWidth": true,
-            "ordering": true,
-            "paging": false,
-            "searching": true,
-            "info": true,
-            responsive: true,
-            stateSave: true
-        });
-
     });
 
 </script>
