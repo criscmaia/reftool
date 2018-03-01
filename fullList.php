@@ -87,7 +87,6 @@ $refUnitDropdown = "";
                 $publicationDetails  = '<tr>';
                 $publicationDetails .= '<td style="">';
                 $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-//                $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                 $publicationDetails .= '</td>';
 
                 // column 2
@@ -190,8 +189,7 @@ function printRefOptions($assignedRef, $publicationID) {
 <script>
     $(document).ready(function() {
         $('#publications').DataTable({
-//            "dom": '<f',
-            "dom": '<Bf>',
+            "dom": 'Bfti',
             "autoWidth": true,
             "ordering": true,
             "paging": false,
