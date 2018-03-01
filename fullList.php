@@ -10,27 +10,6 @@ include 'menu.php';
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
 
     <style>
-        /* START - show only the begin of the abstract until you hover it */
-
-        .ellipse {
-            width: 400px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin: 0;
-            padding: 0;
-            font-size: 90%;
-        }
-
-        .ellipse:hover {
-            /*        padding: 2px;*/
-            white-space: normal;
-            word-break: break-word;
-            z-index: 5;
-        }
-
-        /* END - show only the begin of the abstract until you hover it */
-
         /* Have the SEARCH button to the left, and the PRINT button on the right side */
         div.dt-buttons {
             float: right;
@@ -108,7 +87,7 @@ $refUnitDropdown = "";
                 $publicationDetails  = '<tr>';
                 $publicationDetails .= '<td style="">';
                 $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
-                $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
+//                $publicationDetails .= '<p class="ellipse"><strong>Abstract: </strong>'.$row["abstract"].'</p>';
                 $publicationDetails .= '</td>';
 
                 // column 2
