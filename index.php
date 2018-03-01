@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     echo '<option value="">No previous projects created</option>';
                 }
-                echo '</select></td>';
+                echo '</select>';
                 $conn->close();
             ?>
         <p><button type="submit" name="submitProject" value="continueProject">Work on this Project</button></p>
