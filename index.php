@@ -26,7 +26,9 @@ if(isset($_SESSION["projectDetails"]) && !empty($_SESSION["projectDetails"])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($_POST['submitProject'] == 'continueProject') {
+    if ($_POST['submitProject'] == 'deleteProject') {
+        // delete selected project
+    } else if ($_POST['submitProject'] == 'continueProject') {
         $selectedProject = $_POST['projects'];
         $projectDetails = explode("|", $selectedProject);
         $_SESSION['projectDetails'] = $projectDetails;
@@ -108,6 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo '</select>';
                 $conn->close();
             ?>
+        <button type="submit" name="submitProject" value="deleteProject" onclick="return confirm('\nDeleting the project will remove EVERYTHING related to it: \n - publications imported;\n - authors imported; \n - ERA/start ratings for these publications; \n - and so on... \n\n There is NO undo after the process is done! \n\n Are you sure you want to proceed?');">delete</button>
         <p><button type="submit" name="submitProject" value="continueProject">Work on this Project</button></p>
    </form>
 
