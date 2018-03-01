@@ -27,7 +27,66 @@ if(isset($_SESSION["projectDetails"]) && !empty($_SESSION["projectDetails"])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_POST['submitProject'] == 'deleteProject') {
-        // delete selected project
+        $selectedProject = $_POST['projects'];
+        $projectDetails = explode("|", $selectedProject);
+        $projectID = $projectDetails[0];
+
+        $sqlDeleteRefUnit_publication = "DELETE refUnit_publication
+                                        FROM refUnit_publication
+                                        INNER JOIN publication ON publication.publicationID = refUnit_publication.publicationID
+                                        WHERE publication.publicationID = refUnit_publication.publicationID
+                                        AND projectID = '$projectID';";
+
+        $sqlDeletePublication = "DELETE FROM publication WHERE projectID = '$projectID';";
+
+        $sqlDeleteMdxAuthor = "DELETE FROM mdxAuthor WHERE projectID = '$projectID';";
+
+        $sqlDeleteProject = "DELETE FROM project WHERE projectID = '$projectID';";
+
+        include 'dbconnect.php';
+        $error = false;
+
+        if ($conn->query($sqlDeleteRefUnit_publication) === TRUE) {         // delete refUnit_publication
+            echo "refUnit_publication deleted successfully. <br>";
+
+            if ($conn->query($sqlDeletePublication) === TRUE) {             // delete publication
+                echo "publication deleted successfully. <br>";
+
+                if ($conn->query($sqlDeleteMdxAuthor) === TRUE) {           // delete mdxAuthor
+                    echo "mdxAuthor deleted successfully. <br>";
+
+                    if ($conn->query($sqlDeleteProject) === TRUE) {         // delete project
+                        echo "project deleted successfully. <br>";
+                    } else {
+                        echo "Error deleting 'project' record: " . $conn->error;
+                        $error = true;
+                    }
+                } else {
+                    echo "Error deleting 'mdxAuthor' record: " . $conn->error;
+                    $error = true;
+                }
+            } else {
+                echo "Error deleting 'publication' record: " . $conn->error;
+                $error = true;
+            }
+        } else {
+            echo "Error deleting 'refUnit_publication' record: " . $conn->error;
+            $error = true;
+        }
+
+        $conn->close();
+
+        if ($error) {
+            echo "<script>
+                alert(\"ERROR deleting Project '$projectDetails[1]'\");
+              </script>";
+        } else {
+            echo "<script>
+                alert(\"Project '$projectDetails[1]' deleted successfully!\");
+                location.href = '/reftool/';
+              </script>";
+        }
+
     } else if ($_POST['submitProject'] == 'continueProject') {
         $selectedProject = $_POST['projects'];
         $projectDetails = explode("|", $selectedProject);
