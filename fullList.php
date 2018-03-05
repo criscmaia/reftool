@@ -5,9 +5,12 @@ include 'menu.php';
     <!-- datatable plugin -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" />
+
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
+
 
     <style>
         /* Have the SEARCH button to the left, and the PRINT button on the right side */
@@ -200,25 +203,33 @@ function printRefOptions($assignedRef, $publicationID) {
             responsive: true,
             stateSave: true,
             buttons: [
-                {
-                    extend: 'print',
-                    exportOptions: {
-                        format: {
-                            body: function ( data, row, column, node ) {            // print only the SELECTED value from the REF dropdown
-                                if (column == 6) {                                  // column where the dropdown is (starting from 0)
-                                    return $('#publications').DataTable()
-                                    .cell( {row: row, column: column} )
-                                    .nodes()
-                                    .to$()
-                                    .find(':selected')
-                                    .text()
-                                } else {
-                                    return data;
+                [
+                    {
+                        extend: 'colvis',
+                        text: 'show/hide columns'
+                    }
+                ],
+                [
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {            // print only the SELECTED value from the REF dropdown
+                                    if (column == 6) {                                  // column where the dropdown is (starting from 0)
+                                        return $('#publications').DataTable()
+                                        .cell( {row: row, column: column} )
+                                        .nodes()
+                                        .to$()
+                                        .find(':selected')
+                                        .text()
+                                    } else {
+                                        return data;
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                ]
             ]
         });
 
