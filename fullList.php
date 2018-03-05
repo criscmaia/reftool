@@ -188,6 +188,8 @@ function printRefOptions($assignedRef, $publicationID) {
 
 <script>
     $(document).ready(function() {
+        var $tableData = $('#publications');
+
         $('#publications').DataTable({
             "dom": 'Bfti',
             "autoWidth": true,
@@ -198,7 +200,25 @@ function printRefOptions($assignedRef, $publicationID) {
             responsive: true,
             stateSave: true,
             buttons: [
-                'print'
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        format: {
+                            body: function ( data, row, column, node ) {            // print only the SELECTED value from the REF dropdown
+                                if (column == 6) {                                  // column where the dropdown is (starting from 0)
+                                    return $('#publications').DataTable()
+                                    .cell( {row: row, column: column} )
+                                    .nodes()
+                                    .to$()
+                                    .find(':selected')
+                                    .text()
+                                } else {
+                                    return data;
+                                }
+                            }
+                        }
+                    }
+                }
             ]
         });
 
