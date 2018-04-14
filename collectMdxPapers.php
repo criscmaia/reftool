@@ -55,7 +55,7 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
 
                     $split_date = explode('-',$date);
                     $year = $split_date[0];
-                    if (!empty($paper->creators) && isset($paper->creators) && property_exists($paper, creators)) {
+//                    if (!empty($paper->creators) && isset($paper->creators) && property_exists($paper, creators)) {
                         if ($title!="NULL" && $year>=2014){
                             $date = '"'.$date.'"';           // add quotes for DB INSERT
 
@@ -137,7 +137,8 @@ if(!isset($_SESSION["importedNames"]) && empty($_SESSION["importedNames"])) {
                                 }
                             }
                         }
-                    } else {
+//                    }
+                    else {
         //                echo "Either Title is null or no publications after 2014. Date: $date . Title: $title <br>";
                     }
                 } else {
