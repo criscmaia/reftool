@@ -93,7 +93,7 @@ $refUnitDropdown = "";
                 // column 1
                 $publicationDetails  = '<tr>';
                 $publicationDetails .= '<td style="">';
-                $publicationDetails .= '<a href="#">'.$currentEprintID.'</a> - '.$row["title"];
+                $publicationDetails .= '<a href="http://eprints.mdx.ac.uk/'.$currentEprintID.'/" target="_blank">'.$currentEprintID.'</a> - '.$row["title"];
                 $publicationDetails .= '</td>';
 
                 // column 2
