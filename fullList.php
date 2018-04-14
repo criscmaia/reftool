@@ -54,9 +54,12 @@ $refUnitDropdown = "";
 
     // get total amount of authors per publication
     $ePrintIdTotal = "";
-    $sql = "SELECT projectID, ePrintID, COUNT(ePrintID) as total FROM reftool.publication
+    $sql = "SELECT projectID, ePrintID, COUNT(ePrintID) as total
+            FROM reftool.publication
+            WHERE publication.projectID = $projectDetails[0]
             GROUP BY ePrintID, projectID
             ORDER BY ePrintID;";
+
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
@@ -70,6 +73,7 @@ $refUnitDropdown = "";
             where publication.author = mdxAuthor.mdxAuthorID
             and publication.projectID = $projectDetails[0]
             ORDER BY ePrintID;";
+
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {                                                                                // if any results from query
@@ -119,8 +123,8 @@ $refUnitDropdown = "";
                 $authors .= (!empty($row["firstName"]) ? $row["firstName"] : '').' '.(!empty($row["lastName"]) ? $row["lastName"] : '').' ('.(!empty($row["email"]) ? $row["email"] : '').'); <br>';    // saves 2nd-onwards author details
                 $currentAuthor++;
 
-                if ($currentAuthor == $amountOfAuthors) {                                                       // that was the last author. print everything
-                    $authors .= "</td>";
+                if ($currentAuthor >= $amountOfAuthors) {                                                       // that was the last author. print everything
+                    $authors .= "</td>";                                                                        // not sure why it has to be > amountOfAuthors
 
                     echo $publicationDetails;
                     echo $date;
