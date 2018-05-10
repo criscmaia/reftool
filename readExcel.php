@@ -1,45 +1,7 @@
 <?php
 require_once __DIR__ . '/simplexlsx.class.php';
-include 'menu.php';
-
-class author {
-    public $totalOfPublicationsFirstAuthor;
-    public $totalOfPublicationsCoAuthor;
-    public $ignore;
-
-    public function __construct($firstName, $lastName, $email, $employeeStatus) {
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->email = $email;
-        $this->employeeStatus = $employeeStatus;
-    }
-
-    public function getFirstName () {
-        return $this->firstName;
-    }
-
-    public function getLastName () {
-        return $this->lastName;
-    }
-
-    public function getFullname () {
-        return $this->firstName . " " . $this->lastName;
-    }
-
-    public function getEmail () {
-        return $this->email;
-    }
-
-    public function getEmployeeStatus () {
-        return $this->employeeStatus;
-    }
-
-    public function printAll () {
-        return "First name: " . $this->firstName . ". Last name: " . $this->lastName . ". Email: " . $this->email . ". Employee status: " . $this->employeeStatus;
-    }
-}
-
-
+include_once 'menu.php';
+include_once 'ClassAuthor.php';
 
 $filePath = $_SESSION['filePath'];
 
@@ -51,17 +13,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         $allAuthors[]= new author($author[0], $author[1], $author[2], $author[3]);
     }
 
-    foreach($allAuthors as $author) {
-        echo $author->printAll() . "<br>";
-    }
-
     $_SESSION['importedNames'] = $allAuthors;                                     // save array with all Authors object instance to SESSION so 'collectMdxPapers can access it
-
-//    $totalNames = count($filteredFile);
-//    $_SESSION['importedNames'] = $filteredFile;                                 // save array names to SESSION so 'collectMdxPapers can access it
-//    echo '<br><strong>' . $totalNames . ' names found</strong>. <br><a href="/reftool/collectMdxPapers.php">Click here to continue ➔</a><br><br><br>';
-//    echo '<hr>Full imported content:<br><br>';
-//    print_r($filteredFile);
 } else {
     echo SimpleXLSX::parse_error();
 }
@@ -81,7 +33,19 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         </tr>
     </thead>
     <tbody>
-    <?php
+<?php
+    $authorsId = 1;
+    foreach($allAuthors as $author) {
+        echo '<tr>';
+            echo '<td>' . $authorsId++ . '</td>';
+            echo '<td>' . $author->getFirstName() . '</td>';
+            echo '<td>' . $author->getLastName() . '</td>';
+            echo '<td>' . '-' . '</td>';
+            echo '<td>' . $author->getEmployeeStatus() . '</td>';
+            echo '<td>' . $author->totalOfPublicationsFirstAuthor . '</td>';
+            echo '<td>' . $author->totalOfPublicationsCoAuthor . '</td>';
+        echo '</tr>';
+    }
 ?>
 <tbody>
 </table>
