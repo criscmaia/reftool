@@ -3,7 +3,7 @@ include 'menu.php';
 ?>
 
 <br>
-Download xlsx template <a href="/reftool/staff.xlsx">from here</a>.<br>
+Download xlsx template <a href="/reftool/v2/staff.xlsx">from here</a>.<br>
 Remember that the value in the "Current Employee" column will <strong>always</strong> overwrite the value in the DB.<br>
 <br><br><br>
 
@@ -17,7 +17,7 @@ Remember that the value in the "Current Employee" column will <strong>always</st
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $staffListFile = $_FILES['staffList']['tmp_name'];
         $fileError = $_FILES['staffList']['error'];
-        $upload_dir = '/var/www/html/reftool/tmp/';
+        $upload_dir = '/var/www/html/reftool/v2/tmp/';
 
         if ($fileError) {
             switch ($fileError) {
@@ -72,7 +72,7 @@ Remember that the value in the "Current Employee" column will <strong>always</st
                     echo 'Could not save file.<br>';
                 } else {
                     echo 'upload worked: $fileSavePath';
-                    header ('Location: /reftool/readExcel.php');
+                    header ('Location: /reftool/v2/readExcel.php');
                 }
             } else {
                 echo 'You are trying to edit a different file from the uploaded one.';

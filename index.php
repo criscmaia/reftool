@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "<script>
                 alert(\"Project '$projectDetails[1]' deleted successfully!\");
-                location.href = '/reftool/';
+                location.href = '/reftool/v2/';
               </script>";
         }
 
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['projectDetails'] = $projectDetails;
         echo "<script>
                 alert(\"Project '$projectDetails[1]' selected successfully. \\n\\nPress OK to proceed. \");
-                location.href = '/reftool/excelUpload.php';
+                location.href = '/reftool/v2/excelUpload.php';
               </script>";
     } else if ($_POST['submitProject'] == 'insertProject') {
         include 'dbconnect.php';    // connect to DB
@@ -123,7 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['projectDetails'] = $projectDetails;
                 echo "<script>
                         alert(\"Project '$projectName' created successfully. \\n\\nPress OK to proceed. \");
-                        location.href = '/reftool/excelUpload.php';
+                        location.href = '/reftool/v2/excelUpload.php';
                       </script>";
             } else {                                        // if there is already a project with same name AND description
                 echo "<script>

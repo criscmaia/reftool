@@ -1,4 +1,4 @@
-<?php
+s<?php
 require_once __DIR__ . '/simplexlsx.class.php';
 include 'menu.php';
 
