@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/simplexlsx.class.php';
 include_once 'menu.php';
-include_once 'ClassAuthor.php';
+require_once 'ClassAuthor.php';
+require_once 'dbconnect.php';
 
 // get Excel data
 $filePath = $_SESSION['filePath'];
@@ -17,7 +18,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 } else {
     echo SimpleXLSX::parse_error();
 }
-
 
 ?>
 <table id="importedList">
@@ -36,6 +36,22 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 <?php
     $authorsId = 1;
     foreach($allAuthors as $author) {
+        // get total of publications per author
+
+        //
+        //  LINK IS BROKEN ON THE SOURCE
+        //  DOESN'T EXPORT JSON ANYMORE
+        //
+
+        $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
+        // echo $link;
+        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
+        $json_str = $result;
+        $json = json_decode($json_str);
+        $jsonData = json_encode($json, JSON_PRETTY_PRINT);
+        echo "<pre>" . $jsonData . "</pre><hr>";
+
+
         echo '<tr>';
             echo '<td>' . $authorsId++ . '</td>';
             echo '<td>' . $author->getFirstName() . '</td>';

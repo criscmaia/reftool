@@ -19,7 +19,7 @@ class author {
         return $this->lastName;
     }
 
-    public function getFullname () {
+    public function getFullName () {
         return $this->firstName . " " . $this->lastName;
     }
 
