@@ -11,7 +11,13 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
     $removedTitle = array_shift($filteredFile);                                     // array with removed headings from the spreadsheet. can be ignored.
 
     foreach($filteredFile as $author) {
-        $allAuthors[]= new author($author[0], $author[1], $author[2], $author[3]);  // create object instances and add to the array
+        // create object instances and add to the array
+        $allAuthors[]= new author(
+            isset($author[0])?$author[0]:null,                              // First Name
+            isset($author[1])?$author[1]:null,                              // Last Name
+            isset($author[2])?strtolower($author[2]):null,                  // Email
+            isset($author[3])?((strtolower($author[3])=="y")?1:0):null      // Current employee? - converts Y/y to 1, or anything else to 0
+        );
     }
 
     $_SESSION['importedNames'] = $allAuthors;                                       // save array with all Authors object instance to SESSION so 'collectMdxPapers can access it
@@ -36,6 +42,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             <?php
     $authorsId = 1;
     foreach($allAuthors as $author) {
+//        echo $author->printAll() . "<br><br>";
+
         // get total of publications per author
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
 //        echo "link: <pre>" . $link . "</pre><hr>";
@@ -47,7 +55,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         // tests working: Peter Moore, Almaas Ali, Cristiano Maia, Balbir Barn, Peter Moore + Almaas Ali + Cristiano Maia
         $search = "/" . "\"\s+\}\,\s+\}" . "/";  // ending quote for family, break line, bracket and comma, break line, another bracket
         $resultCleaned = preg_replace($search, "\"\n}\n}", $result);
-        echo "resultCleaned: <pre>" . $resultCleaned . "</pre><hr>";
+//        echo "resultCleaned: <pre>" . $resultCleaned . "</pre><hr>";
 
 
         $json_str = $resultCleaned;

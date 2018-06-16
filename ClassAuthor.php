@@ -5,10 +5,27 @@ class author {
     public $ignore;
 
     public function __construct($firstName, $lastName, $email, $employeeStatus) {
+        // if already in DB:
+        //      if any new papers
+        //          get details to obj
+        // if empty(email || employeeStatus)
+        //      update it
+
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->email = $email;
+
         $this->employeeStatus = $employeeStatus;
+        $this->email = $email;
+
+        if (!isset($employeeStatus)) {                           // not defined on the spreadsheet
+            if (isset($email)) {                                // if email is set
+                $domain = explode('@', $email);                 // get the domain
+                $domain = array_pop($domain);
+                if ($domain=="mdx.ac.uk") {                     // if MDX
+                    $this->employeeStatus = "1";                      // set as employee - IT MAY BE EX EMPLOYEE !
+                }
+            }
+        }
     }
 
     public function getFirstName () {
