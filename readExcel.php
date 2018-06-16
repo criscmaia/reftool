@@ -20,30 +20,41 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 }
 
 ?>
-<table id="importedList">
-    <thead>
-        <tr style="text-align: left">
-            <th>id</th>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>✔</th>
-            <th>Employee Status</th>
-            <th>Total of Publications - First Author</th>
-            <th>Total of Publications - Co-Author</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
+    <table id="importedList">
+        <thead>
+            <tr style="text-align: left">
+                <th>id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>✔</th>
+                <th>Employee Status</th>
+                <th>Total of Publications - First Author</th>
+                <th>Total of Publications - Co-Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
     $authorsId = 1;
     foreach($allAuthors as $author) {
         // get total of publications per author
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-        // echo $link;
+//        echo "link: <pre>" . $link . "</pre><hr>";
+
         $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
-        $json_str = $result;
+//        echo "result: <pre>" . $result . "</pre><hr>";
+
+        // removing extra comma after the last creator array value
+        // tests working: Peter Moore, Almaas Ali, Cristiano Maia, Balbir Barn, Peter Moore + Almaas Ali + Cristiano Maia
+        $search = "/" . "\"\s+\}\,\s+\}" . "/";  // ending quote for family, break line, bracket and comma, break line, another bracket
+        $resultCleaned = preg_replace($search, "\"\n}\n}", $result);
+        echo "resultCleaned: <pre>" . $resultCleaned . "</pre><hr>";
+
+
+        $json_str = $resultCleaned;
         $json = json_decode($json_str);
+//        echo "json: <pre>" . $json . "</pre><hr>";
         $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-        echo "<pre>" . $jsonData . "</pre><hr>";
+//        echo "jsonData: <pre>" . $jsonData . "</pre><hr>";
 
 
         echo '<tr>';
@@ -57,5 +68,5 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         echo '</tr>';
     }
 ?>
-<tbody>
-</table>
+                <tbody>
+    </table>

@@ -1,3 +1,34 @@
+<style>
+/*
+    TEMPORARY
+    STYLE FOR
+    THE TABLE
+*/
+
+#importedList {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#importedList td, #importedList th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#importedList tr:nth-child(even){background-color: #f2f2f2;}
+
+#importedList tr:hover {background-color: #ddd;}
+
+#importedList th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style>
+
 <div class="menu">
 <?php
 ini_set('display_errors', 1);
