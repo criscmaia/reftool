@@ -62,7 +62,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
         foreach($eprintsData[0] as $key => $value) {
 //            echo $key . "<br>";
-            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0) {
+            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
                 unset($eprintsData[0][$key]);
             }
         }
@@ -78,7 +78,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         highlight_string("<?php\n\$data =\n" . var_export($eprintsData, true) . ";\n?>");
         */
 
-//        echo "result: <pre>" . json_encode($eprintsData) . "</pre><hr>";
+        echo "result: <pre>" . json_encode($eprintsData) . "</pre><hr>";
 
 
         for ($i = 0; $i <= 1; $i++) {
