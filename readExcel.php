@@ -60,10 +60,12 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
         $eprintsData = json_decode($eprintsData_str, true);
 
-        foreach($eprintsData[0] as $key => $value) {
-//            echo $key . "<br>";
-            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
-                unset($eprintsData[0][$key]);
+        for ($i = 0; $i < count($eprintsData); $i++) {
+            foreach($eprintsData[$i] as $key => $value) {
+//                echo $key . "<br>";
+                if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
+                    unset($eprintsData[$i][$key]);
+                }
             }
         }
 
