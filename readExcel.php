@@ -59,11 +59,28 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
 
         $json_str = $resultCleaned;
-        $json = json_decode($json_str);
-//        echo "json: <pre>" . $json . "</pre><hr>";
-        $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-//        echo "jsonData: <pre>" . $jsonData . "</pre><hr>";
+        $json = json_decode($json_str, true);
 
+        if (json_last_error() === JSON_ERROR_NONE) {
+            echo "JSON is valid <br>";
+        } else {
+            echo "JSON is NOT valid <br>";
+        }
+
+//        $creators = array_search('Peter', $json);
+//        echo "searching:  $creators <br>";
+
+        /*
+        highlight_string("<?php\n\$data =\n" . var_export($json, true) . ";\n?>");
+        */
+
+//        echo gettype($json) . "<br>";
+        echo "creators: <pre>" . var_export($json[0]['creators'], true) . "</pre><hr>";
+        echo "creators: <pre>" . var_export($json[1]['creators'], true) . "</pre><hr>";
+
+
+//        $jsonData = json_encode($json, JSON_PRETTY_PRINT);
+//        echo "jsonData: <pre>" . $jsonData . "</pre><hr>";
 
         echo '<tr>';
             echo '<td>' . $authorsId++ . '</td>';
