@@ -46,46 +46,47 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
         // get total of publications per author
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-//        echo "link: <pre>" . $link . "</pre><hr>";
+        echo "link: <pre>" . $link . "</pre><hr>";
 
         $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
 //        echo "result: <pre>" . $result . "</pre><hr>";
 
         // removing extra comma after the last creator array value
-        // tests working: Peter Moore, Almaas Ali, Cristiano Maia, Balbir Barn, Peter Moore + Almaas Ali + Cristiano Maia
-        $search = "/" . "\"\s+\}\,\s+\}" . "/";  // ending quote for family, break line, bracket and comma, break line, another bracket
+        $search = "/" . "\"\s+\}\,\s+\}" . "/";                         // ending quote for family, break line, bracket and comma, break line, another bracket
         $resultCleaned = preg_replace($search, "\"\n}\n}", $result);
-//        echo "resultCleaned: <pre>" . $resultCleaned . "</pre><hr>";
+        $eprintsData_str = $resultCleaned;
+//        echo "jsonData: <pre>" . $eprintsData_str . "</pre><hr>";
 
 
-        $json_str = $resultCleaned;
-        $json = json_decode($json_str, true);
+        $eprintsData = json_decode($eprintsData_str, true);
+
+        // removing all the rioxx2_ keys from the data
+        foreach ($eprintsData as $key => $subArr) {
+            unset($subArr['rioxx2_identifier']);        // single key
+//            unset($subArr['rioxx2_author']);            // array
+            $eprintsData[$key] = $subArr;
+        }
+
+
+
 
         if (json_last_error() === JSON_ERROR_NONE) {
-            echo "JSON is valid <br>";
+//            echo "JSON is valid <br>";
         } else {
             echo "JSON is NOT valid <br>";
         }
 
-//        $creators = array_search('Peter', $json);
-//        echo "searching:  $creators <br>";
-
-        /*
-        highlight_string("<?php\n\$data =\n" . var_export($json, true) . ";\n?>");
-        */
-
-//        echo gettype($json) . "<br>";
-//        echo "creators: <pre>" . var_export($json[0]['creators'], true) . "</pre><hr>";
-//        echo "creators: <pre>" . var_export($json[1]['creators'], true) . "</pre><hr>";
+//        /*
+        highlight_string("<?php\n\$data =\n" . var_export($eprintsData, true) . ";\n?>");
+//        */
 
         for ($i = 0; $i <= 1; $i++) {
-            echo "creators: <pre>" . var_export($json[$i]['creators'], true) . "</pre><hr>";
-//            echo var_export($json[$i]['creators'], true);
+//            echo "creators: <pre>" . var_export($eprintsData[$i]['creators'], true) . "</pre><hr>";
+//            echo var_export($eprintsData[$i]['creators'], true);
         }
 
-
-//        $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-//        echo "jsonData: <pre>" . $jsonData . "</pre><hr>";
+//        $eprintsDataData = json_encode($eprintsData, JSON_PRETTY_PRINT);
+//        echo "jsonData: <pre>" . $eprintsData . "</pre><hr>";
 
         echo '<tr>';
             echo '<td>' . $authorsId++ . '</td>';
