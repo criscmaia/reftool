@@ -60,22 +60,11 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
         $eprintsData = json_decode($eprintsData_str, true);
 
-//        function removeElementWithValue($eprintsData, $key, $value){
-//             foreach($eprintsData as $subKey => $subArray){
-//                  if($subArray[$key] == $value){
-//                       unset($eprintsData[$subKey]);
-//                  }
-//             }
-//             return $eprintsData;
-//        }
-//
-//        $eprintsData = removeElementWithValue($eprintsData, "year", 2011);
-//
-
         foreach($eprintsData[0] as $key => $value) {
-          if(strpos($key, 'rioxx2_') === 0) {
-              unset($eprintsData[0][$key]);
-          }
+            echo $key . "<br>";
+            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'relation') === 0) {
+                unset($eprintsData[0][$key]);
+            }
         }
 
 
