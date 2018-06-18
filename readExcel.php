@@ -75,8 +75,13 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         */
 
 //        echo gettype($json) . "<br>";
-        echo "creators: <pre>" . var_export($json[0]['creators'], true) . "</pre><hr>";
-        echo "creators: <pre>" . var_export($json[1]['creators'], true) . "</pre><hr>";
+//        echo "creators: <pre>" . var_export($json[0]['creators'], true) . "</pre><hr>";
+//        echo "creators: <pre>" . var_export($json[1]['creators'], true) . "</pre><hr>";
+
+        for ($i = 0; $i <= 1; $i++) {
+            echo "creators: <pre>" . var_export($json[$i]['creators'], true) . "</pre><hr>";
+//            echo var_export($json[$i]['creators'], true);
+        }
 
 
 //        $jsonData = json_encode($json, JSON_PRETTY_PRINT);
