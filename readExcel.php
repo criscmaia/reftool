@@ -61,8 +61,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         $eprintsData = json_decode($eprintsData_str, true);
 
         foreach($eprintsData[0] as $key => $value) {
-            echo $key . "<br>";
-            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'relation') === 0) {
+//            echo $key . "<br>";
+            if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0) {
                 unset($eprintsData[0][$key]);
             }
         }
@@ -74,9 +74,12 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo "JSON is NOT valid <br>";
         }
 
-//        /*
+        /*
         highlight_string("<?php\n\$data =\n" . var_export($eprintsData, true) . ";\n?>");
-//        */
+        */
+
+//        echo "result: <pre>" . json_encode($eprintsData) . "</pre><hr>";
+
 
         for ($i = 0; $i <= 1; $i++) {
 //            echo "creators: <pre>" . var_export($eprintsData[$i]['creators'], true) . "</pre><hr>";
