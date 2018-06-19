@@ -41,33 +41,62 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         <tbody>
 <?php
     $authorsId = 1;
+
+    // loop all authors from the excel
     foreach($allAuthors as $author) {
-        // get total of publications per author
+        echo "Searching for <strong>".$author->getFullName()."</strong>:<br>";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
-
-        // removing extra comma after the last creator array value
-        $search = "/" . "\"\s+\}\,\s+\}" . "/";                             // regex for ending quote for family, break line, bracket and comma, break line, another bracket
-        $eprintsData_str = preg_replace($search, "\"\n}\n}", $result);
-        $eprintsData = json_decode($eprintsData_str, true);
-
-        // check if JSON is valid
-        if (json_last_error() === JSON_ERROR_NONE) {
-            // go through each paper removing unnecessary fields
-            for ($i = 0; $i < count($eprintsData); $i++) {
-                foreach($eprintsData[$i] as $key => $value) {
-                    if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
-                        unset($eprintsData[$i][$key]);
-                    }
-                }
+        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");          // get the data from the ePrints result
+        $eprintsDataObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
+        if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
+            if (count($eprintsDataObj)>0) {                                                         // if at least one result is available
+                $eprintsDataJSON = json_encode($eprintsDataObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);  // Returns the JSON representation of a value
+                echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
+            } else {
+                echo "No results found for <strong>".$author->getFullName()."</strong><hr>";
             }
-
         } else {
-            echo "JSON is NOT valid <br>";
+            echo "JSON for <strong>".$author->getFullName()."</strong> is NOT valid <hr>";
         }
 
+
+
+//        $eprintsDataJSON = json_encode($result, true);
+//
+//
+//
+//        $eprintsDataObj = json_decode($result, true);
+//
+//        // check if JSON is valid
+//        if (json_last_error() === JSON_ERROR_NONE) {
+//            // ignore any paper before 2014
+//
+//
+//
+//            // go through each author
+//            for ($i = 0; $i < count($eprintsDataObj); $i++) {
+//                // go through each paper
+//                foreach($eprintsDataObj[$i] as $key => $value) {
+//
+//
+//                    // if null or not >= 2014, remove from json
+//                    if () {
+//
+//                    } else {
+//                        // remove unnecessary fields from valid papers
+//                        if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
+//                            unset($eprintsDataObj[$i][$key]);
+//                        }
+//                    }
+//                }
+//            }
+//
+//        } else {
+//            echo "JSON is NOT valid <br>";
+//        }
+
         /*
-        highlight_string("<?php\n\$data =\n" . var_export($eprintsData, true) . ";\n?>");
+        highlight_string("<?php\n\$data =\n" . var_export($eprintsDataObj, true) . ";\n?>");
         */
 
         echo '<tr>';
