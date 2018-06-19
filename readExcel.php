@@ -52,52 +52,46 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
         if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
             if (count($papersObj)>0) {                                                         // if at least one result is available
-                foreach($papersObj as $papersObjKeys => $papersObjValues) {                      // go through each paper
-                            $papersObjValues = reset($papersObjValues);
+                foreach($papersObj as $papersObjKeys => $papersObjValues) {                    // go through each paper
+                    $papersObjValues = reset($papersObjValues);
 
-                            // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-                            if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
-                            if (isset($papersObj[$papersObjKeys]['title']))        { $title = $papersObj[$papersObjKeys]['title']; } else { $title = "NULL";}
+                    // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
+                    if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
+                    if (isset($papersObj[$papersObjKeys]['title']))        { $title = $papersObj[$papersObjKeys]['title']; } else { $title = "NULL";}
 
-
-                            echo "<p>Date: $date. Title: $title</p>";
-
-                            if ($date != "NULL") {
-                                if (strlen($date)==4) {              // only year
-                                    $date = $date . "-01-01";
-                                } else if (strlen($date)==7) {       // only year and month
-                                    $date = $date . "-01";
-                                }
-                                $split_date = explode('-',$date);
-                                $year = $split_date[0];
-                                if ($title=="NULL" || $year<2014){  // remove because title is null OR date is < 2014
-                                    echo "<p>Removing paper because title is null OR date is < 2014</p>";
-                                    unset($papersObj[$papersObjKeys]);
-                //                    array_splice($papersObj[$papersObjKeys],);
-                                    echo "<h1>papersObjKeys: $papersObjKeys. Count: ".count($papersObj)."</h1>";
-                                    continue;
-                                }
-                            } else {                                // remove because no date is set
-                                echo "<h4>Removing paper because no date is set</h4>";
-                                echo "<h1>papersObjKeys: $papersObjKeys. Count: ".count($papersObj)."</h1>";
-                                unset($papersObj[$papersObjKeys]);
-                            }
-
-
-                            foreach($papersObj[$papersObjKeys] as $key => $value) {                                // go through each author
-                                if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
-                //                    unset($papersObj[$papersObjKeys][$key]);
-                                }
-                            }
+                    if ($date != "NULL") {
+                        if (strlen($date)==4) {                                                 // only year
+                            $date = $date . "-01-01";
+                        } else if (strlen($date)==7) {                                          // only year and month
+                            $date = $date . "-01";
                         }
+                        $split_date = explode('-',$date);
+                        $year = $split_date[0];
+                        if ($title=="NULL" || $year<2014){                                      // if title is null OR date is < 2014
+                            unset($papersObj[$papersObjKeys]);                                  // remove from obj variable
+                            continue;                                                           // go backs to loop without going through the authors below
+                        }
+                    } else {                                                                    // remove because no date is set
+                        unset($papersObj[$papersObjKeys]);
+                        continue;                                                               // go backs to loop without going through the authors below
+                    }
+
+                    foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each author
+                        if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
+                            unset($papersObj[$papersObjKeys][$key]);
+                        }
+                    }
+                }
                 $eprintsDataJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
-                echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
             } else {
                 echo "No results found for <strong>".$author->getFullName()."</strong><hr>";
             }
         } else {
             echo "JSON for <strong>".$author->getFullName()."</strong> is NOT valid <hr>";
         }
+
+        echo "<p><strong>".count($papersObj)."</strong> valid papers found</p>";
+        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 
         /*
