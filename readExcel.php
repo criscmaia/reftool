@@ -46,17 +46,17 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
     foreach($allAuthors as $author) {
         echo "Searching for <strong>".$author->getFullName()."</strong>:<br>";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");          // get the data from the ePrints result
-        $eprintsDataObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
+        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
+        $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
 
 
-        if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
-            if (count($eprintsDataObj)>0) {                                                         // if at least one result is available
-//                for ($i = 0; $i < count($eprintsDataObj); $i++) {                                   // go through each paper
-                foreach($eprintsDataObj as $keyObj => $valueObj) {
+        if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
+            if (count($papersObj)>0) {                                                         // if at least one result is available
+                foreach($papersObj as $papersObjKeys => $papersObjValues) {                      // go through each paper
                     // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-                    if (isset($eprintsDataObj[$i]['date']))         { $date = $eprintsDataObj[$i]['date']; } else { $date = "NULL";}
-                    if (isset($eprintsDataObj[$i]['title']))        { $title = $eprintsDataObj[$i]['title']; } else { $title = "NULL";}
+                    if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
+                    if (isset($papersObj[$papersObjKeys]['title']))        { $title = $papersObj[$papersObjKeys]['title']; } else { $title = "NULL";}
+
 
                     echo "<p>Date: $date. Title: $title</p>";
 
@@ -70,30 +70,24 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         $year = $split_date[0];
                         if ($title=="NULL" || $year<2014){  // remove because title is null OR date is < 2014
                             echo "<p>Removing paper because title is null OR date is < 2014</p>";
-//                            print_r($eprintsDataObj[0]);
-                            unset($eprintsDataObj[$i]);
-                            echo "<h1>".count($eprintsDataObj)."</h1>";
+                            unset($papersObj[$papersObjKeys]);
+                            echo "<h1>".count($papersObj)."</h1>";
                             continue;
                         }
                     } else {                                // remove because no date is set
                         echo "<h4>Removing paper because no date is set</h4>";
-//                        unset($eprintsDataObj[$i]);
+//                        unset($papersObj[$papersObjKeys]);
                     }
 
 
-                    foreach($eprintsDataObj[$keyObj] as $key => $value) {                                // go through each author
-
-
-//                        if () {                                                                     // remove paper if date is null or not >= 2014
-//                            unset($eprintsDataObj[$i]);
-//                        } else
+                    foreach($papersObj[$papersObjKeys] as $key => $value) {                                // go through each author
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
-                            unset($eprintsDataObj[$i][$key]);
+                            unset($papersObj[$papersObjKeys][$key]);
                         }
                     }
                 }
-                $eprintsDataJSON = json_encode($eprintsDataObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
-                echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
+                $eprintsDataJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
+//                echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
             } else {
                 echo "No results found for <strong>".$author->getFullName()."</strong><hr>";
             }
@@ -102,45 +96,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         }
 
 
-//        $eprintsDataJSON
-
-//        $eprintsDataJSON = json_encode($result, true);
-//
-//
-//
-//        $eprintsDataObj = json_decode($result, true);
-//
-//        // check if JSON is valid
-//        if (json_last_error() === JSON_ERROR_NONE) {
-//            // ignore any paper before 2014
-//
-//
-//
-//            // go through each author
-//            for ($i = 0; $i < count($eprintsDataObj); $i++) {
-//                // go through each paper
-//                foreach($eprintsDataObj[$i] as $key => $value) {
-//
-//
-//                    // if null or not >= 2014, remove from json
-//                    if () {
-//
-//                    } else {
-//                        // remove unnecessary fields from valid papers
-//                        if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {
-//                            unset($eprintsDataObj[$i][$key]);
-//                        }
-//                    }
-//                }
-//            }
-//
-//        } else {
-//            echo "JSON is NOT valid <br>";
-//        }
-
-        /*
-        highlight_string("<?php\n\$data =\n" . var_export($eprintsDataObj, true) . ";\n?>");
-        */
+//        /*
+        highlight_string("<?php\n\$data =\n" . var_export($eprintsDataJSON, true) . ";\n?>");
+//        */
 
         echo '<tr>';
             echo '<td>' . $authorsId++ . '</td>';
