@@ -76,6 +76,20 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         continue;                                                               // go backs to loop without going through the authors below
                     }
 
+                    foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {
+                        $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);
+                        echo $author->getFullName()." = ".$creatorFullName."?<br>";
+                        if($author->getFullName() == $creatorFullName) {
+                            if ($creatorsKeys==0) {
+                                $author->totalOfPublicationsFirstAuthor++;
+                            } else {
+                                $author->totalOfPublicationsCoAuthor++;
+                            }
+                        }
+                    }
+                    echo "getTotalOfPublicationsFirstAuthor: ".$author->getTotalOfPublicationsFirstAuthor() . ". getTotalOfPublicationsCoAuthor: " . $author->getTotalOfPublicationsCoAuthor();
+                    echo "<hr>";
+
                     foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each key
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
                             unset($papersObj[$papersObjKeys][$key]);

@@ -4,7 +4,7 @@ class author {
     public $totalOfPublicationsCoAuthor;
     public $ignore;
 
-    public function __construct($firstName, $lastName, $email, $employeeStatus, $totalOfValidaPapers) {
+    public function __construct($firstName, $lastName, $email) {
         // if already in DB:
         //      if any new papers
         //          get details to obj
@@ -26,9 +26,6 @@ class author {
                 }
             }
         }
-
-        $this->totalOfPublicationsFirstAuthor = $totalOfPublicationsFirstAuthor;
-        $this->totalOfPublicationsCoAuthor    = $totalOfPublicationsCoAuthor;
     }
 
     public function getFirstName () {
