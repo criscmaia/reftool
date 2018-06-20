@@ -91,7 +91,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
                         $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
-                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+//                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
                         if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
 //                        if($author->getFullName() == $creatorFullName) {
                             if ($creatorsKeys==0) {                                                             // if first authors
