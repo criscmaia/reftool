@@ -117,9 +117,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo '<td>' . $author->getFirstName() . '</td>';
             echo '<td>' . $author->getLastName() . '</td>';
             echo '<td>' . '-' . '</td>';
-            echo '<td>' . $author->getEmployeeStatus() . '</td>';
-            echo '<td>' . $author->totalOfPublicationsFirstAuthor . '</td>';
-            echo '<td>' . $author->totalOfPublicationsCoAuthor . '</td>';
+            echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
+            echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
+            echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
     }
 ?>
