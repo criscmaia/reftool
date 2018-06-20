@@ -76,19 +76,16 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         continue;                                                               // go backs to loop without going through the authors below
                     }
 
-                    foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {
-                        $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);
-                        echo $author->getFullName()." = ".$creatorFullName."?<br>";
-                        if($author->getFullName() == $creatorFullName) {
-                            if ($creatorsKeys==0) {
+                    foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
+                        $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
+                        if($author->getFullName() == $creatorFullName) {                                        // double check if author is one of the creators
+                            if ($creatorsKeys==0) {                                                             // if first authors
                                 $author->totalOfPublicationsFirstAuthor++;
-                            } else {
+                            } else {                                                                            // if co-author
                                 $author->totalOfPublicationsCoAuthor++;
                             }
                         }
                     }
-                    echo "getTotalOfPublicationsFirstAuthor: ".$author->getTotalOfPublicationsFirstAuthor() . ". getTotalOfPublicationsCoAuthor: " . $author->getTotalOfPublicationsCoAuthor();
-                    echo "<hr>";
 
                     foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each key
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
