@@ -4,7 +4,7 @@ class author {
     public $totalOfPublicationsCoAuthor;
     public $ignore;
 
-    public function __construct($firstName, $lastName, $email, $employeeStatus) {
+    public function __construct($firstName, $lastName, $email, $employeeStatus, $totalOfValidaPapers) {
         // if already in DB:
         //      if any new papers
         //          get details to obj
@@ -17,15 +17,18 @@ class author {
         $this->employeeStatus = $employeeStatus;
         $this->email = $email;
 
-        if (!isset($employeeStatus)) {                           // not defined on the spreadsheet
+        if (!isset($employeeStatus)) {                          // not defined on the spreadsheet
             if (isset($email)) {                                // if email is set
                 $domain = explode('@', $email);                 // get the domain
                 $domain = array_pop($domain);
                 if ($domain=="mdx.ac.uk") {                     // if MDX
-                    $this->employeeStatus = "1";                      // set as employee - IT MAY BE EX EMPLOYEE !
+                    $this->employeeStatus = "1";                // set as employee - IT MAY BE EX EMPLOYEE !
                 }
             }
         }
+
+        $this->totalOfPublicationsFirstAuthor = $totalOfPublicationsFirstAuthor;
+        $this->totalOfPublicationsCoAuthor    = $totalOfPublicationsCoAuthor;
     }
 
     public function getFirstName () {
@@ -46,6 +49,14 @@ class author {
 
     public function getEmployeeStatus () {
         return $this->employeeStatus;
+    }
+
+    public function getTotalOfPublicationsFirstAuthor () {
+        return $this->totalOfPublicationsFirstAuthor;
+    }
+
+    public function getTotalOfPublicationsCoAuthor () {
+        return $this->totalOfPublicationsCoAuthor;
     }
 
     public function printAll () {

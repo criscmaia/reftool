@@ -76,7 +76,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         continue;                                                               // go backs to loop without going through the authors below
                     }
 
-                    foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each author
+                    foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each key
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
                             unset($papersObj[$papersObjKeys][$key]);
                         }
@@ -91,7 +91,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         }
 
         echo "<p><strong>".count($papersObj)."</strong> valid papers found</p>";
-        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
+//        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 
         /*
