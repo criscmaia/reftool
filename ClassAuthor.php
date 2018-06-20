@@ -42,6 +42,10 @@ class author {
         return $this->firstName . " " . $this->lastName;
     }
 
+    public function getFullNameReverse () {
+        return $this->lastName . ", " . $this->firstName;
+    }
+
     public function getEmail () {
         return $this->email;
     }

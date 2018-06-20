@@ -56,8 +56,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     // loop all authors from the excel
     foreach($allAuthors as $author) {
-        echo "Searching for <strong>".$author->getFullName()."</strong>... ";
-        $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
+        echo "Searching for <strong>".$author->getFullNameReverse()."</strong>... ";
+        $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullNameReverse());
+        echo $link . "<br>";
         $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
         $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
 
@@ -91,9 +92,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
                         $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
-//                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
                         if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
-//                        if($author->getFullName() == $creatorFullName) {
+                            echo " - true - ";
                             if ($creatorsKeys==0) {                                                             // if first authors
                                 $author->totalOfPublicationsFirstAuthor++;
                             } else {                                                                            // if co-author
