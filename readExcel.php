@@ -34,12 +34,24 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                 <th>Last name</th>
                 <th>✔</th>
                 <th>Employee Status</th>
+                <th>Total of Publications</th>
                 <th>Total of Publications - First Author</th>
                 <th>Total of Publications - Co-Author</th>
             </tr>
         </thead>
         <tbody>
 <?php
+    function startsWith($haystack, $needle) {
+        // search backwards starting from haystack length characters from the end
+        return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+    }
+
+    function endsWith($haystack, $needle) {
+        // search forward starting from end minus needle length characters
+        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
+    }
+
+
     $authorsId = 1;
 
     // loop all authors from the excel
@@ -79,7 +91,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
                         $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
-                        if($author->getFullName() == $creatorFullName) {                                        // double check if author is one of the creators
+                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+                        if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
+//                        if($author->getFullName() == $creatorFullName) {
                             if ($creatorsKeys==0) {                                                             // if first authors
                                 $author->totalOfPublicationsFirstAuthor++;
                             } else {                                                                            // if co-author
@@ -116,6 +130,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo '<td>' . $author->getLastName() . '</td>';
             echo '<td>' . '-' . '</td>';
             echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
+            echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';    // if none = 0
             echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
             echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
