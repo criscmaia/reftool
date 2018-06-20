@@ -4,7 +4,7 @@ class author {
     public $totalOfPublicationsCoAuthor;
     public $ignore;
 
-    public function __construct($firstName, $lastName, $email) {
+    public function __construct($firstName, $lastName, $email, $employeeStatus) {
         // if already in DB:
         //      if any new papers
         //          get details to obj
