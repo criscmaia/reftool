@@ -44,7 +44,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     // loop all authors from the excel
     foreach($allAuthors as $author) {
-        echo "Searching for <strong>".$author->getFullName()."</strong>:<br>";
+        echo "Searching for <strong>".$author->getFullName()."</strong>... ";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
         $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
         $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
@@ -58,6 +58,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
                     if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
                     if (isset($papersObj[$papersObjKeys]['title']))        { $title = $papersObj[$papersObjKeys]['title']; } else { $title = "NULL";}
+                    if (isset($papersObj[$papersObjKeys]['creators']))     { $creators = $papersObj[$papersObjKeys]['creators']; } else { $creators = "NULL";}
 
                     if ($date != "NULL") {
                         if (strlen($date)==4) {                                                 // only year
@@ -67,7 +68,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         }
                         $split_date = explode('-',$date);
                         $year = $split_date[0];
-                        if ($title=="NULL" || $year<2014){                                      // if title is null OR date is < 2014
+                        if ($title=="NULL" || $creators=="NULL" || $year<2014){                 // if title/creators/date is null OR date is < 2014
                             unset($papersObj[$papersObjKeys]);                                  // remove from obj variable
                             continue;                                                           // go backs to loop without going through the authors below
                         }
@@ -95,13 +96,13 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                 }
                 $eprintsDataJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
             } else {
-                echo "No results found for <strong>".$author->getFullName()."</strong><hr>";
+                echo "No results found for <strong>".$author->getFullName()."</strong><br>";
             }
         } else {
             echo "JSON for <strong>".$author->getFullName()."</strong> is NOT valid <hr>";
         }
 
-        echo "<p><strong>".count($papersObj)."</strong> valid papers found</p>";
+        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
 //        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 

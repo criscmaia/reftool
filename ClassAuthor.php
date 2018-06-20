@@ -24,6 +24,8 @@ class author {
                 if ($domain=="mdx.ac.uk") {                     // if MDX
                     $this->employeeStatus = "1";                // set as employee - IT MAY BE EX EMPLOYEE !
                 }
+            } else {                                            // no email and no status from spreadsheet = null
+                $this->employeeStatus = "";
             }
         }
     }
