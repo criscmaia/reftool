@@ -56,6 +56,27 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     // loop all authors from the excel
     foreach($allAuthors as $author) {
+        /*
+        if authors has had a repository name manually added
+        gets the name that should be on ePrint from this system DB
+        and use it to be the main search piece
+        */
+        $sql = "SELECT repositoryName FROM reftool.mdxAuthor WHERE firstName='".$author->getFirstName()."' AND lastName='".$author->getLastName()."'";
+        echo $sql."<br>";
+        $result = $conn->query($sql);
+        if (!$result) {
+            trigger_error('Error in: '.$sql.'<br><br>Invalid query: ' . $conn->error);
+        } else if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $author->repositoryName = $row["repositoryName"];
+                echo $row["repositoryName"]."<br>";
+            }
+        } else {
+            echo '<h2>0 results</h2>';
+        }
+        $conn->close();
+
+
         if ($author->getFirstName() == "Maeve") {                                              // Only found case where reverse search doesn't work
             echo "Searching for <strong>".$author->getFullName()."</strong>... ";
             $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
@@ -136,7 +157,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo '<td>' . $author->getLastName() . '</td>';
             echo '<td>' . '-' . '</td>';
             echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
-            echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';    // if none = 0
+            echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
             echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
             echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
