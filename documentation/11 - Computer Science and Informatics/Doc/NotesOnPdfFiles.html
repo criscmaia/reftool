@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>REF 2014 download documentation</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="styles/refsubbasic.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="styles/tables.css" />
+
+        <style type="text/css">
+            p {clear: both;}
+        </style>
+    </head>
+<body>
+<div id="banner">
+	<img src="images/REFlogo.gif" alt="REF logo" id="reflogo" />
+	</div><!--banner-->
+    <div id="maincontainer">    
+	      <div id="content">
+            <h1>REF 2014 download documentation</h1>
+            <h2>Notes on PDF files for Access export files</h2>
+            <p>
+                The access export files use the data type OLE Object for the columns which contain PDF files for the 
+                impact templates, impact case studies and environment templates. Microsoft Access stores binary data in 
+                the OLE Object data type as OLE Objects (a technology Microsoft in general no longer supports) however it
+                is difficult to write binary data to these columns as OLE Object. We have 
+                written files to theses columns by assuming they are equivalent to the VARBINARY(MAX) data type. 
+                For an example of how to use Microsoft Access to retrieve the files in columns, 
+                see the Microsoft knowledge base article ACC: Reading, Storing, & Writing Binary Large Objects (BLOBs) 
+                located at: <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;103257&Product=acc">
+                    http://support.microsoft.com/default.aspx?scid=kb;en-us;103257&Product=acc</a>
+            </p>
+            <p>
+                Note: Some knowledge of Visual Basic is required in order to achieve this.
+            </p>
+         </div>
+   </div>
+   
+   
+
+            
+<div id="footer">
+<div>
+<p><a href="http://www.ref.ac.uk/copyright/#d.en.72612">Copyright &copy;2014 REF </a>| <a href="http//www.ref.ac.uk/disclaimer/#d.en.72613">Disclaimer</a></p>
+</div>
+<div id="footerlogos">
+<p><a href="http://www.hefcw.ac.uk" title="HEFCW website"><img src="images/hefcw.gif" alt="Higher Education Funding Council for Wales" style="   " /></a> 
+   <a href="http://www.hefce.ac.uk/" title="HEFCE website"><img src="images/hefce.gif" alt="Higher Education Funding Council for England" style="   " /></a>
+   <a href="http://www.sfc.ac.uk" title="SFC website"><img src="images/sfc.gif" alt="Scottish Funding Council" style="   " /></a>
+   <a href="http://www.delni.gov.uk" title="DELNI website"><img src="images/del.gif" alt="Department for Employment and Learning (Northern Ireland)" style="   " /></a>
+</p>
+</div>
+
+</div><!--footer-->
+  	
+	</body>
+</html>

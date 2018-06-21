@@ -1,0 +1,680 @@
+body {
+color:#000;
+background:#fff;
+font-size:76%;
+line-height:150%;
+font-family: verdana, sans-serif;
+margin:0;
+padding:0;
+}
+p {font-size:95%;}
+h1 {font-weight:normal;font-size:200%;}
+h1.uoa {font-weight:normal;font-size:120%;}
+h2 {font-size:140%; font-weight: normal;}
+h2.jointsub{color: #007088;font-weight: bold;}
+h3 {font-size:110%;}
+h4 {font-size:105%;}
+h5 {font-size:102%;}
+h6 {font-size:100%;}
+a {
+text-decoration:none;
+border-bottom:1px dotted #ccc;
+font-weight:bold;
+color:#039;}
+
+a:hover, 
+a:active,
+a:focus {
+border-bottom:0;
+text-decoration:underline;
+color:#03c;
+background:#ffc;
+}
+a img {border:0;} /* to stop ugly blue lines around images that are links */
+p.navlinks a:hover {
+	border: 1px solid #000;
+	text-decoration: none;
+	background-color: #007088;
+	color: #FFF;} 
+p.navlinks a {margin-right: 10px;
+	border: 1px solid #ccc; 
+	padding: 3px; 
+	background-color:#eff8f8; }
+
+
+th p, td p {font-size:1em;}
+hr.clearboth {
+	clear:both;
+	visibility:hidden;}
+hr.clearleft {
+	clear:left;
+	visibility:hidden;}
+hr.clearright {
+	clear:right;
+	visibility:hidden;}
+hr.clear {
+	clear: both; 
+	color: #FFF;
+	background-color: #FFF;
+	border: 0;
+	padding: 0;}
+.clear {
+	clear: both;}
+cite {
+	font-style:normal;}
+
+input  {
+	font-family: Verdana, Geneva, sans-serif;}
+
+
+.spacedlist li {
+	margin-bottom: 0.7em;}
+
+.return {
+	padding-top: 1.5em;
+	padding-bottom: 1.5em;}
+	
+.showresults 	{
+	color: #007088;
+	font-weight: bold;}
+			
+.rowspacer {
+	margin-bottom: 25px}
+
+#header {
+	background-color:#eff8f8;
+	}
+	
+li h3{
+	margin-bottom: -10px;}	
+/*page banner*/
+#banner, #insecurebanner  {
+	clear: both;
+	background-color:#007088;
+	width:100%;
+	height:100px;
+	margin:0;
+	padding-left:0;
+	padding-right:0;
+	padding-top:0;}
+#banner fieldset#globalsearch input[type=text]{
+	width:200px;
+	border: 1px solid #ccc;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding:6px;}
+#banner fieldset#globalsearch input[type=submit]  {
+	border:1px solid #ccc;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;}
+#banner fieldset#globalsearch  {
+	float: right;
+	border: 1px solid #eee;
+	font-size: 90%;
+	text-align: right;
+	margin-top:20px;
+	margin-right:20px;
+	color: #fff;
+	font-weight: bold;
+	background-color: #eee;
+	padding: 2px;}
+#banner{
+	padding-bottom:0;
+	float:left;}
+#banner a:link, #insecurebanner a:link,
+#banner a:visited, #insecurebanner a:visited,
+#banner a:hover, #insecurebanner a:hover
+#banner a:active,  #insecurebanner a:active{
+	text-decoration:none;
+	border-bottom:none;
+	background:none;}
+#insecureloggedon {
+	display: none;}
+#maincontainer, 
+#frontmaincontainer {
+	width:auto;
+	margin: 0;
+	padding:0 20px;
+	clear:both;}
+#content, #unprocessedcontent {
+	margin-left: 1%;
+	margin-right: 1%;
+	padding-top: 5px;
+}
+
+
+#postsubmitbanner {
+	background-color: #242424;
+	padding: 3px;
+	color: #fff;
+	font-weight: bold;
+	text-align: center;}
+#postsubmitbanner a {
+	color: #80FFFF;}
+#postsubmitbanner a:hover {
+	color: #fff; 
+	background-color: #00C;}
+
+
+
+
+/*---------------- footer --------------- */
+#footer {
+    border-top:1px solid #007088;
+    margin:10px 0;
+    padding:10px 10px 10px 0;
+    clear:both;
+    text-align:center;
+    background-color:#f1fafa;
+    min-height:150px}
+#footer address {
+    font-style:normal;
+    display:inline}
+#footer a { font-weight:bold }
+#footer a[href^="http://"] {border-bottom:0}
+#footerlogos img {vertical-align:middle}
+
+
+/*toplevel navigation bar */
+#mainnav {
+	clear: both;
+	background-color: #007088; }
+#mainnav ul {
+	padding:0;
+	margin:0 0 0 10px; }
+#mainnav input{
+	border: none; 
+	color: #fff; 
+	padding:5px;
+	margin:0;
+	background-color: #007088;
+	font-weight: bold;
+}
+#mainnav input:hover {
+	background-color: #fff;
+	color:#000;
+	cursor: pointer;}
+#mainnav li{
+	display: inline;
+	border-right: dotted #eff8f8 1px;
+	padding-left: 0;
+	padding-right: 5px;
+		}
+#mainnav li:last-child{
+	border-right: none; }
+#mainnav .current {
+	background-color:#eff8f8;
+	color: #000;
+	background-image:url("/i/backlight16.jpg");
+	background-repeat:repeat-x;
+	}
+#mainnav .current:hover {
+	background-color:#eff8f8;
+	}
+
+
+/*#mainnav .current {
+	border-right: 5px solid  #007088;
+	}
+#mainnav li .current:hover {
+	border-right: 5px solid  #007088;
+	}
+
+/*content/page-specific navigation bar */
+
+
+
+#contentnav a{
+	/* for ipads - links to appear as buttons*/
+	-webkit-appearance: none;
+}
+
+#contentnav  {
+	margin: 10px 0;}
+#contentnav ul {
+	padding:0; 
+	margin:0; }
+#contentnav li {
+	display: inline;
+	line-height: 3em; }
+#contentnav li .noclass {
+	font-size: 95%;
+	padding:4px;
+	font-weight: bold;
+	cursor: pointer;}
+#contentnav li a,
+.editpermissions{
+	padding:6px;}
+#contentnav li a,
+.editpermissions,
+#contentnav li .noclass {
+		/* for ipads*/
+	-webkit-appearance: none;
+	background-color: #FC9;
+	border: 1px solid #999; 
+	text-decoration: none; 
+	color:#2B2B2B;
+	background-image:url("/i/contentnavback.jpg");
+	background-repeat:repeat-x;}
+#contentnav li a:hover, .editpermissions:hover {
+		/* for ipads*/
+	-webkit-appearance: none;
+	color: #000;
+	border: 1px solid #666;
+	background-color: #FFC;
+	background-image:url("/i/contentnavbackover.jpg");
+	background-repeat:repeat-x;}
+#contentnav .noclass[input] {
+		/* for ipads*/
+	-webkit-appearance: none;
+	background-color: #FC9;
+	padding:6px; 
+	border: 1px solid #999; 
+	text-decoration: none; 
+	color:#2B2B2B;
+	background-image:url("/i/contentnavback.jpg");
+	background-repeat:repeat-x;}
+#contentnav .disabled {
+	border: 1px solid #999;
+	padding: 6px;
+	background-color: #eee;
+	color: #999;
+	font-weight: bold;}
+	
+	
+/* uses style (above) from content nav but need few extras as it's a button and for when it's disabled*/
+.editpermissions{
+	font-weight:bold; 
+	font-size: 100%;
+	margin-bottom:0.5em;}
+.editpermissions:hover {
+	cursor: pointer;}
+.editpermissions[disabled]
+	{background-image: none;
+	background-color: #eee;
+	color: #999;}
+.editpermissions[disabled]:hover
+	{background-image: none;
+	border: 1px solid #999;
+	cursor:  text;
+	}
+
+
+
+/*paging*/
+
+.paging {
+	font-size: 0.9em;
+	padding: 5px 0;	}
+.pageindex {
+	display: inline;
+	text-align:center;}
+.pageindex a {
+	font-weight:normal;
+	background-color: #FC9;
+	padding:0 5px;
+	border: 1px solid #999;
+	text-decoration: none;
+	color:#333; 
+	text-decoration: none;
+	background-image:url("/i/pageindexback.gif"); 
+	background-repeat:repeat-x;}
+.pageindex a:hover {
+	border: 1px solid #666;
+	color: #000;
+	background-color: #FC9;
+	background-image:url("/i/pageindexactive.gif"); 
+	background-repeat:repeat-x;}
+.pageindex .firstprev,  
+.pageindex .nextlast {
+	display: inline;} 
+.firstprev {
+	margin-right: 10px;}
+.nextlast {
+	margin-left: 10px;}	
+
+
+/*------- use access to hide text but make visible for screenreaders----------*/
+
+.access {
+	position:absolute;
+	left:-10000px;
+	top:auto;
+	width:1px;
+	height:1px;
+	overflow:hidden;}
+
+/*---------------- accessibility links at the top ---------------*/
+
+#mainaccesslinks {
+	float:left;
+	font-size:.9em;
+	margin-bottom: 15px;}
+#mainaccesslinks ul {
+	display:inline;
+	margin-left:0;
+	padding-left:2px;}
+#mainaccesslinks ul li {
+	display:inline;
+	list-style: none;
+	margin-left:0;
+	padding-left:2px;}
+
+/*----------------- generic list styles ------------------------*/
+
+ul.nobullet {
+	list-style:none;
+	margin-left:0;
+	padding-left:0;}
+ul.nobulletindent {list-style:none;}
+ol.lowerroman {list-style:lower-roman;}
+ol.low-a {list-style:lower-alpha;}
+ul.square, ol ul,ul ul {list-style:square;}
+ul.disc, ol ul ul, ol ol ul,ul ul ul  {list-style:disc;}
+
+/*---------- download heading --------------*/
+
+.download {border:1px solid #007088}
+.download h2, .download h3, .download h4 {font-size:1em; margin-bottom:-12px;padding-bottom:0px;} 
+.download h2 + p, .download h3+ p, .download h4+ p  {margin-top:14px;} 
+
+/*------------------- contextual help link -----------------*/
+
+.help {
+	border:#aae8fd 1px solid;
+	padding:3px;
+}
+
+
+/*------------------ crumb trail ------------------------------
+
+*/
+
+#crumb  {
+	padding:6px 1%;
+	clear:both; 
+	background-color:#eff8f8;}
+#crumb input, #crumb input[type="button"]  {
+	background-color: #eff8f8;
+	border: 0;
+	color: #0000D9;
+	padding:0; 
+	margin:0;
+	font-size:.95em;}
+#crumb input:hover {
+	cursor: pointer;
+	text-decoration:underline;	}
+#crumb ul {
+	margin: 0 0 0 17%; 
+	padding:0.25em;}
+#crumb li {
+	display:inline;
+	padding:0; margin:0;}
+
+/* page index - admin*/
+#pagemenu input {
+	margin-bottom: 0.5em;
+	border: none;
+	background-color: #fff;
+	color: #039;
+	font-weight: bold;}
+#pagemenu input:hover {
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+/*------------------ cancel buttons made to look like links ------------------------------*/
+
+h2.copypermissions {
+	display: inline;}
+h2.copypermissions + .linkcancel {
+	display: inline;}
+.linkcancel {
+	background-color: #FFF;
+	border: none;
+	color: #039;
+	padding: 0;
+	margin:0;
+	font-weight:bold;
+	display: inline;}
+.linkcancel:hover {
+	cursor: pointer;
+	text-decoration: underline;}
+
+/*------------------ standard buttons made to look like links ------------------------------*/
+
+.linklookbutton {
+	background-color: #FFF; 
+	border: none;
+	color: #039;
+	font-weight: bold;
+	padding:0;}
+.linklookbutton:hover {
+	cursor: pointer;
+	text-decoration: underline;}
+
+
+/*------------------ misc styles ------------------------------*/
+
+.updated {
+	font-size:80%; 
+	text-align:right;}
+.textalignright {
+	text-align:right;}
+.nowrap {
+	white-space:nowrap;}
+	
+	
+/*----made to look like fieldset style when just a div (configure joint subs)--------*/
+
+
+.dummyfieldset {
+	border: 1px solid #ccc;
+	margin-bottom:0.5em; 
+	margin-right:0; 
+	margin-left:0;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding-bottom: 15px;}
+.dummyfieldset p, 
+.dummyfieldset h2,
+.dummyfieldset h3{
+	padding-left: 6px;}
+.dummyfieldset h2,
+.dummyfieldset h3{
+	font-size: 100%; 
+	font-weight:bold; 
+	padding-top:-12px;}
+.dummyfieldset table {
+	margin-left: 1%;}
+.dummyfieldset + .functions{
+	margin-top: 1.5em;}	
+
+/*
+/* error message reference box */
+.errorrefcode {
+	border: 1px solid #666; 
+	width: 30%; 
+	background-color: #eee;
+	padding:0;
+	text-align:center;}
+.errorrefcode h2 {
+	font-size: 110%;
+	margin-bottom:-10px;}
+/*icons for pdf download*/
+a.pdf, a.word, a.xml, a.excel, a.excelx, a.text, a.msaccess{
+	background-position:1% 50%;
+	background-repeat:no-repeat;
+	padding:6px 0 6px 30px;}
+a.pdf{
+	background-image:url("/i/pdf.gif");}
+a.word{
+	background-image:url("/i/doc.gif");}
+a.xml{
+	background-image:url("/i/xml.gif");}
+a.excel{
+	background-image:url("/i/xls.gif");}
+a.excelx{
+	background-image:url("/i/xlsx.gif");}
+a.text{
+	background-image:url("/i/txt.gif");}
+a.msaccess{
+	background-image:url("/i/mdb.gif");}
+	
+	
+.selectfiletype .doc {
+	background-image:url("/i/doc.gif");}
+
+.selectfiletype .pdf{
+	background-image:url("/i/pdf.gif");}
+
+/*import - displaying image for format type selected*/
+#reportformatfiletype img {
+	position: absolute;
+	left: 350px;
+	margin-top: 10px;
+	}
+	
+/*highlighting radios & checkboxes */
+.highlight, 
+.highlight td {background-color: #FFC;}
+
+	/* usb */
+#example_filter {margin-bottom: 10px;}
+.dataTables_length{float: right;}
+#example_paginate a {margin: 1em;}
+#example_paginate a:first-child {margin-left: 0!important;}
+.dataTables_info {margin-bottom: 1em;}
+	.searchtype a{
+		color: #000;
+		display: block;
+
+		border:1px solid #007088;
+	 	width: 250px;
+		padding: 1em;
+		background-color: #eff8f8; 
+		text-align: center;
+		margin: 0 1em 1em 0!important;}
+		
+		.searchtype a:hover {
+		border:1px solid #eff8f8; 
+		background-color:#007088;
+		color:#fff;
+		text-decoration:none;}
+
+
+
+/*tabs*/
+
+#tabs{
+	border-bottom: 1px solid #000;
+	padding-bottom: 3px;
+	margin-bottom: 10px;
+	margin-right: 0;
+	margin-top: 20px;
+	clear: both;}
+#tabs li {
+	list-style: none;
+	background-color: #CCC;
+	}
+#tabs ul {
+	margin-left: 0;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	display: inline;
+	border-bottom: 1px solid #000;
+	width: 100%;	} 
+#tabs ul li{
+	margin-left: 0;
+	margin-bottom: 0;
+	padding: 5px 0;
+	display: inline;
+	margin-right: 5px;}
+#tabs ul li a{
+	padding: 5px;
+	border: 1px solid #000;
+	display: inline;
+	color: #000;
+	font-weight: normal;
+
+	}
+
+	
+#tabs ul li a:hover{
+	padding: 5px;
+	border: 1px solid #000;
+	display: inline;
+	text-decoration: none!important;	}	
+#tabs ul li#current{
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+	border-top: 1px solid #000;
+	border-bottom: 1px dashed #fff;
+	display: inline;
+	background-color:#FFF;
+	padding-left: 5px;
+	padding-right: 5px;	}	
+
+
+#example_paginate .ui-state-default:hover{
+		text-decoration: none;
+		cursor: pointer;
+		background-color: #FF9;
+		color: #000;}
+#example_paginate .ui-state-default {
+	border: 1px solid #333;
+	padding: 3px 8px;
+	font-weight: normal;
+	background-color: #eff8f8;}
+#example_paginate .ui-state-disabled {background-color: #eee; color:#666; }
+#example_paginate .ui-state-disabled:hover {
+cursor: text;
+background-color: #eee; 
+color:#666;
+}
+
+.previous {margin-right: 25px!important;}
+
+#example_paginate span .ui-state-disabled:hover{
+	background-color: #007088; 
+}
+#example_paginate span .ui-state-disabled {
+	background-color: #007088;
+	color: #fff;}
+	
+#example_length, #example_filter {
+	background-color: #FFC;
+	padding: 1em; 
+	border: 1px solid #666;}
+
+.waitforload {
+	border: 1px dashed #000;
+	padding: 1em; 
+	text-align: center;
+	margin-bottom: 5px;
+	font-weight: bold;
+	background-color: #C66;
+	background-image:url("../../waiting.gif");
+	color: #FFF;
+
+
+}
+
+#staffmemberdetails th {
+	background-color: #FFC; width: 20%;}
+#staffmemberdetails td,
+#staffmemberdetails th {border: 1px solid #666;}
+
+.section {
+    width: 300px; padding-left: 10px; 
+    border-top: 2px dashed #666; 
+     padding-top:15px; }
+
+.section:last-of-type {
+        border-bottom: 2px dashed #666;}

@@ -1,0 +1,50 @@
+/*------------------- tables --------------*/
+
+/*------- generic tables ----------------- */
+
+#insts {
+	width: 50%;}
+	
+table{
+	border: 1px solid #007088; 
+	border-collapse: collapse; 
+ 	width: 100%;
+	margin-bottom: 1em;	}
+td {
+	background:#fff;	
+	font-size: 95%;}		
+td, th {
+	vertical-align: top;
+	padding: 6px; 
+	border: 1px solid #007088; 
+	text-align: left; 
+	color:#000;
+	vertical-align: middle;}	
+
+/*th,	 to catch tables without thead - doesn't work browsers insert tbody*/
+thead th, tbody th {
+	background-color: #eff8f8; 
+	background-image:url("/i/backlight16.jpg");
+	background-repeat:repeat-x;
+	background-position:bottom left;	}
+
+/*lists in tables - permissions page*/
+td ul{margin:0; padding:0;}
+td li {list-style-type:none;margin:0; padding:0;}
+
+thead th:hover{text-decoration: underline;
+cursor: pointer;}
+
+/*generic table with no borders*/
+table.blank {
+	border: 0;}
+.blank td, .blank th {
+	border: none; }
+.blank th {
+	font-weight: bold;}
+
+.ref2headcol {
+	width: 20%;}
+	
+	
+table.display{margin-bottom:2.5em;}
