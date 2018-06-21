@@ -60,7 +60,11 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         if authors has had a repository name manually added
         gets the name that should be on ePrint from this system DB
         and use it to be the main search piece
+
+        TODO:
+        ADD THE PROJECT ID TO THE QUERY
         */
+        $searchingName = "";
         $sql = "SELECT repositoryName FROM reftool.mdxAuthor WHERE firstName='".$author->getFirstName()."' AND lastName='".$author->getLastName()."'";
         echo $sql."<br>";
         $result = $conn->query($sql);
@@ -71,19 +75,26 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                 $author->repositoryName = $row["repositoryName"];
                 echo $row["repositoryName"]."<br>";
             }
-        } else {
-            echo '<h2>0 results</h2>';
         }
         $conn->close();
 
+        // define what is going to be the search variable
+        ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
+
+        /*
+        TODO:
+        ADD MAEVER REPOSITORY NAME TO THE DB
 
         if ($author->getFirstName() == "Maeve") {                                              // Only found case where reverse search doesn't work
             echo "Searching for <strong>".$author->getFullName()."</strong>... ";
             $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-        } else {
-            echo "Searching for <strong>".$author->getFullNameReverse()."</strong>... ";
-            $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullNameReverse());
         }
+        */
+
+
+        echo "Searching for <strong>".$searchingName."</strong>... ";
+        $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
+
         echo $link . "<br>";
         $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
         $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
@@ -118,7 +129,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
                         $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
-                        echo $author->getFullName() ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+                        echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
                         if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
                             echo "true <br>";
                             if ($creatorsKeys==0) {                                                             // if first authors
@@ -137,10 +148,10 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                 }
                 $eprintsDataJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
             } else {
-                echo "No results found for <strong>".$author->getFullName()."</strong><br>";
+                echo "No results found for <strong>".$searchingName."</strong><br>";
             }
         } else {
-            echo "JSON for <strong>".$author->getFullName()."</strong> is NOT valid <hr>";
+            echo "JSON for <strong>".$searchingName."</strong> is NOT valid <hr>";
         }
 
         echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";

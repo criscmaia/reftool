@@ -2,6 +2,7 @@
 class author {
     public $totalOfPublicationsFirstAuthor;
     public $totalOfPublicationsCoAuthor;
+    public $repositoryName;
     public $ignore;
 
     public function __construct($firstName, $lastName, $email, $employeeStatus) {
@@ -46,6 +47,10 @@ class author {
         return $this->lastName . ", " . $this->firstName;
     }
 
+    public function getRepositoryName() {
+        return $this->repositoryName;
+    }
+
     public function getEmail () {
         return $this->email;
     }
@@ -64,10 +69,6 @@ class author {
 
     public function printAll () {
         return "First name: " . $this->firstName . ". Last name: " . $this->lastName . ". Email: " . $this->email . ". Employee status: " . $this->employeeStatus;
-    }
-
-    public function setRepositoryName() {
-
     }
 }
 ?>
