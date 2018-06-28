@@ -57,12 +57,14 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
     // loop all authors from the excel
     foreach($allAuthors as $author) {
         /*
+            Do project details
+        */
+        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author->getFirstName(), $author->getLastName());        // get DB id value and assign to object
+
+        /*
         if authors has had a repository name manually added
         gets the name that should be on ePrint from this system DB
         and use it to be the main search piece
-
-        TODO:
-        ADD THE PROJECT ID TO THE QUERY
         */
         $searchingName = "";
         $sql = "SELECT repositoryName FROM reftool.mdxAuthor WHERE firstName='".$author->getFirstName()."' AND lastName='".$author->getLastName()."'";
@@ -81,22 +83,17 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         // define what is going to be the search variable
         ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
 
-        /*
-        TODO:
-        ADD MAEVER REPOSITORY NAME TO THE DB
-
-        if ($author->getFirstName() == "Maeve") {                                              // Only found case where reverse search doesn't work
-            echo "Searching for <strong>".$author->getFullName()."</strong>... ";
-            $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($author->getFullName());
-        }
-        */
-
-
         echo "Searching for <strong>".$searchingName."</strong>... ";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
 
         echo $link . "<br>";
-        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
+
+
+//        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
+        $result = "commented out to test different parts of the system";
+
+
+
         $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
 
 
@@ -173,6 +170,35 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
     }
+
+function checkIfMdxAuthorIsOnDB($projectDetails, $fname, $lname){
+    include 'dbconnect.php';
+    $fullName = $fname . ' ' . $lname;
+    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND $fullName LIKE '%$fullName%';";
+
+    echo $query."<br>";
+    $result = $conn->query($query);
+    if (!$result) {
+        trigger_error('Error in: '.$sql.'<br><br>Invalid query: ' . $conn->error);
+    } else if ($result->num_rows > 0) {             // author is not on the DB
+        while($row = $result->fetch_assoc()) {
+            return $row['mdxAuthorID'];
+            echo $row['mdxAuthorID']."<br>";
+        }
+    } else if ($result->num_rows == 0) {            // author is not on the DB
+        echo "Should show first name if it can access the objs: ".$author->getFirstName()."<br>";
+        $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', '$author->getFirstName()','$author->getLastName()','$author->getEmail()','$author->getEmployeeStatus()');";
+        if ($conn->query($sql) === TRUE) {
+            $last_id = $conn->insert_id;
+            echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
+            return $last_id;
+        } else {
+            echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
+        }
+    }
+    $conn->close();
+}
+
 ?>
                 <tbody>
     </table>

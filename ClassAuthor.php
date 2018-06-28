@@ -2,15 +2,17 @@
 class author {
     public $totalOfPublicationsFirstAuthor;
     public $totalOfPublicationsCoAuthor;
-    public $repositoryName;
-    public $ignore;
+    public $repositoryName;                     // manually added by the user - when ePrint name is different from MDX name
+    public $ignore;                             // manually chosen to be ignored by the user
+    public $mdxAuthorID;
 
     public function __construct($firstName, $lastName, $email, $employeeStatus) {
         // if already in DB:
+        // SELECT * FROM reftool.mdxAuthor where firstName = "William" and lastName = "Wong";
         //      if any new papers
         //          get details to obj
-        // if empty(email || employeeStatus)
-        //      update it
+        // else
+        // insert indo mdxAuthor
 
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -45,6 +47,10 @@ class author {
 
     public function getFullNameReverse () {
         return $this->lastName . ", " . $this->firstName;
+    }
+
+    public function getMdxAuthorID() {
+        return $this->mdxAuthorID;
     }
 
     public function getRepositoryName() {
