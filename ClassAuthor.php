@@ -74,7 +74,7 @@ class author {
     }
 
     public function printAll () {
-        return "First name: " . $this->firstName . ". Last name: " . $this->lastName . ". Email: " . $this->email . ". Employee status: " . $this->employeeStatus;
+        return "Author ID:" . $this->mdxAuthorID . ": First name: " . $this->firstName . ". Last name: " . $this->lastName . ". Email: " . $this->email . ". Employee status: " . $this->employeeStatus;
     }
 }
 ?>

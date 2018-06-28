@@ -61,6 +61,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         */
 //        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author->getFirstName(), $author->getLastName());        // get DB id value and assign to object
         $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author);        // get DB id value and assign to object
+        echo $author->printAll()."<br>";
 
         /*
         if authors has had a repository name manually added
@@ -68,8 +69,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         and use it to be the main search piece
         */
         $searchingName = "";
-        $sql = "SELECT repositoryName FROM reftool.mdxAuthor WHERE firstName='".$author->getFirstName()."' AND lastName='".$author->getLastName()."'";
-        echo $sql."<br>";
+        $sql = "SELECT repositoryName FROM reftool.mdxAuthor WHERE firstName=\"".$author->getFirstName()."\" AND lastName=\"".$author->getLastName()."\"";
+//        echo $sql."<br>";
         $result = $conn->query($sql);
         if (!$result) {
             trigger_error('Error in: '.$sql.'<br><br>Invalid query: ' . $conn->error);
@@ -79,7 +80,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                 echo $row["repositoryName"]."<br>";
             }
         }
-        $conn->close();
+//        $conn->close();
 
         // define what is going to be the search variable
         ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
@@ -175,24 +176,48 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     include 'dbconnect.php';
     $fullName = $localAuthor->getFirstName() . ' ' . $localAuthor->getLastName();
-    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND '$fullName' LIKE '%$fullName%';";
+    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND CONCAT(firstName, ' ', lastName) LIKE \"%$fullName%\";";
 
     echo $query."<br>";
     $result = $conn->query($query);
     if (!$result) {
         trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
-    } else if ($result->num_rows > 0) {             // author is not on the DB
+    } else if ($result->num_rows > 0) {                                                                                             // author IS on the DB
         while($row = $result->fetch_assoc()) {
-            return $row['mdxAuthorID'];
-            echo $row['mdxAuthorID']."<br>";
+            print_r($row);
+            if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
+                echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
+                if ($localAuthor->getEmployeeStatus()=='') {
+                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+                } else {
+                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+                }
+
+                $result = $conn->query($sqlUpdate);
+                if ($result) {
+                    echo "Overwritten! $sqlUpdate <br>";
+                } else {
+                    echo "Error: " . $sqlUpdate . "<br>" . $conn->error;
+                }
+                $conn->close();
+            } else {
+                echo "email AND current employee on the spreadsheet are the same from the DB. Nothing changes. <br>";
+            }
+            return $row['mdxAuthorID'];                                                                                             // return author DB id
+//            echo $row['mdxAuthorID']."<br>";
         }
-    } else if ($result->num_rows == 0) {            // author is not on the DB
+    } else if ($result->num_rows == 0) {                                                                                            // author is NOT on the DB
         echo "Should show first name if it can access the objs: ".$localAuthor->getFirstName()."<br>";
-        $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', '".$localAuthor->getFirstName()."','".$localAuthor->getLastName()."','".$localAuthor->getEmail()."','".$localAuthor->getEmployeeStatus()."');";
+        if ($localAuthor->getEmployeeStatus()=='') {
+            $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`) VALUES ('$projectDetails[0]', \"".$localAuthor->getFirstName()."\",\"".$localAuthor->getLastName()."\",\"".$localAuthor->getEmail()."\");";
+        } else {
+            $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', \"".$localAuthor->getFirstName()."\",\"".$localAuthor->getLastName()."\",\"".$localAuthor->getEmail()."\",".$localAuthor->getEmployeeStatus().");";
+        }
+
         if ($conn->query($sql) === TRUE) {
             $last_id = $conn->insert_id;
             echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
-            return $last_id;
+            return $last_id;                                                                                                        // return newly created author DB id
         } else {
             echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
         }
