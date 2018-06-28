@@ -59,7 +59,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         /*
             Do project details
         */
-        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author->getFirstName(), $author->getLastName());        // get DB id value and assign to object
+//        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author->getFirstName(), $author->getLastName());        // get DB id value and assign to object
+        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author);        // get DB id value and assign to object
 
         /*
         if authors has had a repository name manually added
@@ -171,23 +172,23 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         echo '</tr>';
     }
 
-function checkIfMdxAuthorIsOnDB($projectDetails, $fname, $lname){
+function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     include 'dbconnect.php';
-    $fullName = $fname . ' ' . $lname;
-    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND $fullName LIKE '%$fullName%';";
+    $fullName = $localAuthor->getFirstName() . ' ' . $localAuthor->getLastName();
+    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND '$fullName' LIKE '%$fullName%';";
 
     echo $query."<br>";
     $result = $conn->query($query);
     if (!$result) {
-        trigger_error('Error in: '.$sql.'<br><br>Invalid query: ' . $conn->error);
+        trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
     } else if ($result->num_rows > 0) {             // author is not on the DB
         while($row = $result->fetch_assoc()) {
             return $row['mdxAuthorID'];
             echo $row['mdxAuthorID']."<br>";
         }
     } else if ($result->num_rows == 0) {            // author is not on the DB
-        echo "Should show first name if it can access the objs: ".$author->getFirstName()."<br>";
-        $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', '$author->getFirstName()','$author->getLastName()','$author->getEmail()','$author->getEmployeeStatus()');";
+        echo "Should show first name if it can access the objs: ".$localAuthor->getFirstName()."<br>";
+        $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', '".$localAuthor->getFirstName()."','".$localAuthor->getLastName()."','".$localAuthor->getEmail()."','".$localAuthor->getEmployeeStatus()."');";
         if ($conn->query($sql) === TRUE) {
             $last_id = $conn->insert_id;
             echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
