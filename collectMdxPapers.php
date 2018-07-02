@@ -37,8 +37,12 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
                     $split_date = explode('-',$date);
                     $year = $split_date[0];
                     if ($title!="NULL" && $year>=2014){
-                        echo "valid paper <br>";
+//                        echo "valid paper <br>";
+                    } else {
+                        echo "Either TITLE is null or YEAR < 2014 -- ".$papersObj[$papersObjKeys]['eprintid'].": ".$papersObj[$papersObjKeys]['title'].". <br>";
                     }
+                } else {
+                    echo "Date is null -- ".$papersObj[$papersObjKeys]['eprintid'].": ".$papersObj[$papersObjKeys]['title'].".<br>";
                 }
             }
         } else {
