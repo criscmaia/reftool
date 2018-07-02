@@ -185,9 +185,9 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
             if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
                 echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
                 if ($localAuthor->getEmployeeStatus()=='') {
-                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
-                } else {
                     $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+                } else {
+                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
                 }
 
                 $result = $conn->query($sqlUpdate);
