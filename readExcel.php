@@ -59,9 +59,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         /*
             Do project details
         */
-//        $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author->getFirstName(), $author->getLastName());        // get DB id value and assign to object
         $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author);        // get DB id value and assign to object
-        echo $author->printAll()."<br>";
+//        echo $author->printAll()."<br>";
 
         /*
         if authors has had a repository name manually added
@@ -77,23 +76,20 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         } else if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 $author->repositoryName = $row["repositoryName"];
-                echo $row["repositoryName"]."<br>";
+//                echo $row["repositoryName"]."<br>";
             }
         }
-//        $conn->close();
 
         // define what is going to be the search variable
         ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
 
-        echo "Searching for <strong>".$searchingName."</strong>... ";
+        echo "Searching for <strong>".$searchingName."</strong>... <br />";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
 
-        echo $link . "<br>";
+//        echo $link . "<br>";
 
 
-//        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
-        $result = "commented out to test different parts of the system";
-
+        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
 
 
         $papersObj = json_decode($result, true);                                               // Takes a JSON encoded string and converts it into a PHP variable
@@ -128,9 +124,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
                         $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
-                        echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+//                        echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
                         if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
-                            echo "true <br>";
+//                            echo "true <br>";
                             if ($creatorsKeys==0) {                                                             // if first authors
                                 $author->totalOfPublicationsFirstAuthor++;
                             } else {                                                                            // if co-author
@@ -153,8 +149,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo "JSON for <strong>".$searchingName."</strong> is NOT valid <hr>";
         }
 
-        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
-        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
+//        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
+//        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 
         /*
@@ -178,13 +174,13 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     $fullName = $localAuthor->getFirstName() . ' ' . $localAuthor->getLastName();
     $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND CONCAT(firstName, ' ', lastName) LIKE \"%$fullName%\";";
 
-    echo $query."<br>";
+//    echo $query."<br>";
     $result = $conn->query($query);
     if (!$result) {
         trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
     } else if ($result->num_rows > 0) {                                                                                             // author IS on the DB
         while($row = $result->fetch_assoc()) {
-            print_r($row);
+//            print_r($row);
             if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
                 echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
                 if ($localAuthor->getEmployeeStatus()=='') {
@@ -201,13 +197,13 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
                 }
                 $conn->close();
             } else {
-                echo "email AND current employee on the spreadsheet are the same from the DB. Nothing changes. <br>";
+//                echo "email AND current employee on the spreadsheet are the same from the DB. Nothing changes. <br>";
             }
             return $row['mdxAuthorID'];                                                                                             // return author DB id
 //            echo $row['mdxAuthorID']."<br>";
         }
     } else if ($result->num_rows == 0) {                                                                                            // author is NOT on the DB
-        echo "Should show first name if it can access the objs: ".$localAuthor->getFirstName()."<br>";
+//        echo "Should show first name if it can access the objs: ".$localAuthor->getFirstName()."<br>";
         if ($localAuthor->getEmployeeStatus()=='') {
             $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`) VALUES ('$projectDetails[0]', \"".$localAuthor->getFirstName()."\",\"".$localAuthor->getLastName()."\",\"".$localAuthor->getEmail()."\");";
         } else {
