@@ -11,7 +11,6 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
     die();
 } else {
     $publicationDetails = $_SESSION["publicationDetails"];
-    echo "<pre>" . $publicationDetails . "</pre><hr>";
 
 //    echo "<h3>Author: quantity of publications in total (from all years)</h3>";
 //    foreach ($importedNames as $author) {
@@ -28,20 +27,33 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 //        //$search = "Cristiano Maia";
 //        $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($search);
 //        $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");
-//        $json_str = $result;
-//        $json = json_decode($json_str);
+
+
+//        $publicationDetails_str = $result;
+//        $publicationDetails = json_decode($publicationDetails_str);
 //
-//        if (count($json)==0) {
-//            echo "No results found for <strong>$search</strong><br>";
-////            echo "<a href='/reftool/'>go back</a><hr>";
-//        } else {
-//            echo "<strong>$search</strong>: " . count($json) . " publications <br>";
+            $papersObj = json_decode($publicationDetails, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
+            echo gettype($papersObj)."<br>";
+            if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
+                if (count($papersObj)>0) {                                                         // if at least one result is available
+                    echo "Valid JSON and not empty <br>";
+//                    echo "<pre>" . $publicationDetails . "</pre><hr>";
+
+//            echo "<strong>$search</strong>: " . count($publicationDetails) . " publications <br>";
 //
-//            $jsonData = json_encode($json, JSON_PRETTY_PRINT);
-//            //echo "<pre>" . $jsonData . "</pre><hr>";
+//            $publicationDetailsData = json_encode($publicationDetails, JSON_PRETTY_PRINT);
+//            //echo "<pre>" . $publicationDetailsData . "</pre><hr>";
 //
-//            $eraRating = "NULL";
-//            foreach($json as $indjson){
+                $eraRating = "NULL";
+                foreach($papersObj as $paperKey){
+                    print_r($paperKey);
+                }
+            } else {
+        echo "No valid publications collected.<br>";
+        echo "<a href='/reftool/v2/'>go back</a><hr>";
+    }
+}
+//
 //                $paper = $indjson;
 //
 //                // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
