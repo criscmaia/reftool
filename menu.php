@@ -48,6 +48,20 @@ if(!isset($_SESSION["projectDetails"]) && empty($_SESSION["projectDetails"])) {
     echo "<strong>Project: <abbr title=\"$projectDetails[2]\">($projectDetails[0]) $projectDetails[1]</abbr> <a href='/reftool/v2/' title='Change Project'>[x]</a></strong> | ";
 //    print_r($projectDetails);
 }
+
+
+//if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetails"])) {
+//    echo "<script>
+//            alert(\"You have to process the spreadsheet upload first.\");
+//            setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",1000);
+//          </script>";
+//    die();
+//} else {
+//    $publicationDetails = $_SESSION["publicationDetails"];
+//    echo "<strong>Project: <abbr title=\"$publicationDetails[2]\">($publicationDetails[0]) $publicationDetails[1]</abbr> <a href='/reftool/v2/' title='Change Project'>[x]</a></strong> | ";
+//    print_r($publicationDetails);
+//}
+
 ?>
 <a href="/reftool/v2/excelUpload.php">Upload Excel</a> |
 <a href="/reftool/v2/readExcel.php">Reading from Excel</a> |

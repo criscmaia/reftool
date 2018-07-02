@@ -150,6 +150,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         }
 
 //        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
+        $_SESSION['publicationDetails'] = $eprintsDataJSON;
 //        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 
@@ -224,3 +225,4 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 ?>
                 <tbody>
     </table>
+<a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>
