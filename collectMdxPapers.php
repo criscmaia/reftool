@@ -24,9 +24,22 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 
             foreach($papersObj as $papersObjKeys => $papersObjValues) {                    // go through each paper
 //              GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-//                echo $papersObj[$papersObjKeys]['date']. " : ".isset($papersObj[$papersObjKeys]['date'])."<br>";
                 if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
-//                echo $papersObj[$papersObjKeys]['date']. " : " . $date . "<br>";
+                if (isset($papersObj[$papersObjKeys]['title']))        { $title = '"'.addslashes($papersObj[$papersObjKeys]['title']).'"'; } else { $title = "NULL";}
+
+                if ($date != "NULL") {
+                    if (strlen($date)==4) {              // only year
+                        $date = $date . "-01-01";
+                    } else if (strlen($date)==7) {       // only year and month
+                        $date = $date . "-01";
+                    }
+
+                    $split_date = explode('-',$date);
+                    $year = $split_date[0];
+                    if ($title!="NULL" && $year>=2014){
+                        echo "valid paper <br>";
+                    }
+                }
             }
         } else {
             echo "No valid publications collected.<br>";
@@ -102,9 +115,9 @@ function checkEra2010rank($issn) {
                     $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
                     echo $eraRating . "<br>";
                 }
-              */
             }
         }
+              */
 
 
 
