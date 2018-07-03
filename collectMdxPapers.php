@@ -11,12 +11,15 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
     die();
 } else {
     $publicationDetails = $_SESSION["publicationDetails"];
+//            /*
+            highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
+//            */
 
     $papersObj = json_decode($publicationDetails, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
 
     if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
         if (count($papersObj)>0) {                                                         // if at least one result is available
-            echo "Valid JSON and not empty <br>";
+//            echo "Valid JSON and not empty <br>";
             $eraRating = "NULL";
             /*
             highlight_string("<?php\n\$data =\n" . var_export($papersObj, true) . ";\n?>");
@@ -62,8 +65,26 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 
                         if ($issn != "NULL") {
                             $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
-                            echo $eprintid.":".$issn.":".$title." - ".$eraRating . "<br>";
+//                            echo $eprintid.":".$issn.":".$title." - ".$eraRating . "<br>";
                         }
+
+                        if(sizeof($allcreators)>0 && $allcreators!="NULL"){
+                                        /*
+            highlight_string("<?php\n\$data =\n" . var_export($allcreators, true) . ";\n?>");
+//            */
+
+//                            foreach($allcreators as $eachcreator) {
+//                                ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());    // define what is going to be the search variable
+//                                $creatorFullName = ($eachcreator["name"]["given"]." ".$eachcreator["name"]["family"]);                                                      // get the creator full name
+//                                if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {                           // double check if author is one of the creators
+//                                    $author->
+//                                }
+//
+//                                echo "$fName $lName <br>";
+//                            }
+                        }
+
+
 
                     } else {
                         echo "Either TITLE is null or YEAR < 2014 -- ".$papersObj[$papersObjKeys]['eprintid'].": ".$papersObj[$papersObjKeys]['title'].". <br>";
@@ -83,11 +104,8 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 function checkEra2010rank($issn) {
     include 'dbconnect.php';
 
-    //remove quotes from ISSN
-    $issn = trim($issn, '"');
+    $issn = trim($issn, '"');                               //remove quotes from ISSN
     $sqlquery = "SELECT rank FROM reftool.era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;";
-//    echo "Searching using issn: $issn <br>";
-//    echo $sqlquery . "<br>";
 
     if ($checkEraRank = $conn->query($sqlquery)) {
         $row_cnt = $checkEraRank->num_rows;
@@ -105,58 +123,6 @@ function checkEra2010rank($issn) {
 
 
 //            foreach($papersObj as $paper){
-
-//          GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-            /*
-            if (isset($paper->date))         { $date = $paper->date; } else { $date = "NULL";}
-                echo $date . "<br>";
-            if (isset($paper->title))        { $title = '"'.addslashes($paper->title).'"'; } else { $title = "NULL";}
-            if ($date != "NULL") {
-                if (strlen($date)==4) {              // only year
-                    $date = $date . "-01-01";
-                } else if (strlen($date)==7) {       // only year and month
-                    $date = $date . "-01";
-                }
-
-                $split_date = explode('-',$date);
-                $year = $split_date[0];
-                if ($title!="NULL" && $year>=2014){
-                    $date = '"'.$date.'"';           // add quotes for DB INSERT
-
-                    if (isset($paper->type))         { $type = '"'.addslashes($paper->type).'"'; }
-                    if (isset($paper->creators))     { $allcreators = $paper->creators; } else { $allcreators = "NULL";}        // minor scenarios where creator is null
-                    if (isset($paper->succeeds))     { $succeeds = $paper->succeeds; } else { $succeeds = "NULL";}
-                    if (isset($paper->ispublished))  { $ispublished = '"'.addslashes($paper->ispublished).'"'; } else { $ispublished = "NULL";}
-                    if (isset($paper->pres_type))    { $presType = '"'.addslashes($paper->pres_type).'"'; } else { $presType = "NULL";}
-                    if (isset($paper->keywords))     { $keywords = '"'.addslashes($paper->keywords).'"'; } else { $keywords = "NULL";}
-                    if (isset($paper->publication))  { $publication = '"'.addslashes($paper->publication).'"'; } else { $publication = "NULL";}
-                    if (isset($paper->volume))       { $volume = '"'.addslashes($paper->volume).'"'; } else { $volume = "NULL";}
-                    if (isset($paper->number))       { $number = '"'.addslashes($paper->number).'"'; } else { $number = "NULL";}
-                    if (isset($paper->publisher))    { $publisher = '"'.addslashes($paper->publisher).'"'; } else { $publisher = "NULL";}
-                    if (isset($paper->event_title))  { $eventTitle = '"'.addslashes($paper->event_title).'"'; } else { $eventTitle = "NULL";}
-                    if (isset($paper->event_type))   { $eventType = '"'.addslashes($paper->event_type).'"'; } else { $eventType = "NULL";}
-                    if (isset($paper->isbn))         { $isbn = '"'.addslashes($paper->isbn).'"'; } else { $isbn = "NULL";}
-                    if (isset($paper->issn))         { $issn = '"'.addslashes($paper->issn).'"'; } else { $issn = "NULL";}
-                    if (isset($paper->book_title))   { $bookTitle = '"'.addslashes($paper->book_title).'"'; } else { $bookTitle = "NULL";}
-                    if (isset($paper->eprintid))     { $eprintid = $paper->eprintid; } else { $eprintid = "NULL";}
-                    if (isset($paper->official_url)) { $doi = '"'.addslashes($paper->official_url).'"'; } else { $doi = "NULL";}
-                    if (isset($paper->uri))          { $uri = '"'.addslashes($paper->uri).'"'; } else { $uri = "NULL";}
-                    if (isset($paper->abstract))     { $abstract = '"'.addslashes($paper->abstract).'"'; } else { $abstract = "NULL";}
-                }
-
-
-                echo $issn;
-                if ($issn != "NULL") {
-                    $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
-                    echo $eraRating . "<br>";
-                }
-            }
-        }
-              */
-
-
-
-//
 //                            // ONLY ADD TO DB IF IT HAS AN AUTHOR
 //                            if(sizeof($allcreators)>0 && $allcreators!="NULL"){
 //                                foreach($allcreators as $eachcreator){

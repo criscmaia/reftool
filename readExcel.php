@@ -41,6 +41,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         </thead>
         <tbody>
 <?php
+    $_SESSION['publicationDetails'] = null;
+    $allProcessedPublications = [];
     function startsWith($haystack, $needle) {
         // search backwards starting from haystack length characters from the end
         return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
@@ -152,7 +154,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         }
 
 //        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
-        $_SESSION['publicationDetails'] = $eprintsDataJSON;
+        $allProcessedPublications[] = $eprintsDataJSON;
 //        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
 
 
@@ -171,6 +173,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
             echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
     }
+
+    $_SESSION['publicationDetails'] = $allProcessedPublications;
 
 function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     include 'dbconnect.php';
