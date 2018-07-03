@@ -11,18 +11,19 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
     die();
 } else {
     $publicationDetails = $_SESSION["publicationDetails"];
-//            /*
+            /*
             highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
 //            */
 
-    $papersObj = json_decode($publicationDetails, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
+//    $papersObj = json_decode($publicationDetails, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
 
     if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
-        if (count($papersObj)>0) {                                                         // if at least one result is available
+        echo count($publicationDetails)."<br>";
+        if (count($publicationDetails)>0) {                                                         // if at least one result is available
 //            echo "Valid JSON and not empty <br>";
             $eraRating = "NULL";
             /*
-            highlight_string("<?php\n\$data =\n" . var_export($papersObj, true) . ";\n?>");
+            highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
 //            */
 
             foreach($papersObj as $papersObjKeys => $papersObjValues) {                    // go through each paper
