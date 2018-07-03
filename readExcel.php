@@ -123,7 +123,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {       // for each author of each paper
-                        if isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']) {               // if name IS set to creator - "Yang, Xin-She" is not, as example
+                        if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {               // if name IS set to creator - "Yang, Xin-She" is not, as example
                             $creatorFullName = ($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given']." ".$papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family']);        // get the creator full name
 //                          echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {        // double check if author is one of the creators
@@ -194,7 +194,8 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 
                 $result = $conn->query($sqlUpdate);
                 if ($result) {
-                    echo "Overwritten! $sqlUpdate <br>";
+                    echo "Author details updated on the DB! <br>";
+//                    echo "Overwritten! $sqlUpdate <br>";
                 } else {
                     echo "Error: " . $sqlUpdate . "<br>" . $conn->error;
                 }
@@ -215,7 +216,8 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 
         if ($conn->query($sql) === TRUE) {
             $last_id = $conn->insert_id;
-            echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
+//            echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
+                echo $fullName. " added to the DB successfully. (ID: ". $last_id. ")<br>";
             return $last_id;                                                                                                        // return newly created author DB id
         } else {
             echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";

@@ -85,7 +85,11 @@ function checkEra2010rank($issn) {
 
     //remove quotes from ISSN
     $issn = trim($issn, '"');
-    if ($checkEraRank = $conn->query("SELECT rank FROM era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;")) {
+    $sqlquery = "SELECT rank FROM reftool.era2010JournalTitleList WHERE CONCAT(ISSN1, ISSN2, ISSN3, ISSN4) LIKE '%$issn%' LIMIT 1;";
+//    echo "Searching using issn: $issn <br>";
+//    echo $sqlquery . "<br>";
+
+    if ($checkEraRank = $conn->query($sqlquery)) {
         $row_cnt = $checkEraRank->num_rows;
         if($row_cnt>0) {
             $resultsArray = $checkEraRank->fetch_assoc();
