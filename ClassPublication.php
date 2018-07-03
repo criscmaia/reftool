@@ -25,6 +25,7 @@ class publication {
     public $abstract;
     public $date;
     public $eraRating;
+    public $authors = array();      // id from each author in the paper
 
     public function getProjectID() {
         return $this->projectID;

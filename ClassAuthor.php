@@ -5,6 +5,7 @@ class author {
     public $repositoryName;                     // manually added by the user - when ePrint name is different from MDX name
     public $ignore;                             // manually chosen to be ignored by the user
     public $mdxAuthorID;
+    public $publications = array();                     // id from each publicaiton for this author
 
     public function __construct($firstName, $lastName, $email, $employeeStatus) {
         // if already in DB:

@@ -6,30 +6,30 @@ error_reporting(E_ALL);
 include 'menu.php';
 include 'dbconnect.php';
 
-if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetails"])) {
+if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
     header("Location: /reftool/v2/readExcel.php");
     die();
 } else {
-    $publicationDetails = $_SESSION["publicationDetails"];
-//            /*
-            highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
+    $publications = $_SESSION["publications"];
+            /*
+            highlight_string("<?php\n\$data =\n" . var_export($publications, true) . ";\n?>");
 //            */
 
-//    $papersObj = json_decode($publicationDetails, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
+//    $papersObj = json_decode($publications, true);                                   // Takes a JSON encoded string and converts it into a PHP variable
 
-    if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
-        echo count($publicationDetails)."<br>";
-        if (count($publicationDetails)>0) {                                                         // if at least one result is available
+//    if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
+        echo count($publications)."<br>";
+        if (count($publications)>0) {                                                         // if at least one result is available
 //            echo "Valid JSON and not empty <br>";
             $eraRating = "NULL";
             /*
-            highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
+            highlight_string("<?php\n\$data =\n" . var_export($publications, true) . ";\n?>");
 //            */
 
-            foreach($papersObj as $papersObjKeys => $papersObjValues) {                    // go through each paper
+            foreach($publications as $papersObjKeys => $papersObjValues) {                    // go through each paper
 //              GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-                if (isset($papersObj[$papersObjKeys]['date']))         { $date = $papersObj[$papersObjKeys]['date']; } else { $date = "NULL";}
-                if (isset($papersObj[$papersObjKeys]['title']))        { $title = '"'.addslashes($papersObj[$papersObjKeys]['title']).'"'; } else { $title = "NULL";}
+                if (isset($publications[$papersObjKeys]['date']))         { $date = $publications[$papersObjKeys]['date']; } else { $date = "NULL";}
+                if (isset($publications[$papersObjKeys]['title']))        { $title = '"'.addslashes($publications[$papersObjKeys]['title']).'"'; } else { $title = "NULL";}
 
                 if ($date != "NULL") {
                     if (strlen($date)==4) {                 // only year
@@ -44,25 +44,25 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 
                         $date = '"'.$date.'"';              // add quotes for DB INSERT
 
-                        if (isset($papersObj[$papersObjKeys]['type']))         { $type        = '"'.addslashes($papersObj[$papersObjKeys]['type']).'"'; }
-                        if (isset($papersObj[$papersObjKeys]['creators']))     { $allcreators = $papersObj[$papersObjKeys]['creators']; } else { $allcreators = "NULL";}        // minor scenarios where creator is null
-                        if (isset($papersObj[$papersObjKeys]['succeeds']))     { $succeeds    = $papersObj[$papersObjKeys]['succeeds']; } else { $succeeds = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['ispublished']))  { $ispublished = '"'.addslashes($papersObj[$papersObjKeys]['ispublished']).'"'; } else { $ispublished = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['pres_type']))    { $presType    = '"'.addslashes($papersObj[$papersObjKeys]['pres_type']).'"'; } else { $presType = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['keywords']))     { $keywords    = '"'.addslashes($papersObj[$papersObjKeys]['keywords']).'"'; } else { $keywords = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['publication']))  { $publication = '"'.addslashes($papersObj[$papersObjKeys]['publication']).'"'; } else { $publication = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['volume']))       { $volume      = '"'.addslashes($papersObj[$papersObjKeys]['volume']).'"'; } else { $volume = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['number']))       { $number      = '"'.addslashes($papersObj[$papersObjKeys]['number']).'"'; } else { $number = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['publisher']))    { $publisher   = '"'.addslashes($papersObj[$papersObjKeys]['publisher']).'"'; } else { $publisher = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['event_title']))  { $eventTitle  = '"'.addslashes($papersObj[$papersObjKeys]['event_title']).'"'; } else { $eventTitle = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['event_type']))   { $eventType   = '"'.addslashes($papersObj[$papersObjKeys]['event_type']).'"'; } else { $eventType = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['isbn']))         { $isbn        = '"'.addslashes($papersObj[$papersObjKeys]['isbn']).'"'; } else { $isbn = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['issn']))         { $issn        = '"'.addslashes($papersObj[$papersObjKeys]['issn']).'"'; } else { $issn = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['book_title']))   { $bookTitle   = '"'.addslashes($papersObj[$papersObjKeys]['book_title']).'"'; } else { $bookTitle = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['eprintid']))     { $eprintid    = $papersObj[$papersObjKeys]['eprintid']; } else { $eprintid = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['official_url'])) { $doi         = '"'.addslashes($papersObj[$papersObjKeys]['official_url']).'"'; } else { $doi = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['uri']))          { $uri         = '"'.addslashes($papersObj[$papersObjKeys]['uri']).'"'; } else { $uri = "NULL";}
-                        if (isset($papersObj[$papersObjKeys]['abstract']))     { $abstract    = '"'.addslashes($papersObj[$papersObjKeys]['abstract']).'"'; } else { $abstract = "NULL";}
+                        if (isset($publications[$papersObjKeys]['type']))         { $type        = '"'.addslashes($publications[$papersObjKeys]['type']).'"'; }
+                        if (isset($publications[$papersObjKeys]['creators']))     { $allcreators = $publications[$papersObjKeys]['creators']; } else { $allcreators = "NULL";}        // minor scenarios where creator is null
+                        if (isset($publications[$papersObjKeys]['succeeds']))     { $succeeds    = $publications[$papersObjKeys]['succeeds']; } else { $succeeds = "NULL";}
+                        if (isset($publications[$papersObjKeys]['ispublished']))  { $ispublished = '"'.addslashes($publications[$papersObjKeys]['ispublished']).'"'; } else { $ispublished = "NULL";}
+                        if (isset($publications[$papersObjKeys]['pres_type']))    { $presType    = '"'.addslashes($publications[$papersObjKeys]['pres_type']).'"'; } else { $presType = "NULL";}
+                        if (isset($publications[$papersObjKeys]['keywords']))     { $keywords    = '"'.addslashes($publications[$papersObjKeys]['keywords']).'"'; } else { $keywords = "NULL";}
+                        if (isset($publications[$papersObjKeys]['publication']))  { $publication = '"'.addslashes($publications[$papersObjKeys]['publication']).'"'; } else { $publication = "NULL";}
+                        if (isset($publications[$papersObjKeys]['volume']))       { $volume      = '"'.addslashes($publications[$papersObjKeys]['volume']).'"'; } else { $volume = "NULL";}
+                        if (isset($publications[$papersObjKeys]['number']))       { $number      = '"'.addslashes($publications[$papersObjKeys]['number']).'"'; } else { $number = "NULL";}
+                        if (isset($publications[$papersObjKeys]['publisher']))    { $publisher   = '"'.addslashes($publications[$papersObjKeys]['publisher']).'"'; } else { $publisher = "NULL";}
+                        if (isset($publications[$papersObjKeys]['event_title']))  { $eventTitle  = '"'.addslashes($publications[$papersObjKeys]['event_title']).'"'; } else { $eventTitle = "NULL";}
+                        if (isset($publications[$papersObjKeys]['event_type']))   { $eventType   = '"'.addslashes($publications[$papersObjKeys]['event_type']).'"'; } else { $eventType = "NULL";}
+                        if (isset($publications[$papersObjKeys]['isbn']))         { $isbn        = '"'.addslashes($publications[$papersObjKeys]['isbn']).'"'; } else { $isbn = "NULL";}
+                        if (isset($publications[$papersObjKeys]['issn']))         { $issn        = '"'.addslashes($publications[$papersObjKeys]['issn']).'"'; } else { $issn = "NULL";}
+                        if (isset($publications[$papersObjKeys]['book_title']))   { $bookTitle   = '"'.addslashes($publications[$papersObjKeys]['book_title']).'"'; } else { $bookTitle = "NULL";}
+                        if (isset($publications[$papersObjKeys]['eprintid']))     { $eprintid    = $publications[$papersObjKeys]['eprintid']; } else { $eprintid = "NULL";}
+                        if (isset($publications[$papersObjKeys]['official_url'])) { $doi         = '"'.addslashes($publications[$papersObjKeys]['official_url']).'"'; } else { $doi = "NULL";}
+                        if (isset($publications[$papersObjKeys]['uri']))          { $uri         = '"'.addslashes($publications[$papersObjKeys]['uri']).'"'; } else { $uri = "NULL";}
+                        if (isset($publications[$papersObjKeys]['abstract']))     { $abstract    = '"'.addslashes($publications[$papersObjKeys]['abstract']).'"'; } else { $abstract = "NULL";}
 
                         if ($issn != "NULL") {
                             $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
@@ -88,17 +88,17 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
 
 
                     } else {
-                        echo "Either TITLE is null or YEAR < 2014 -- ".$papersObj[$papersObjKeys]['eprintid'].": ".$papersObj[$papersObjKeys]['title'].". <br>";
+                        echo "Either TITLE is null or YEAR < 2014 -- ".$publications[$papersObjKeys]['eprintid'].": ".$publications[$papersObjKeys]['title'].". <br>";
                     }
                 } else {
-                    echo "Date is null -- ".$papersObj[$papersObjKeys]['eprintid'].": ".$papersObj[$papersObjKeys]['title'].".<br>";
+//                    echo "Date is null -- ".$publications[$papersObjKeys]['eprintid'].": ".$publications[$papersObjKeys]['title'].".<br>";
                 }
             }
         } else {
             echo "No valid publications collected.<br>";
             echo "<a href='/reftool/v2/'>go back</a><hr>";
         }
-    }
+//    }
 }
 
 // check paper rank

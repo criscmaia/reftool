@@ -2,6 +2,7 @@
 require_once __DIR__ . '/simplexlsx.class.php';
 include_once 'menu.php';
 require_once 'ClassAuthor.php';
+require_once 'ClassPublication.php';
 require_once 'dbconnect.php';
 
 // get Excel data
@@ -12,7 +13,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     foreach($filteredFile as $author) {
         // create object instances and add to the array
-        $allAuthors[]= new author(
+        $authors[]= new author(
             isset($author[0])?$author[0]:null,                              // First Name
             isset($author[1])?$author[1]:null,                              // Last Name
             isset($author[2])?strtolower($author[2]):null,                  // Email
@@ -20,7 +21,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         );
     }
 
-    $_SESSION['importedNames'] = $allAuthors;                                       // save array with all Authors object instance to SESSION so 'collectMdxPapers can access it
+    $_SESSION['authors'] = $authors;                                       // save array with all Authors object instance to SESSION so 'collectMdxPapers can access it
 } else {
     echo SimpleXLSX::parse_error();
 }
@@ -41,8 +42,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         </thead>
         <tbody>
 <?php
-    $_SESSION['publicationDetails'] = null;
-    $allProcessedPublications = [];
+    $_SESSION['publications'] = null;
+    $publications = [];
     function startsWith($haystack, $needle) {
         // search backwards starting from haystack length characters from the end
         return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
@@ -57,7 +58,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
     $authorsId = 1;
 
     // loop all authors from the excel
-    foreach($allAuthors as $author) {
+    foreach($authors as $author) {
         /*
             Do project details
         */
@@ -145,7 +146,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         }
                     }
                 }
-                $eprintsDataJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
+                $publicationJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
             } else {
                 echo "No results found for <strong>".$searchingName."</strong><br>";
             }
@@ -154,12 +155,12 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         }
 
 //        echo "<strong>".count($papersObj)."</strong> valid papers found.</p>";
-        $allProcessedPublications[] = $eprintsDataJSON;
-//        echo "<pre>" . $eprintsDataJSON . "</pre><hr>";
+        $publications[] = $publicationJSON;
+//        echo "<pre>" . $publicationJSON . "</pre><hr>";
 
 
         /*
-        highlight_string("<?php\n\$data =\n" . var_export($eprintsDataJSON, true) . ";\n?>");
+        highlight_string("<?php\n\$data =\n" . var_export($publicationJSON, true) . ";\n?>");
         */
 
         echo '<tr>';
@@ -174,7 +175,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         echo '</tr>';
     }
 
-    $_SESSION['publicationDetails'] = $allProcessedPublications;
+    $_SESSION['publications'] = $publications;
 
 function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     include 'dbconnect.php';
