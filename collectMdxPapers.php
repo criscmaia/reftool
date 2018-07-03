@@ -11,7 +11,7 @@ if(!isset($_SESSION["publicationDetails"]) && empty($_SESSION["publicationDetail
     die();
 } else {
     $publicationDetails = $_SESSION["publicationDetails"];
-            /*
+//            /*
             highlight_string("<?php\n\$data =\n" . var_export($publicationDetails, true) . ";\n?>");
 //            */
 
