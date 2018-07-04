@@ -122,8 +122,9 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         continue;                                                               // go backs to loop without going through the authors below
                     }
 
+                    echo $papersObj[$papersObjKeys]['title']."<br><br>";
+
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {                                               // for each author of each paper
-//                        echo $papersObj[$papersObjKeys]['title']."<br><br>";
                         if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {                                                     // if name IS set to creator - "Yang, Xin-She" is not, as example
 
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
@@ -144,7 +145,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             $allObjsFullName = array_column($authors, 'fullName');
                             $objPosition = array_search($creatorFullName, $allObjsFullName);
                             if ($objPosition!='') {
-//                                echo "Author DB ID: " . $authors[$objPosition]->getMdxAuthorID() . "<br>";
                                 $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $authors[$objPosition]->getMdxAuthorID();
                             } else {
                                 $authors[]= new author($givenName, $familyName, null, null);                                                            // add the author not being searched to the OBJ array
