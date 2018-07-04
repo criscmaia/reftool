@@ -7,40 +7,22 @@ class author {
     public $mdxAuthorID;
     public $publications = array();                     // id from each publicaiton for this author
 
-//    public function __construct() {
-//
-//    }
-
-    // adding authors from the spreadsheet
-    public static function newAuthorFromSpreadsheet ($firstName, $lastName, $email, $employeeStatus) {
-        $authorInstance = new self();
-
-        $authorInstance->firstName = $firstName;
-        $authorInstance->lastName = $lastName;
-
-        $authorInstance->employeeStatus = $employeeStatus;
-        $authorInstance->email = $email;
-
+    public function __construct($firstName, $lastName, $email, $employeeStatus) {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->employeeStatus = $employeeStatus;
+        $this->email = $email;
         if (!isset($employeeStatus)) {                          // not defined on the spreadsheet
             if (isset($email)) {                                // if email is set
                 $domain = explode('@', $email);                 // get the domain
                 $domain = array_pop($domain);
                 if ($domain=="mdx.ac.uk") {                     // if MDX
-                    $authorInstance->employeeStatus = "1";            // set as employee - IT MAY BE EX EMPLOYEE !
+                    $this->employeeStatus = "1";                // set as employee - IT MAY BE EX EMPLOYEE !
                 }
             } else {                                            // no email and no status from spreadsheet = null
-                $authorInstance->employeeStatus = "";
+                $this->employeeStatus = "";
             }
         }
-        return $authorInstance;
-    }
-
-    // adding authors who are on the same paper as the staff being searched
-    public static function newAuthorNotFromSpreadsheet ($firstName, $lastName) {
-        $instance = new self();
-        $instance->firstName = $firstName;
-        $instance->lastName = $lastName;
-        return $instance;
     }
 
 

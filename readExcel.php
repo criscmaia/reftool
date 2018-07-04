@@ -13,7 +13,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     foreach($filteredFile as $author) {
         // create object instances and add to the array
-        $authors[]= author::newAuthorFromSpreadsheet(
+        $authors[]= new author(
             isset($author[0])?$author[0]:null,                              // First Name
             isset($author[1])?$author[1]:null,                              // Last Name
             isset($author[2])?strtolower($author[2]):null,                  // Email
@@ -131,11 +131,8 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
                             $familyName = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family'];
 
-
                             $creatorFullName = ($givenName." ".$familyName);                                                                            // get the creator full name
-//                          echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
-
-
+//                            echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
 
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
@@ -144,12 +141,13 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                                 } else {                                                                                                                // if co-author
                                     $author->totalOfPublicationsCoAuthor++;
                                 }
+                                echo "newlyAddedAuthor: ".$author->printAll()."<br>";
                                 $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();                                      // replace author JSON data with author OBJ/DB id
                             } else {
-                                $authors[]= author::newAuthorNotFromSpreadsheet($givenName, $familyName);                                               // add the author not being searched to the OBJ array
+                                $authors[]= new author($givenName, $familyName, null, null);                                                           // add the author not being searched to the OBJ array
                                 $newlyAddedAuthor = $authors[count($authors)-1];                                                                        // select the newly added author
                                 $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);                            // get DB id value and assign to the object
-//                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
+                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
                                 $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();                            // replace author JSON data with author OBJ/DB id
                             }
                         }
@@ -209,7 +207,7 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
         trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
     } else if ($result->num_rows > 0) {                                                                                             // author IS on the DB
         while($row = $result->fetch_assoc()) {
-//            print_r($row);
+            print_r($row);
             if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
                 echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
                 if ($localAuthor->getEmployeeStatus()=='') {
