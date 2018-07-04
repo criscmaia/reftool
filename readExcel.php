@@ -144,34 +144,19 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             $allObjsFullName = array_column($authors, 'fullName');
                             $objPosition = array_search($creatorFullName, $allObjsFullName);
                             if ($objPosition!='') {
-                                echo "Author DB ID: " . $authors[$objPosition]->getMdxAuthorID() . "<br>";
-                            }
-
-
-                            if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
-//                                echo "Author is one of the creators <br>";
-                                if ($creatorsKeys==0) {                                                                                                 // if first authors
-//                                    echo "Author is FIRST author <br>";
-                                    $author->totalOfPublicationsFirstAuthor++;
-                                } else {                                                                                                                // if co-author
-//                                     echo "Author is co-author <br>";
-                                    $author->totalOfPublicationsCoAuthor++;
-                                }
-//                                echo "Spreadsheet author: ".$author->printAll()."<br>";
-                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();                                      // replace author JSON data with author OBJ/DB id
+//                                echo "Author DB ID: " . $authors[$objPosition]->getMdxAuthorID() . "<br>";
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $authors[$objPosition]->getMdxAuthorID();
                             } else {
-//                                echo "Author is NOT of the creators --- ? --- shouldn't it always be? <br>";
                                 $authors[]= new author($givenName, $familyName, null, null);                                                            // add the author not being searched to the OBJ array
                                 $newlyAddedAuthor = $authors[count($authors)-1];                                                                        // select the newly added author
                                 $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);                            // get DB id value and assign to the object
-//                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
                                 $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();                            // replace author JSON data with author OBJ/DB id
                             }
                         }
                     }
 //                    echo "<hr>";
 
-                                /*
+//                                /*
                                 highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
     //                            */
 
