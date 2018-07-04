@@ -34,6 +34,12 @@ class author {
         }
     }
 
+    // adding authors who are on the same paper as the staff being searched
+    public function __construct($firstName, $lastName) {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
+
     public function getFirstName () {
         return $this->firstName;
     }

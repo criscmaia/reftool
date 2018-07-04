@@ -131,29 +131,41 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
                             $familyName = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family'];
 
-                            // REPLACE ALL AUTHORS NAME WITH ID FROM THE DB
-                            $authorID = checkIfMdxOtherAuthor($projectDetails, $givenName, $familyName);
 
-
-
-                            // DEFINE IF STAFF BEING SEARCHED IS FIRST OR CO-AUTHORS
                             $creatorFullName = ($givenName." ".$familyName);                                                                            // get the creator full name
 //                          echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+
+
+
+                            // DEFINE IF STAFF BEING SEARCHED FROM THE SPREADSHEET IS FIRST OR CO-AUTHORS
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
-//                              echo "true <br>";
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
                                     $author->totalOfPublicationsFirstAuthor++;
+
+                                    $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();
+        //                            /*
+                                    highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
+        //                            */
+
                                 } else {                                                                                                                // if co-author
                                     $author->totalOfPublicationsCoAuthor++;
+
+
+                                    //  insert to OBJ/DB
+                                    $authors[]= new author($givenName, $familyName);                                                    // add the author not being searched to the OBJ array
+                                    $newlyAddedAuthor = $authors[count($authors)-1];                                                    // select the newly added author
+                                    $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);        // get DB id value and assign to the object
+                                    // REPLACE ALL AUTHORS NAME WITH ID FROM THE DB
+
+                                    // probably here
+                                    $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();
+        //                            /*
+                                    highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
+        //                            */
+
                                 }
                             }
 
-                            //        replace JSON author with ID from DB
-
-                            echo $author->mdxAuthorID;
-//                            /*
-                            highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
-//                            */
 
 
                         }
@@ -236,60 +248,6 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
             $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`) VALUES ('$projectDetails[0]', \"".$localAuthor->getFirstName()."\",\"".$localAuthor->getLastName()."\",\"".$localAuthor->getEmail()."\");";
         } else {
             $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', \"".$localAuthor->getFirstName()."\",\"".$localAuthor->getLastName()."\",\"".$localAuthor->getEmail()."\",".$localAuthor->getEmployeeStatus().");";
-        }
-
-        if ($conn->query($sql) === TRUE) {
-            $last_id = $conn->insert_id;
-//            echo "New record created successfully. ID: ". $last_id. " - fullName: ".$fullName. "<br>";
-                echo $fullName. " added to the DB successfully. (ID: ". $last_id. ")<br>";
-            return $last_id;                                                                                                        // return newly created author DB id
-        } else {
-            echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
-        }
-    }
-    $conn->close();
-}
-
-function checkIfMdxOtherAuthor($projectDetails, $given, $family){
-    include 'dbconnect.php';
-    $fullName = $given . ' ' . $family;
-    $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND CONCAT(firstName, ' ', lastName) LIKE \"%$fullName%\";";
-
-//    echo $query."<br>";
-    $result = $conn->query($query);
-    if (!$result) {
-        trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
-    } else if ($result->num_rows > 0) {                                                                                             // author IS on the DB
-        while($row = $result->fetch_assoc()) {
-//            print_r($row);
-            if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
-                echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
-                if ($localAuthor->getEmployeeStatus()=='') {
-                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
-                } else {
-                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
-                }
-
-                $result = $conn->query($sqlUpdate);
-                if ($result) {
-                    echo "Author details updated on the DB! <br>";
-//                    echo "Overwritten! $sqlUpdate <br>";
-                } else {
-                    echo "Error: " . $sqlUpdate . "<br>" . $conn->error;
-                }
-                $conn->close();
-            } else {
-//                echo "email AND current employee on the spreadsheet are the same from the DB. Nothing changes. <br>";
-            }
-            return $row['mdxAuthorID'];                                                                                             // return author DB id
-//            echo $row['mdxAuthorID']."<br>";
-        }
-    } else if ($result->num_rows == 0) {                                                                                            // author is NOT on the DB
-//        echo "Should show first name if it can access the objs: ".$given."<br>";
-        if ($localAuthor->getEmployeeStatus()=='') {
-            $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`) VALUES ('$projectDetails[0]', \"".$given."\",\"".$family."\",\"".$localAuthor->getEmail()."\");";
-        } else {
-            $sql = "INSERT INTO `mdxAuthor` (`projectID`,`firstName`,`lastName`,`email`,`currentEmployee`) VALUES ('$projectDetails[0]', \"".$given."\",\"".$family."\",\"".$localAuthor->getEmail()."\",".$localAuthor->getEmployeeStatus().");";
         }
 
         if ($conn->query($sql) === TRUE) {
