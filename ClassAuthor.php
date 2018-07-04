@@ -8,31 +8,21 @@ class author {
     public $publications = array();                     // id from each publicaiton for this author
 
     public function __construct($firstName, $lastName, $email, $employeeStatus) {
-        echo "<h3>Creating obj: </h3><br>";
-        echo $firstName ." - ";
-
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->employeeStatus = $employeeStatus;
         $this->email = $email;
         if (!isset($employeeStatus)) {                          // not defined on the spreadsheet
-            echo "no employee status - ";
             if (isset($email)) {                                // if email is set
-                echo " with email - ";
                 $domain = explode('@', $email);                 // get the domain
                 $domain = array_pop($domain);
                 if ($domain=="mdx.ac.uk") {                     // if MDX
                     $this->employeeStatus = "1";                // set as employee - IT MAY BE EX EMPLOYEE !
-                    echo "mdx email ";
                 }
             } else {                                            // no email and no status from spreadsheet = null
-                echo "no email. empty employee status.";
                 $this->employeeStatus = "";
             }
-        } else {
-            echo "employee: " .$employeeStatus;
         }
-        echo "<br><br>";
     }
 
 
