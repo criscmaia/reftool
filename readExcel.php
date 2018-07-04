@@ -132,6 +132,14 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             $creatorFullName = ($givenName." ".$familyName);                                                                            // get the creator full name
 //                            echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br>";
 
+                            $allFullName = array_column($authors, 'fullName');
+                            print_r($allFullName);
+                            echo "<br>";
+                            echo "Full name: ".$creatorFullName."<br>";
+                            echo "Name found?" .in_array($creatorFullName, $allFullName, true) . "<br>";
+//                                in_array('Cristiano', (array_column($authors, 'firstName')), true);
+
+
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
 //                                echo "Author is one of the creators <br>";
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
