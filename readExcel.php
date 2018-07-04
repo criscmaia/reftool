@@ -83,7 +83,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
         // define what is going to be the search variable
         ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
 
-        echo "Searching for <strong>".$searchingName."</strong>... <br />";
+        echo "Searching for <strong>".$searchingName."</strong>... ";
         $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
 
 //        echo $link . "<br>";
@@ -122,8 +122,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                         continue;                                                               // go backs to loop without going through the authors below
                     }
 
-                    echo $papersObj[$papersObjKeys]['title']."<br><br>";
-
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {                                               // for each author of each paper
                         if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {                                                     // if name IS set to creator - "Yang, Xin-She" is not, as example
 
@@ -154,12 +152,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             }
                         }
                     }
-//                    echo "<hr>";
-
-//                                /*
-                                highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
-    //                            */
-
 
                     foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each key
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers
@@ -168,8 +160,10 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
                 }
                 $publicationJSON = json_encode($papersObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);      // Returns the JSON representation of a value
+                echo " ✓<br>";
             } else {
-                echo "No results found for <strong>".$searchingName."</strong><br>";
+//                echo "No results found for <strong>".$searchingName."</strong><br>";
+                echo "No results found<br>";
             }
         } else {
             echo "JSON for <strong>".$searchingName."</strong> is NOT valid <hr>";
@@ -240,7 +234,7 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 
         if ($conn->query($sql) === TRUE) {
             $last_id = $conn->insert_id;
-                echo $fullName. " added to the DB successfully. (ID: ". $last_id. ")<br>";
+//            echo $fullName. " added to the DB successfully. (ID: ". $last_id. ")<br>";
             return $last_id;                                                                                                        // return newly created author DB id
         } else {
             echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
