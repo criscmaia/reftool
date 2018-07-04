@@ -59,9 +59,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     // loop all authors from the excel
     foreach($authors as $author) {
-        /*
-            Do project details
-        */
         $author->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $author);        // get DB id value and assign to object
 //        echo $author->printAll()."<br>";
 
@@ -126,25 +123,30 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {                                               // for each author of each paper
+                        echo "<hr>";
+                        echo $papersObj[$papersObjKeys]['title']."<br><br>";
                         if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {                                                     // if name IS set to creator - "Yang, Xin-She" is not, as example
 
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
                             $familyName = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family'];
 
                             $creatorFullName = ($givenName." ".$familyName);                                                                            // get the creator full name
-//                            echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br><hr>";
+                            echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br>";
 
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
+                                echo "Author is one of the creators <br>";
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
-//                                    echo "++ Author: ".$author->printAll()."<br>";
+                                    echo "Author is FIRST author <br>";
                                     $author->totalOfPublicationsFirstAuthor++;
                                 } else {                                                                                                                // if co-author
+                                     echo "Author is co-author <br>";
                                     $author->totalOfPublicationsCoAuthor++;
                                 }
-                                echo "newlyAddedAuthor: ".$author->printAll()."<br>";
+                                echo "Spreadsheet author: ".$author->printAll()."<br>";
                                 $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();                                      // replace author JSON data with author OBJ/DB id
                             } else {
-                                $authors[]= new author($givenName, $familyName, null, null);                                                           // add the author not being searched to the OBJ array
+                                echo "Author is NOT of the creators --- ? --- shouldn't it always be? <br>";
+                                $authors[]= new author($givenName, $familyName, null, null);                                                            // add the author not being searched to the OBJ array
                                 $newlyAddedAuthor = $authors[count($authors)-1];                                                                        // select the newly added author
                                 $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);                            // get DB id value and assign to the object
                                 echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
@@ -152,7 +154,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             }
                         }
                     }
-
+                    echo "<hr>";
 
     //                            /*
                                 highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
@@ -197,9 +199,12 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
     $_SESSION['publications'] = $publications;
 
 function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
+    echo "Local author object: ".$localAuthor->printAll()."<br>";
+
     include 'dbconnect.php';
     $fullName = $localAuthor->getFirstName() . ' ' . $localAuthor->getLastName();
     $query = "SELECT * FROM mdxAuthor WHERE projectID = $projectDetails[0] AND CONCAT(firstName, ' ', lastName) LIKE \"%$fullName%\";";
+    echo $query."<br>";
 
 //    echo $query."<br>";
     $result = $conn->query($query);
@@ -207,7 +212,13 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
         trigger_error('Error in: '.$query.'<br><br>Invalid query: ' . $conn->error);
     } else if ($result->num_rows > 0) {                                                                                             // author IS on the DB
         while($row = $result->fetch_assoc()) {
-            print_r($row);
+            echo "Database details: <br>";
+//                            /*
+            highlight_string("<?php\n\$data =\n" . var_export($row, true) . ";\n?>");
+//                            */
+
+            echo "DB email: ".$row['email']. " -- obj email: ".$localAuthor->getEmail()."<br>";
+            echo "DB employee: ".$row['currentEmployee']." -- obj employee".$localAuthor->getEmployeeStatus()."<br>";
             if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
                 echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
                 if ($localAuthor->getEmployeeStatus()=='') {
@@ -215,6 +226,8 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
                 } else {
                     $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
                 }
+
+                echo $sqlUpdate ."<br>";
 
                 $result = $conn->query($sqlUpdate);
                 if ($result) {
