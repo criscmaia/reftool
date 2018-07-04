@@ -219,29 +219,49 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 
             echo "DB email: ".$row['email']. " -- obj email: ".$localAuthor->getEmail()."<br>";
             echo "DB employee: ".$row['currentEmployee']." -- obj employee".$localAuthor->getEmployeeStatus()."<br>";
-            if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
-                echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
-                if ($localAuthor->getEmployeeStatus()=='') {
-                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
-                } else {
-                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
-                }
 
+            echo "email is '': ".($row['email'] == '')." <br>";
+            echo "email is NULL: ".($row['email'] == NULL)." <br>";
+
+            $sqlUpdate = "";
+
+            if ($row['email'] == '' && $localAuthor->getEmail()!='') {
+                $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+            }
+
+            if ($sqlUpdate != "") {
                 echo $sqlUpdate ."<br>";
-
                 $result = $conn->query($sqlUpdate);
                 if ($result) {
-                    echo "Author details updated on the DB! <br>";
-//                    echo "Overwritten! $sqlUpdate <br>";
+                    echo "Email udpated <br>";
                 } else {
                     echo "Error: " . $sqlUpdate . "<br>" . $conn->error;
                 }
-                $conn->close();
-            } else {
-//                echo "email AND current employee on the spreadsheet are the same from the DB. Nothing changes. <br>";
             }
+
+            if ($row['currentEmployee'] == '' && $localAuthor->getEmployeeStatus()!='') {
+                $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmployeeStatus()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+            }
+
+//            if ($row['email'] != $localAuthor->getEmail() ||  $row['currentEmployee'] != $localAuthor->getEmployeeStatus()) {       // check if email or current employee is different
+//                echo "email or current employee on the spreadsheet is different from the DB. Overwritting it... <br>";
+//                if ($localAuthor->getEmployeeStatus()=='') {
+//                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+//                } else {
+//                    $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\", `currentEmployee` = ".$localAuthor->getEmployeeStatus()." WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
+//                }
+//
+            if ($sqlUpdate != "") {
+                echo $sqlUpdate ."<br>";
+                $result = $conn->query($sqlUpdate);
+                if ($result) {
+                    echo "Current employee udpated <br>";
+                } else {
+                    echo "Error: " . $sqlUpdate . "<br>" . $conn->error;
+                }
+            }
+            $conn->close();
             return $row['mdxAuthorID'];                                                                                             // return author DB id
-//            echo $row['mdxAuthorID']."<br>";
         }
     } else if ($result->num_rows == 0) {                                                                                            // author is NOT on the DB
 //        echo "Should show first name if it can access the objs: ".$localAuthor->getFirstName()."<br>";
