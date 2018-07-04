@@ -142,19 +142,10 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
 
                             $allObjsFullName = array_column($authors, 'fullName');
-                            print_r($allObjsFullName);
-                            echo "<br>";
-                            echo "Search for : ".$creatorFullName." in the Authos[] obj<br>";
-//                            echo "Name found?" .array_search($creatorFullName, $allObjsFullName, true) . "<br>";
-                            $objPosition = "";
                             $objPosition = array_search($creatorFullName, $allObjsFullName);
                             if ($objPosition!='') {
                                 echo "Author DB ID: " . $authors[$objPosition]->getMdxAuthorID() . "<br>";
                             }
-                                                        /*
-                                highlight_string("<?php\n\$data =\n" . var_export($authors, true) . ";\n?>");
-    //                            */
-                            echo "<br>";
 
 
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
@@ -235,8 +226,6 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
             $sqlUpdate = "";
 
             // upadte email, if null
-            echo $localAuthor->getFirstName() . ": ".$row['email']." - ".$localAuthor->getEmail()."<br>";
-
             if ($row['email'] == '' && $localAuthor->getEmail()!='') {
                 $sqlUpdate = "UPDATE `mdxAuthor` SET `email` = \"".$localAuthor->getEmail()."\" WHERE `mdxAuthorID` = ".$row['mdxAuthorID'].";";
                 $result = $conn->query($sqlUpdate);
