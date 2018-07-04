@@ -145,7 +145,12 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             print_r($allObjsFullName);
                             echo "<br>";
                             echo "Search for : ".$creatorFullName." in the Authos[] obj<br>";
-                            echo "Name found?" .array_search($creatorFullName, $allObjsFullName, true) . "<br>";
+//                            echo "Name found?" .array_search($creatorFullName, $allObjsFullName, true) . "<br>";
+                            $objPosition = "";
+                            $objPosition = array_search($creatorFullName, $allObjsFullName);
+                            if ($objPosition!='') {
+                                echo "Author DB ID: " . $authors[$objPosition]->getMdxAuthorID() . "<br>";
+                            }
                                                         /*
                                 highlight_string("<?php\n\$data =\n" . var_export($authors, true) . ";\n?>");
     //                            */
