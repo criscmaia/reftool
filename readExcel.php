@@ -126,7 +126,6 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {                                               // for each author of each paper
-                        echo "<hr>";
                         if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {                                                     // if name IS set to creator - "Yang, Xin-She" is not, as example
 
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
@@ -138,40 +137,29 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
 
 
-                            // DEFINE IF STAFF BEING SEARCHED FROM THE SPREADSHEET IS FIRST OR CO-AUTHORS
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
-                                    echo "++ Author: ".$author->printAll()."<br>";
+//                                    echo "++ Author: ".$author->printAll()."<br>";
                                     $author->totalOfPublicationsFirstAuthor++;
                                 } else {                                                                                                                // if co-author
                                     $author->totalOfPublicationsCoAuthor++;
                                 }
-                                echo "<h1>$author->getMdxAuthorID()</h1>";
-                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();                                      // replace author JSON data with author OBJ/DB id
                             } else {
-
-                                //  insert to OBJ/DB
-                                $authors[]= author::newAuthorNotFromSpreadsheet($givenName, $familyName);                                   // add the author not being searched to the OBJ array
-                                $newlyAddedAuthor = $authors[count($authors)-1];                                                    // select the newly added author
-                                $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);        // get DB id value and assign to the object
-
-
-                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
-
-                                // REPLACE ALL AUTHORS NAME WITH ID FROM THE DB
-
-                                // probably here
-                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();
+                                $authors[]= author::newAuthorNotFromSpreadsheet($givenName, $familyName);                                               // add the author not being searched to the OBJ array
+                                $newlyAddedAuthor = $authors[count($authors)-1];                                                                        // select the newly added author
+                                $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);                            // get DB id value and assign to the object
+//                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();                            // replace author JSON data with author OBJ/DB id
                             }
+                        }
+                    }
+
 
     //                            /*
                                 highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
     //                            */
 
-
-
-                        }
-                    }
 
                     foreach($papersObj[$papersObjKeys] as $key => $value) {                     // for the valid papers, go through each key
                         if(strpos($key, 'rioxx2_') === 0 || strpos($key, 'hoa_') === 0  || strpos($key, 'documents') === 0 || strpos($key, 'dates') === 0 || strpos($key, 'files') === 0) {     // remove unnecessary fields from valid papers

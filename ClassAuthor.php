@@ -7,32 +7,32 @@ class author {
     public $mdxAuthorID;
     public $publications = array();                     // id from each publicaiton for this author
 
-    public function __construct() {
-
-    }
+//    public function __construct() {
+//
+//    }
 
     // adding authors from the spreadsheet
     public static function newAuthorFromSpreadsheet ($firstName, $lastName, $email, $employeeStatus) {
-        $instance = new self();
+        $authorInstance = new self();
 
-        $instance->firstName = $firstName;
-        $instance->lastName = $lastName;
+        $authorInstance->firstName = $firstName;
+        $authorInstance->lastName = $lastName;
 
-        $instance->employeeStatus = $employeeStatus;
-        $instance->email = $email;
+        $authorInstance->employeeStatus = $employeeStatus;
+        $authorInstance->email = $email;
 
         if (!isset($employeeStatus)) {                          // not defined on the spreadsheet
             if (isset($email)) {                                // if email is set
                 $domain = explode('@', $email);                 // get the domain
                 $domain = array_pop($domain);
                 if ($domain=="mdx.ac.uk") {                     // if MDX
-                    $instance->employeeStatus = "1";            // set as employee - IT MAY BE EX EMPLOYEE !
+                    $authorInstance->employeeStatus = "1";            // set as employee - IT MAY BE EX EMPLOYEE !
                 }
             } else {                                            // no email and no status from spreadsheet = null
-                $instance->employeeStatus = "";
+                $authorInstance->employeeStatus = "";
             }
         }
-        return $instance;
+        return $authorInstance;
     }
 
     // adding authors who are on the same paper as the staff being searched
@@ -40,8 +40,6 @@ class author {
         $instance = new self();
         $instance->firstName = $firstName;
         $instance->lastName = $lastName;
-        $instance->employeeStatus = null;
-        $instance->email = null;
         return $instance;
     }
 
