@@ -13,7 +13,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
     foreach($filteredFile as $author) {
         // create object instances and add to the array
-        $authors[]= new author(
+        $authors[]= author::newAuthorFromSpreadsheet(
             isset($author[0])?$author[0]:null,                              // First Name
             isset($author[1])?$author[1]:null,                              // Last Name
             isset($author[2])?strtolower($author[2]):null,                  // Email
@@ -126,6 +126,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
 
                     foreach($papersObj[$papersObjKeys]['creators'] as $creatorsKeys => $creatorsValues) {                                               // for each author of each paper
+                        echo "<hr>";
                         if (isset($papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name'])) {                                                     // if name IS set to creator - "Yang, Xin-She" is not, as example
 
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
@@ -140,31 +141,32 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                             // DEFINE IF STAFF BEING SEARCHED FROM THE SPREADSHEET IS FIRST OR CO-AUTHORS
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
                                 if ($creatorsKeys==0) {                                                                                                 // if first authors
+                                    echo "++ Author: ".$author->printAll()."<br>";
                                     $author->totalOfPublicationsFirstAuthor++;
-
-                                    $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();
-        //                            /*
-                                    highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
-        //                            */
-
                                 } else {                                                                                                                // if co-author
                                     $author->totalOfPublicationsCoAuthor++;
-
-
-                                    //  insert to OBJ/DB
-                                    $authors[]= new author($givenName, $familyName);                                                    // add the author not being searched to the OBJ array
-                                    $newlyAddedAuthor = $authors[count($authors)-1];                                                    // select the newly added author
-                                    $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);        // get DB id value and assign to the object
-                                    // REPLACE ALL AUTHORS NAME WITH ID FROM THE DB
-
-                                    // probably here
-                                    $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();
-        //                            /*
-                                    highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
-        //                            */
-
                                 }
+                                echo "<h1>$author->getMdxAuthorID()</h1>";
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();
+                            } else {
+
+                                //  insert to OBJ/DB
+                                $authors[]= author::newAuthorNotFromSpreadsheet($givenName, $familyName);                                   // add the author not being searched to the OBJ array
+                                $newlyAddedAuthor = $authors[count($authors)-1];                                                    // select the newly added author
+                                $newlyAddedAuthor->mdxAuthorID = checkIfMdxAuthorIsOnDB($projectDetails, $newlyAddedAuthor);        // get DB id value and assign to the object
+
+
+                                echo "newlyAddedAuthor: ".$newlyAddedAuthor->printAll()."<br>";
+
+                                // REPLACE ALL AUTHORS NAME WITH ID FROM THE DB
+
+                                // probably here
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $newlyAddedAuthor->getMdxAuthorID();
                             }
+
+    //                            /*
+                                highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
+    //                            */
 
 
 

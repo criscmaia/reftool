@@ -7,38 +7,44 @@ class author {
     public $mdxAuthorID;
     public $publications = array();                     // id from each publicaiton for this author
 
-    public function __construct($firstName, $lastName, $email, $employeeStatus) {
-        // if already in DB:
-        // SELECT * FROM reftool.mdxAuthor where firstName = "William" and lastName = "Wong";
-        //      if any new papers
-        //          get details to obj
-        // else
-        // insert indo mdxAuthor
+    public function __construct() {
 
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+    }
 
-        $this->employeeStatus = $employeeStatus;
-        $this->email = $email;
+    // adding authors from the spreadsheet
+    public static function newAuthorFromSpreadsheet ($firstName, $lastName, $email, $employeeStatus) {
+        $instance = new self();
+
+        $instance->firstName = $firstName;
+        $instance->lastName = $lastName;
+
+        $instance->employeeStatus = $employeeStatus;
+        $instance->email = $email;
 
         if (!isset($employeeStatus)) {                          // not defined on the spreadsheet
             if (isset($email)) {                                // if email is set
                 $domain = explode('@', $email);                 // get the domain
                 $domain = array_pop($domain);
                 if ($domain=="mdx.ac.uk") {                     // if MDX
-                    $this->employeeStatus = "1";                // set as employee - IT MAY BE EX EMPLOYEE !
+                    $instance->employeeStatus = "1";            // set as employee - IT MAY BE EX EMPLOYEE !
                 }
             } else {                                            // no email and no status from spreadsheet = null
-                $this->employeeStatus = "";
+                $instance->employeeStatus = "";
             }
         }
+        return $instance;
     }
 
     // adding authors who are on the same paper as the staff being searched
-    public function __construct($firstName, $lastName) {
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+    public static function newAuthorNotFromSpreadsheet ($firstName, $lastName) {
+        $instance = new self();
+        $instance->firstName = $firstName;
+        $instance->lastName = $lastName;
+        $instance->employeeStatus = null;
+        $instance->email = null;
+        return $instance;
     }
+
 
     public function getFirstName () {
         return $this->firstName;
