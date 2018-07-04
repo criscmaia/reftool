@@ -128,16 +128,28 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 
                             $givenName  = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['given'];
                             $familyName = $papersObj[$papersObjKeys]['creators'][$creatorsKeys]['name']['family'];
-
                             $creatorFullName = ($givenName." ".$familyName);                                                                            // get the creator full name
-//                            echo $searchingName ." - ".$creatorFullName."? creatorsKeys: $creatorsKeys <br>";
 
-                            $allFullName = array_column($authors, 'fullName');
-                            print_r($allFullName);
+                            if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
+                                if ($creatorsKeys==0) {                                                                                                 // if first authors
+                                    $author->totalOfPublicationsFirstAuthor++;
+                                } else {                                                                                                                // if co-author
+                                    $author->totalOfPublicationsCoAuthor++;
+                                }
+                                $papersObj[$papersObjKeys]['creators'][$creatorsKeys] = $author->getMdxAuthorID();                                      // replace author JSON data with author OBJ/DB id
+                            }
+
+
+
+                            $allObjsFullName = array_column($authors, 'fullName');
+                            print_r($allObjsFullName);
                             echo "<br>";
-                            echo "Full name: ".$creatorFullName."<br>";
-                            echo "Name found?" .in_array($creatorFullName, $allFullName, true) . "<br>";
-//                                in_array('Cristiano', (array_column($authors, 'firstName')), true);
+                            echo "Search for : ".$creatorFullName." in the Authos[] obj<br>";
+                            echo "Name found?" .array_search($creatorFullName, $allObjsFullName, true) . "<br>";
+                                                        /*
+                                highlight_string("<?php\n\$data =\n" . var_export($authors, true) . ";\n?>");
+    //                            */
+                            echo "<br>";
 
 
                             if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {           // double check if author is one of the creators
@@ -163,7 +175,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
                     }
 //                    echo "<hr>";
 
-    //                            /*
+                                /*
                                 highlight_string("<?php\n\$data =\n" . var_export($papersObj[$papersObjKeys]['creators'], true) . ";\n?>");
     //                            */
 
