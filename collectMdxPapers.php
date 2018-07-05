@@ -48,17 +48,25 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
                         } else if (strlen($date)==7) {          // only year and month
                             $date = $date . "-01";
                         }
-
                         $date = "'".$date."'";
                     }
                     if ($issn != "NULL")  /* check ERA from issn */                                   { $eraRating = checkEra2010rank($issn); }
+
+                    /* =================
+                    TODO:
+                    - create publication objects
+                    - pass publications to next pages
+                    - check author AND publications compared to DB
+                    -- just by id each
+                    ====================*/
+
 
                     foreach($allcreators as $mdxAuthorId) {                                                                     // for each author from the publication
                         $publicationAlreadyInDB = checkPublicationAlreadyInDB ($projectDetails, $mdxAuthorId, $eprintid);       // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                         if (!$publicationAlreadyInDB && !empty($mdxAuthorId)){
                             $sql = "INSERT INTO `publication` (`projectID`,`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($projectDetails[0], $type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                             if ($conn->query($sql) === TRUE) {
-                                echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
+//                                echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
                             } else {
                                 echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                             }
