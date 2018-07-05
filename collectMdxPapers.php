@@ -15,6 +15,7 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
     $searchedAuthor = json_decode($publications, true);                 // Takes a JSON encoded string and converts it into a PHP variable
     if (json_last_error() === JSON_ERROR_NONE) {                        // if JSON is valid
         if (count($searchedAuthor)>0) {
+            echo "Processing... <br>";
             $eraRating = "NULL";
 
             foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                     // see all the authors
@@ -71,12 +72,13 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
                                 echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                             }
                         } else {
-                            echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
+//                            echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
                         }
                     }
                 }       // end of looping author's publications
             }           // end of looping authors
         }               // end of if at least one paper
+        echo "Finished processing all authors and publications!";
     } else {
         echo "Invalid JSON. <br>";
     }
