@@ -12,31 +12,27 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
 } else {
     $publications = $_SESSION["publications"];
 
-    $papersObj = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
+    $searchedAuthor = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
     if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
-        if (count($papersObj)>0) {
+        if (count($searchedAuthor)>0) {
             $eraRating = "NULL";
 
+            foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                            // see all the authors
+                echo "<hr>";
+                echo "Searched auhtor id: ".$searchedAuthorKeys."<br>";
+                echo "How many publications? ".count($searchedAuthorPublications)."<br>";
 
+                foreach($searchedAuthor[$searchedAuthorKeys] as $publicationKey => $publicationDetails) {               // go through the author's publications
+                    echo "Eprintid: ".$searchedAuthor[$searchedAuthorKeys][$publicationKey]['eprintid'] ."<br>";
+                    echo "Searched auhtor's publication ID: ".$publicationKey."<br>";
+                    echo "How many fields for each publication? ".count($publicationDetails)."<br>";
 
-            echo $papersObj[0][0]['eprintid'] . "<br>";
-            echo $papersObj[1][0]['eprintid'] . "<br>";
-            echo $papersObj[1][1]['eprintid'] . "<br>";
-//                /*
-    highlight_string("<?php\n\$data =\n" . var_export($papersObj, true) . ";\n?>");
-//        */
+                    foreach($searchedAuthor[$searchedAuthorKeys][$publicationKey] as $fieldKey => $fieldDetails) {      // go through the publications's fields
 
-
-
-
-            foreach($papersObj[0][0] as $papersObjKeys => $papersObjValues) {                    // go through each paper
-//                $papersObjValues = reset($papersObjValues);
-
-                // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-                if (isset($papersObj[$papersObjKeys][0]['date']))         { $date = $papersObj[$papersObjKeys][0]['date']; } else { $date = "NULL";}
-                if (isset($papersObj[0][0][$papersObjKeys]['title']))        { $title = $papersObj[0][0][$papersObjKeys]['title']; } else { $title = "NULL";}
-
-                echo "Date: $date  - Title: $title <br>";
+                        echo "Searched publication's ID: ".$fieldKey."<br>";
+                        echo "How many sub-fields for each publication field? ".count($fieldDetails)."<br>";
+                    }
+                }
             }
         }
     } else {
