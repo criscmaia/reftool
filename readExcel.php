@@ -91,7 +91,7 @@ foreach($authors as $author) {
 
     $result = mb_convert_encoding(file_get_contents($link), 'HTML-ENTITIES', "UTF-8");     // get the data from the ePrints result
 
-    //                /*
+                    /*
     highlight_string("<?php\n\$data =\n" . var_export($result, true) . ";\n?>");
 //        */
 

@@ -12,26 +12,66 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
 } else {
     $publications = $_SESSION["publications"];
 
-    $searchedAuthor = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
-    if (json_last_error() === JSON_ERROR_NONE) {                                           // if JSON is valid
+    $searchedAuthor = json_decode($publications, true);                 // Takes a JSON encoded string and converts it into a PHP variable
+    if (json_last_error() === JSON_ERROR_NONE) {                        // if JSON is valid
         if (count($searchedAuthor)>0) {
             $eraRating = "NULL";
 
-            foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                            // see all the authors
-                echo "<hr>";
-                echo "Searched auhtor id: ".$searchedAuthorKeys."<br>";
-                echo "How many publications? ".count($searchedAuthorPublications)."<br>";
+            foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                     // see all the authors
+                foreach($searchedAuthor[$searchedAuthorKeys] as $publicationKey => $publicationDetails) {        // go through the author's publications
 
-                foreach($searchedAuthor[$searchedAuthorKeys] as $publicationKey => $publicationDetails) {               // go through the author's publications
-                    echo "Eprintid: ".$searchedAuthor[$searchedAuthorKeys][$publicationKey]['eprintid'] ."<br>";
-                    echo "Searched auhtor's publication ID: ".$publicationKey."<br>";
-                    echo "How many fields for each publication? ".count($publicationDetails)."<br>";
+//                        `projectID`,
+//                        `publicationID`,
+//                    `type`,
+//                        `author`,
+//                    `succeeds`,
+//                    `title`,
+//                    `isPublished`,
+//                    `presType`,
+//                    `keywords`,
+//                    `publication`,
+//                    `volume`,
+//                    `number`,
+//                    `publisher`,
+//                    `eventTitle`,
+//                    `eventType`,
+//                    `isbn`,
+//                    `issn`,
+//                    `bookTitle`,
+//                    `ePrintID`,
+//                    `doi`,
+//                    `uri`,
+//                        `additionalInfo`,
+//                    `abstract`,
+//                    `date`,
+//                    `eraRating`
 
-                    foreach($searchedAuthor[$searchedAuthorKeys][$publicationKey] as $fieldKey => $fieldDetails) {      // go through the publications's fields
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['type']))         { $type        = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['type']).'"'; }
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['succeeds']))     { $succeeds    = $searchedAuthor[$searchedAuthorKeys][$publicationKey]['succeeds']; } else { $succeeds = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['title']))        { $title = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['title']).'"'; } else { $title = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['ispublished']))  { $ispublished = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['ispublished']).'"'; } else { $ispublished = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['pres_type']))    { $presType    = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['pres_type']).'"'; } else { $presType = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['keywords']))     { $keywords    = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['keywords']).'"'; } else { $keywords = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['publication']))  { $publication = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['publication']).'"'; } else { $publication = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['volume']))       { $volume      = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['volume']).'"'; } else { $volume = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['number']))       { $number      = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['number']).'"'; } else { $number = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['publisher']))    { $publisher   = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['publisher']).'"'; } else { $publisher = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['event_title']))  { $eventTitle  = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['event_title']).'"'; } else { $eventTitle = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['event_type']))   { $eventType   = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['event_type']).'"'; } else { $eventType = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['isbn']))         { $isbn        = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['isbn']).'"'; } else { $isbn = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['issn']))         { $issn        = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['issn']).'"'; } else { $issn = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['book_title']))   { $bookTitle   = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['book_title']).'"'; } else { $bookTitle = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['eprintid']))     { $eprintid    = $searchedAuthor[$searchedAuthorKeys][$publicationKey]['eprintid']; } else { $eprintid = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['official_url'])) { $doi         = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['official_url']).'"'; } else { $doi = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['uri']))          { $uri         = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['uri']).'"'; } else { $uri = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['abstract']))     { $abstract    = '"'.addslashes($searchedAuthor[$searchedAuthorKeys][$publicationKey]['abstract']).'"'; } else { $abstract = "NULL";}
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['date']))         { $date = $searchedAuthor[$searchedAuthorKeys][$publicationKey]['date']; } else { $date = "NULL";}
+                    if ($issn != "NULL")  /* check ERA from issn */                                   { $eraRating = checkEra2010rank($issn); }
 
-                        echo "Searched publication's ID: ".$fieldKey."<br>";
-                        echo "How many sub-fields for each publication field? ".count($fieldDetails)."<br>";
-                    }
+                    if (isset($searchedAuthor[$searchedAuthorKeys][$publicationKey]['creators']))     { $allcreators = $searchedAuthor[$searchedAuthorKeys][$publicationKey]['creators']; } else { $allcreators = "NULL";}                          // minor scenarios where creator is null
+
+                    echo "$type - $succeeds - $title - $ispublished - $presType - $keywords - $publication - $volume - $number - $publisher - $eventTitle - $eventType - $isbn - $issn - $bookTitle - $doi - $uri - $abstract - $date - $eraRating - ".print_r($allcreators)."<br><hr>";
+
                 }
             }
         }
@@ -39,79 +79,6 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
         echo "Invalid JSON. <br>";
     }
 }
-
-
-//        foreach($papersObj as $papersObjKeys => $papersObjValues) {                    // go through each paper
-//            // GET TITLE AND DATE 1st BECAUSE IF IT IS EMPTY OR <2014, JUST SKIP
-//            if (isset($publications[$papersObjKeys]['date']))         { $date = $publications[$papersObjKeys]['date']; } else { $date = "NULL";}
-//            if (isset($publications[$papersObjKeys]['title']))        { $title = '"'.addslashes($publications[$papersObjKeys]['title']).'"'; } else { $title = "NULL";}
-//
-////            echo "papersObjKeys: ".$papersObjKeys. " - papersObjValues: " . $papersObjValues. "<br>";
-//
-//            if ($date != "NULL") {
-//                if (strlen($date)==4) {                 // only year
-//                    $date = $date . "-01-01";
-//                } else if (strlen($date)==7) {          // only year and month
-//                    $date = $date . "-01";
-//                }
-//
-//                $split_date = explode('-',$date);
-//                $year = $split_date[0];
-//                if ($title!="NULL" && $year>=2014){     // valid paper to process
-//
-//                    $date = '"'.$date.'"';              // add quotes for DB INSERT
-//
-//                    if (isset($publications[$papersObjKeys]['type']))         { $type        = '"'.addslashes($publications[$papersObjKeys]['type']).'"'; }
-//                    if (isset($publications[$papersObjKeys]['creators']))     { $allcreators = $publications[$papersObjKeys]['creators']; } else { $allcreators = "NULL";}        // minor scenarios where creator is null
-//                    if (isset($publications[$papersObjKeys]['succeeds']))     { $succeeds    = $publications[$papersObjKeys]['succeeds']; } else { $succeeds = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['ispublished']))  { $ispublished = '"'.addslashes($publications[$papersObjKeys]['ispublished']).'"'; } else { $ispublished = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['pres_type']))    { $presType    = '"'.addslashes($publications[$papersObjKeys]['pres_type']).'"'; } else { $presType = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['keywords']))     { $keywords    = '"'.addslashes($publications[$papersObjKeys]['keywords']).'"'; } else { $keywords = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['publication']))  { $publication = '"'.addslashes($publications[$papersObjKeys]['publication']).'"'; } else { $publication = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['volume']))       { $volume      = '"'.addslashes($publications[$papersObjKeys]['volume']).'"'; } else { $volume = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['number']))       { $number      = '"'.addslashes($publications[$papersObjKeys]['number']).'"'; } else { $number = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['publisher']))    { $publisher   = '"'.addslashes($publications[$papersObjKeys]['publisher']).'"'; } else { $publisher = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['event_title']))  { $eventTitle  = '"'.addslashes($publications[$papersObjKeys]['event_title']).'"'; } else { $eventTitle = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['event_type']))   { $eventType   = '"'.addslashes($publications[$papersObjKeys]['event_type']).'"'; } else { $eventType = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['isbn']))         { $isbn        = '"'.addslashes($publications[$papersObjKeys]['isbn']).'"'; } else { $isbn = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['issn']))         { $issn        = '"'.addslashes($publications[$papersObjKeys]['issn']).'"'; } else { $issn = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['book_title']))   { $bookTitle   = '"'.addslashes($publications[$papersObjKeys]['book_title']).'"'; } else { $bookTitle = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['eprintid']))     { $eprintid    = $publications[$papersObjKeys]['eprintid']; } else { $eprintid = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['official_url'])) { $doi         = '"'.addslashes($publications[$papersObjKeys]['official_url']).'"'; } else { $doi = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['uri']))          { $uri         = '"'.addslashes($publications[$papersObjKeys]['uri']).'"'; } else { $uri = "NULL";}
-//                    if (isset($publications[$papersObjKeys]['abstract']))     { $abstract    = '"'.addslashes($publications[$papersObjKeys]['abstract']).'"'; } else { $abstract = "NULL";}
-//
-//                    if ($issn != "NULL") {
-//                        $eraRating = checkEra2010rank($issn);       // check ERA2010 rank based on ISSN
-////                            echo $eprintid.":".$issn.":".$title." - ".$eraRating . "<br>";
-//                    }
-//
-//                    if(sizeof($allcreators)>0 && $allcreators!="NULL"){
-//
-////                            foreach($allcreators as $eachcreator) {
-////                                ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());    // define what is going to be the search variable
-////                                $creatorFullName = ($eachcreator["name"]["given"]." ".$eachcreator["name"]["family"]);                                                      // get the creator full name
-////                                if(startsWith($creatorFullName, $author->getFirstName()) && endsWith($creatorFullName, $author->getLastName())) {                           // double check if author is one of the creators
-////                                    $author->
-////                                }
-////
-////                                echo "$fName $lName <br>";
-////                            }
-//                    }
-//
-//
-//
-//                } else {
-//                    echo "Either TITLE is null or YEAR < 2014 -- ".$publications[$papersObjKeys]['eprintid'].": ".$publications[$papersObjKeys]['title'].". <br>";
-//                }
-//            } else {
-////                    echo "Date is null -- ".$publications[$papersObjKeys]['eprintid'].": ".$publications[$papersObjKeys]['title'].".<br>";
-//            }
-//        }
-//    } else {
-//        echo "No valid publications collected.<br>";
-//        echo "<a href='/reftool/v2/'>go back</a><hr>";
-//    }
 
 // check paper rank
 function checkEra2010rank($issn) {
