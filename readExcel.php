@@ -203,6 +203,7 @@ foreach($authors as $author) {
     highlight_string("<?php\n\$data =\n" . var_export($publications, true) . ";\n?>");
 //        */
 
+    // disable checkbox if no publications was found for the searched author
     if (($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor)>0) {
         $checkBox = '<input type="checkbox" name="authorID[]" value="'.$author->getMdxAuthorID().'"checked />';
     } else {
@@ -214,7 +215,6 @@ foreach($authors as $author) {
             echo '<td>' . $author->getFirstName() . '</td>';
             echo '<td>' . $author->getLastName() . '</td>';
             echo '<td>' . $checkBox . '</td>';
-//            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.($authorsId-2).'"checked />' . '</td>';
             echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
             echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
             echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
