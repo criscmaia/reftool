@@ -29,6 +29,9 @@ if (empty($_POST['authorID'])) {                                                
         $publications = $_SESSION["publications"];
         $searchedAuthor = json_decode($publications, true);                             // Takes a JSON encoded string and converts it into a PHP variable
 
+        $searchedAuthor = array_intersect_key($searchedAuthor, array_flip($selectedAuthorsId));
+        echo count($searchedAuthor);
+
             /*
         highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
     //        */
