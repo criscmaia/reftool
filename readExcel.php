@@ -277,8 +277,6 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
     <button type="submit">Collect papers from selected authors --></button>
 </form>
 <hr>
-<!--<a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>-->
-
 
 <script>
     $(document).ready(function() {
