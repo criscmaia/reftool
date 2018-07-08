@@ -7,10 +7,10 @@ include 'menu.php';
 include 'dbconnect.php';
 
 
-if (empty($_POST['authorID'])) {                                                        // if no authors were selected
+if (empty($_POST['authorID'])) {                                                                    // if no authors were selected
     echo "<script>
             alert(\"You didn't select any author.\");
-            setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",1000);
+            setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",500);
           </script>";
     die();
 } else {
@@ -19,34 +19,32 @@ if (empty($_POST['authorID'])) {                                                
     print_r($selectedAuthorsId);
     echo "<br><br>";
 
-    if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {         // if no publications were found for selected authors
+    if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {                     // if no publications were found for selected authors
         echo "<script>
             alert(\"No publications found for the selected authors.\");
-            setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",1000);
+            setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",500);
           </script>";
         die();
-    } else {                                                                            // proceed with valid authors with >0 publications
+    } else {                                                                                        // proceed with valid authors with >0 publications
         $publications = $_SESSION["publications"];
-        $searchedAuthor = json_decode($publications, true);                             // Takes a JSON encoded string and converts it into a PHP variable
+        $searchedAuthor = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
+        $searchedAuthor = array_intersect_key($searchedAuthor, array_flip($selectedAuthorsId));     // only keep selected authors based on POST values (flips is so values become keys)
 
-        $searchedAuthor = array_intersect_key($searchedAuthor, array_flip($selectedAuthorsId));
-        echo count($searchedAuthor);
-
-            /*
-        highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
-    //        */
-
-        if (json_last_error() === JSON_ERROR_NONE) {                                    // if JSON is valid
+        if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
             if (count($searchedAuthor)>0) {
                 echo "Authors being processed = ".count($searchedAuthor).": <br>";
-                print_r($searchedAuthor);
-                echo "<br><br>";
+
+//    /*
+    highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
+//        */
+
 
                 echo "Processing... <br>";
                 $eraRating = "NULL";
 
                 foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                     // see all the authors
-    //                echo $searchedAuthorKeys . "<br>";
+                    echo $searchedAuthorKeys . "<br>";
+
                     foreach($searchedAuthor[$searchedAuthorKeys] as $publicationKey => $publicationDetails) {        // go through the author's publications
 
                         // get value or set to null
