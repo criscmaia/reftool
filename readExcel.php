@@ -52,7 +52,7 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 }
 
 ?>
-    <form action="/v2/collectMdxPapers.php" method="post">
+    <form action="collectMdxPapers.php" method="post">
         <table id="publications">
             <thead>
                 <tr style="text-align: left">
@@ -206,7 +206,7 @@ foreach($authors as $author) {
             echo '<td>' . $authorsId++ . '</td>';
             echo '<td>' . $author->getFirstName() . '</td>';
             echo '<td>' . $author->getLastName() . '</td>';
-            echo '<td>' . '<input type="checkbox" name="authorID" value="'.$author->getMdxAuthorID().'"checked />' . '</td>';
+            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.$author->getMdxAuthorID().'"checked />' . '</td>';
             echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
             echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
             echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
@@ -274,9 +274,10 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 ?>
         <tbody>
     </table>
+    <button type="submit">Collect papers from selected authors --></button>
 </form>
 <hr>
-<a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>
+<!--<a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>-->
 
 
 <script>

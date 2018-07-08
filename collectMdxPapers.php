@@ -6,6 +6,11 @@ error_reporting(E_ALL);
 include 'menu.php';
 include 'dbconnect.php';
 
+//$selectedAuthorsId[] = htmlspecialchars($_POST['authorID']);
+$selectedAuthorsId = $_POST['authorID'];
+
+print_r($selectedAuthorsId);
+
 if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
     header("Location: /reftool/v2/readExcel.php");
     die();
