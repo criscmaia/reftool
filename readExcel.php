@@ -109,7 +109,7 @@ foreach($authors as $author) {
     // define what is going to be the search variable
     ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
 
-    echo "Checking eprint repository for <strong>".$searchingName."</strong>... ";
+//    echo "Checking eprint repository for <strong>".$searchingName."</strong>... ";
     $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
 
 //        echo $link . "<br>";
@@ -189,10 +189,10 @@ foreach($authors as $author) {
                 }
             }
             $publications[] = $papersObj;               // save publication obj to array of publications
-            echo " ✓<br>";
+//            echo " ✓<br>";
         } else {
 //                echo "No results found for <strong>".$searchingName."</strong><br>";
-            echo "No results found<br>";
+//            echo "No results found<br>";
         }
     } else {
         echo "JSON for <strong>".$searchingName."</strong> is NOT valid <hr>";
@@ -213,8 +213,6 @@ foreach($authors as $author) {
             echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
         echo '</tr>';
 }
-echo "<hr>";
-
 
 // convert all publications OBJ to valid JSON and save to the session
 $publicationsValidJSON = [];
@@ -277,6 +275,7 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
         <tbody>
     </table>
 </form>
+<hr>
 <a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>
 
 
@@ -296,29 +295,7 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
             buttons: [
                 [
                     {
-                        extend: 'colvis',
-                        text: 'show/hide columns'
-                    }
-                ],
-                [
-                    {
-                        extend: 'print',
-                        exportOptions: {
-                            format: {
-                                body: function ( data, row, column, node ) {            // print only the SELECTED value from the REF dropdown
-                                    if (column == 6) {                                  // column where the dropdown is (starting from 0)
-                                        return $('#publications').DataTable()
-                                        .cell( {row: row, column: column} )
-                                        .nodes()
-                                        .to$()
-                                        .find(':selected')
-                                        .text()
-                                    } else {
-                                        return data;
-                                    }
-                                }
-                            }
-                        }
+                        extend: 'print'
                     }
                 ]
             ]
