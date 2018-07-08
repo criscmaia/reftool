@@ -15,9 +15,11 @@ if (empty($_POST['authorID'])) {                                                
     die();
 } else {
     $selectedAuthorsId = $_POST['authorID'];
+    echo "Number of authors selected = ".count($selectedAuthorsId).":<br>";
     print_r($selectedAuthorsId);
+    echo "<br><br>";
 
-    else if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {    // if no publications were found for selected authors
+    if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {         // if no publications were found for selected authors
         echo "<script>
             alert(\"No publications found for the selected authors.\");
             setTimeout(\"location.href = '/reftool/v2/readExcel.php';\",1000);
@@ -33,7 +35,10 @@ if (empty($_POST['authorID'])) {                                                
 
         if (json_last_error() === JSON_ERROR_NONE) {                                    // if JSON is valid
             if (count($searchedAuthor)>0) {
-                echo "Authors being processed: ".count($searchedAuthor)."<br>";
+                echo "Authors being processed = ".count($searchedAuthor).": <br>";
+                print_r($searchedAuthor);
+                echo "<br><br>";
+
                 echo "Processing... <br>";
                 $eraRating = "NULL";
 
