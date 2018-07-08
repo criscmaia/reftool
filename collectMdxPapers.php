@@ -18,7 +18,7 @@ if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {
     $publications = $_SESSION["publications"];
     $searchedAuthor = json_decode($publications, true);                 // Takes a JSON encoded string and converts it into a PHP variable
 
-        /*
+//        /*
     highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
 //        */
 

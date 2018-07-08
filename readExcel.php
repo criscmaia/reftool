@@ -188,7 +188,8 @@ foreach($authors as $author) {
                     }
                 }
             }
-            $publications[] = $papersObj;               // save publication obj to array of publications
+//            $authorID = $author->getMdxAuthorID();
+            $publications[$author->getMdxAuthorID()] = $papersObj;               // save publication obj to array of publications
 //            echo " ✓<br>";
         } else {
 //                echo "No results found for <strong>".$searchingName."</strong><br>";
@@ -206,8 +207,8 @@ foreach($authors as $author) {
             echo '<td>' . $authorsId++ . '</td>';
             echo '<td>' . $author->getFirstName() . '</td>';
             echo '<td>' . $author->getLastName() . '</td>';
-//            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.$author->getMdxAuthorID().'"checked />' . '</td>';
-            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.($authorsId-2).'"checked />' . '</td>';
+            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.$author->getMdxAuthorID().'"checked />' . '</td>';
+//            echo '<td>' . '<input type="checkbox" name="authorID[]" value="'.($authorsId-2).'"checked />' . '</td>';
             echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
             echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
             echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
