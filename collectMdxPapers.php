@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 include 'menu.php';
 include 'dbconnect.php';
 
+$_SESSION['publicationsFiltered'] = null;                                                           // only publications from selected authors
+$authors = $_SESSION['authors'];                                                                    // array of of authors objects
 
 if (empty($_POST['authorID'])) {                                                                    // if no authors were selected
     echo "<script>
@@ -15,9 +17,6 @@ if (empty($_POST['authorID'])) {                                                
     die();
 } else {
     $selectedAuthorsId = $_POST['authorID'];
-    echo "Number of authors selected = ".count($selectedAuthorsId).":<br>";
-    print_r($selectedAuthorsId);
-    echo "<br><br>";
 
     if(!isset($_SESSION["publications"]) && empty($_SESSION["publications"])) {                     // if no publications were found for selected authors
         echo "<script>
@@ -28,17 +27,42 @@ if (empty($_POST['authorID'])) {                                                
     } else {                                                                                        // proceed with valid authors with >0 publications
         $publications = $_SESSION["publications"];
         $searchedAuthor = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
+
+
+        echo "Count 1: ".count($searchedAuthor)."<br>";
         $searchedAuthor = array_intersect_key($searchedAuthor, array_flip($selectedAuthorsId));     // only keep selected authors based on POST values (flips is so values become keys)
 
-        if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
-            if (count($searchedAuthor)>0) {
-                echo "Authors being processed = ".count($searchedAuthor).": <br>";
+        foreach($searchedAuthor as $k=>$v) {
+            foreach ($searchedAuthor[$k] as $key=>$value) {
+              if ($key === "mdxAuthorID" && $value === "$selectedAuthorsId[0]") { //If Value of 2D is equal to user and cat
+                  unset($searchedAuthor[$k]); //Delete from Array
+              }
+            }
+        }
+        echo "Count 2: ".count($searchedAuthor)."<br>";
 
-//    /*
+                    /*
     highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
 //        */
 
 
+        // IT WORKS! But I have to loop the array of
+        // WAIT.. is it working?
+
+        /*
+        TODO:
+
+        Filter authors out as well
+        Loop through array of objs
+        Get IDs
+        If it matches
+        Unset from array
+        */
+
+
+
+        if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
+            if (count($searchedAuthor)>0) {
                 echo "Processing... <br>";
                 $eraRating = "NULL";
 
@@ -79,15 +103,6 @@ if (empty($_POST['authorID'])) {                                                
                         }
                         if ($issn != "NULL")  /* check ERA from issn */                                   { $eraRating = checkEra2010rank($issn); }
 
-                        /* =================
-                        TODO:
-                        - create publication objects
-                        - pass publications to next pages
-                        - check author AND publications compared to DB
-                        -- just by id each
-                        ====================*/
-
-
                         foreach($allcreators as $mdxAuthorId) {                                                                     // for each author from the publication
                             $publicationAlreadyInDB = checkPublicationAlreadyInDB ($projectDetails, $mdxAuthorId, $eprintid);       // CHECK IF PUBLICATION + AUTHOR ALREADY IN DB
                             if (!$publicationAlreadyInDB && !empty($mdxAuthorId)){
@@ -105,12 +120,12 @@ if (empty($_POST['authorID'])) {                                                
                 }           // end of looping authors
             }               // end of if at least one paper
             echo "Finished processing all authors and publications!";
+            $_SESSION['publicationsFiltered'] = $searchedAuthor;            // only publications from selected authors
         } else {
             echo "Invalid JSON. <br>";
-        }
+        }                   // end of invalid JSON
     }                       // end of if no publications save to SESSION
-    }
-
+}                           // end of no authors selected
 
 
 // check paper rank
