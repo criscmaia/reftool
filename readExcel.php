@@ -4,7 +4,32 @@ include_once 'menu.php';
 require_once 'ClassAuthor.php';
 require_once 'ClassPublication.php';
 require_once 'dbconnect.php';
+?>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- datatable plugin -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+
+
+<style>
+    /* Have the SEARCH button to the left, and the PRINT button on the right side */
+    div.dt-buttons {
+        float: right;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        float: left;
+    }
+
+</style>
+
+
+<?php
 // get Excel data
 $filePath = $_SESSION['filePath'];
 if ( $xlsx = SimpleXLSX::parse($filePath)) {
@@ -27,20 +52,21 @@ if ( $xlsx = SimpleXLSX::parse($filePath)) {
 }
 
 ?>
-    <table id="importedList">
-        <thead>
-            <tr style="text-align: left">
-                <th>id</th>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>✔</th>
-                <th>Employee Status</th>
-                <th>Total of Publications</th>
-                <th>Total of Publications - First Author</th>
-                <th>Total of Publications - Co-Author</th>
-            </tr>
-        </thead>
-        <tbody>
+    <form action="/v2/collectMdxPapers.php" method="post">
+        <table id="publications">
+            <thead>
+                <tr style="text-align: left">
+                    <th>id</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>✔</th>
+                    <th>Current employee?</th>
+                    <th>Total of Publications</th>
+                    <th>Total as First Author</th>
+                    <th>Total as Co-Author</th>
+                </tr>
+            </thead>
+            <tbody>
 <?php
 $_SESSION['publications'] = null;
 $publications = [];
@@ -83,7 +109,7 @@ foreach($authors as $author) {
     // define what is going to be the search variable
     ($author->getRepositoryName() == NULL)?($searchingName = $author->getFullNameReverse()):($searchingName = $author->getRepositoryName());
 
-    echo "Searching for <strong>".$searchingName."</strong>... ";
+    echo "Checking eprint repository for <strong>".$searchingName."</strong>... ";
     $link="http://eprints.mdx.ac.uk/cgi/search/archive/simple/export_mdx_JSON.js?output=JSON&exp=0|1|-|q3:creators_name/editors_name:ALL:EQ:".rawurlencode($searchingName);
 
 //        echo $link . "<br>";
@@ -176,17 +202,19 @@ foreach($authors as $author) {
     highlight_string("<?php\n\$data =\n" . var_export($publications, true) . ";\n?>");
 //        */
 
-    echo '<tr>';
-        echo '<td>' . $authorsId++ . '</td>';
-        echo '<td>' . $author->getFirstName() . '</td>';
-        echo '<td>' . $author->getLastName() . '</td>';
-        echo '<td>' . '-' . '</td>';
-        echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
-        echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
-        echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
-        echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
-    echo '</tr>';
+        echo '<tr>';
+            echo '<td>' . $authorsId++ . '</td>';
+            echo '<td>' . $author->getFirstName() . '</td>';
+            echo '<td>' . $author->getLastName() . '</td>';
+            echo '<td>' . '<input type="checkbox" name="authorID" value="'.$author->getMdxAuthorID().'"checked />' . '</td>';
+            echo '<td>' . (($author->getEmployeeStatus()!=='')?(($author->getEmployeeStatus()==1)?'Y':'N'):'') . '</td>';           // if unknown, leaves blank. if 1=Y, else=N
+            echo '<td>' . ($author->totalOfPublicationsFirstAuthor+$author->totalOfPublicationsCoAuthor) . '</td>';                 // if none = 0
+            echo '<td>' . (($author->totalOfPublicationsFirstAuthor=='')?'0':$author->totalOfPublicationsFirstAuthor) . '</td>';    // if none = 0
+            echo '<td>' . (($author->totalOfPublicationsCoAuthor=='')?'0':$author->totalOfPublicationsCoAuthor) . '</td>';          // if none = 0
+        echo '</tr>';
 }
+echo "<hr>";
+
 
 // convert all publications OBJ to valid JSON and save to the session
 $publicationsValidJSON = [];
@@ -246,6 +274,55 @@ function checkIfMdxAuthorIsOnDB($projectDetails, $localAuthor){
 
 
 ?>
-                <tbody>
+        <tbody>
     </table>
+</form>
 <a href="/reftool/v2/collectMdxPapers.php">Collect papers from selected authors --> </a>
+
+
+<script>
+    $(document).ready(function() {
+        var $tableData = $('#publications');
+
+        $('#publications').DataTable({
+            "dom": 'Bfti',
+            "autoWidth": true,
+            "ordering": true,
+            "paging": false,
+            "searching": true,
+            "info": true,
+            responsive: true,
+            stateSave: true,
+            buttons: [
+                [
+                    {
+                        extend: 'colvis',
+                        text: 'show/hide columns'
+                    }
+                ],
+                [
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {            // print only the SELECTED value from the REF dropdown
+                                    if (column == 6) {                                  // column where the dropdown is (starting from 0)
+                                        return $('#publications').DataTable()
+                                        .cell( {row: row, column: column} )
+                                        .nodes()
+                                        .to$()
+                                        .find(':selected')
+                                        .text()
+                                    } else {
+                                        return data;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            ]
+        });
+    });
+
+</script>
