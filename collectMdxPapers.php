@@ -27,39 +27,15 @@ if (empty($_POST['authorID'])) {                                                
     } else {                                                                                        // proceed with valid authors with >0 publications
         $publications = $_SESSION["publications"];
         $searchedAuthor = json_decode($publications, true);                                         // Takes a JSON encoded string and converts it into a PHP variable
-
-
-        echo "Count 1: ".count($searchedAuthor)."<br>";
         $searchedAuthor = array_intersect_key($searchedAuthor, array_flip($selectedAuthorsId));     // only keep selected authors based on POST values (flips is so values become keys)
 
-        foreach($searchedAuthor as $k=>$v) {
-            foreach ($searchedAuthor[$k] as $key=>$value) {
-              if ($key === "mdxAuthorID" && $value === "$selectedAuthorsId[0]") { //If Value of 2D is equal to user and cat
-                  unset($searchedAuthor[$k]); //Delete from Array
-              }
+        foreach($searchedAuthor as $k=>$v) {                                                        // loop to remove publications from the author searched
+            foreach ($searchedAuthor[$k] as $key=>$value) {                                         //  example:
+              if ($key === "mdxAuthorID" && $value === "$selectedAuthorsId[0]") {                   // Search authors A (paper with B) and B
+                  unset($searchedAuthor[$k]);                                                       //  don't select author A to be processed
+              }                                                                                     //  it still appears on the paper under B search
             }
         }
-        echo "Count 2: ".count($searchedAuthor)."<br>";
-
-                    /*
-    highlight_string("<?php\n\$data =\n" . var_export($searchedAuthor, true) . ";\n?>");
-//        */
-
-
-        // IT WORKS! But I have to loop the array of
-        // WAIT.. is it working?
-
-        /*
-        TODO:
-
-        Filter authors out as well
-        Loop through array of objs
-        Get IDs
-        If it matches
-        Unset from array
-        */
-
-
 
         if (json_last_error() === JSON_ERROR_NONE) {                                                // if JSON is valid
             if (count($searchedAuthor)>0) {
@@ -67,8 +43,6 @@ if (empty($_POST['authorID'])) {                                                
                 $eraRating = "NULL";
 
                 foreach($searchedAuthor as $searchedAuthorKeys => $searchedAuthorPublications) {                     // see all the authors
-                    echo $searchedAuthorKeys . "<br>";
-
                     foreach($searchedAuthor[$searchedAuthorKeys] as $publicationKey => $publicationDetails) {        // go through the author's publications
 
                         // get value or set to null
@@ -108,12 +82,12 @@ if (empty($_POST['authorID'])) {                                                
                             if (!$publicationAlreadyInDB && !empty($mdxAuthorId)){
                                 $sql = "INSERT INTO `publication` (`projectID`,`type`,`author`,`succeeds`,`title`,`isPublished`,`presType`,`keywords`,`publication`,`volume`,`number`,`publisher`,`eventTitle`,`eventType`,`isbn`,`issn`,`bookTitle`,`ePrintID`,`doi`,`uri`, `abstract`,`date`,`eraRating`) VALUES ($projectDetails[0], $type, $mdxAuthorId, $succeeds, $title, $ispublished, $presType, $keywords, $publication, $volume, $number, $publisher, $eventTitle, $eventType, $isbn, $issn, $bookTitle, $eprintid, $doi, $uri, $abstract, $date, $eraRating);";
                                 if ($conn->query($sql) === TRUE) {
-    //                                echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
+//                                    echo "New record created successfully. Publication added. Author ID: " . $mdxAuthorId." - Publication ID: ".$eprintid."<br>";
                                 } else {
                                     echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                                 }
                             } else {
-    //                            echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
+//                                echo "Publication + Author already in the DB. Nothing changed. Author ID: " . $mdxAuthorId." -  Publication ID: ".$eprintid."<br>";
                             }
                         }
                     }       // end of looping author's publications
